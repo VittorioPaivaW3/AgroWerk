@@ -1,0 +1,1 @@
+<img src="{{ asset ('imagem/productor_icone.svg')}} "width="300px">
