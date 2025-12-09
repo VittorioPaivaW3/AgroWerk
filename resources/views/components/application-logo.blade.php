@@ -1,1 +1,1 @@
-<img src="{{ asset ('imagem/productor_icone.svg')}} "width="300px">
+<img src="{{ asset('imagem/Logo-AgroWerk.svg') }}" width="300px">

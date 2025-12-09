@@ -11,25 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Tabela de Usuários
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            
-            // Seus campos personalizados
-            $table->boolean('admin')->default(false);
-            $table->boolean('supervisor')->default(false);
-            $table->boolean('operario')->default(false);
-            
             $table->rememberToken();
             $table->timestamps();
         });
 
-        // Tabelas extras padrão do Laravel (Reset de senha e Sessões)
-        // É bom manter isso aqui se o seu arquivo original tinha
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
