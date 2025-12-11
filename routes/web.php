@@ -2,27 +2,27 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\CadasMaqController;
+use App\Http\Controllers\OrdemServicoController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('dashboard');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Rotas REST de OS, Clientes e Equipamentos
+    Route::resource('ordens', OrdemServicoController::class);
+    Route::resource('clientes', ClienteController::class);
+    Route::resource('equipamentos', EquipamentoController::class);
+
+    Route::get('/cadastro/cadasmaq', [CadasMaqController::class, 'index'])
+        ->name('cadasmaq');
+    Route::resource('ordens', OrdemServicoController::class);
+
 });
-Route::get('/home', function () {
-    return view('telas/home');
-})->middleware(['auth', 'verified'])->name('home');
-
-
-Route::get('/cadastro', function () {
-    return view('telas/cadastro');
-})->middleware(['auth', 'verified'])->name('cadastro');
 
 require __DIR__.'/auth.php';

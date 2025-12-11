@@ -6,7 +6,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200"/>
+                        <x-application-logo class="block h-12 w-auto fill-current text-gray-800 dark:text-gray-200"/>
                     </a>
                 </div>
 
@@ -15,12 +15,12 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }} 
                     </x-nav-link>
-                    <x-nav-link :href="route('home')" :active="request()->routeIs('home')">
-                        {{ __('Home') }} 
-                    </x-nav-link>
-                    <x-nav-link :href="route('cadastro')" :active="request()->routeIs('cadastro')">
-                        {{ __('Cadastro') }} 
-                    </x-nav-link>          
+                    <x-nav-link :href="route('cadasmaq')" :active="request()->routeIs('cadasmaq')">
+                        {{ __('Cadastro de Máquina') }} 
+                    </x-nav-link>  
+                        <x-nav-link :href="route('ordens.index')" :active="request()->routeIs('ordens.*')">
+                        {{ __('Ordens') }}
+                    </x-nav-link>         
                 </div>
             </div>
 
@@ -75,6 +75,9 @@
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('cadasmaq')" :active="request()->routeIs('cadasmaq')">
+                {{ __('Cadastro Máquina') }}
             </x-responsive-nav-link>
         </div>
 
