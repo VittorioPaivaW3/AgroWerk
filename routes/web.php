@@ -7,6 +7,7 @@ use App\Http\Controllers\OrdemServicoController;
 use App\Http\Controllers\EquipamentoController;
 use App\Http\Controllers\SetoresController;
 use App\Http\Controllers\ManutencaoPreventivaController;
+use App\Http\Controllers\UsuarioController;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
@@ -15,6 +16,10 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
+
+    Route::resource('usuarios', UsuarioController::class)
+    ->parameters(['usuarios' => 'usuario'])
+    ->except(['show']);
 
     // Rotas REST de OS, Clientes e Equipamentos
     Route::resource('ordens', OrdemServicoController::class);
@@ -58,6 +63,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Excluir
     Route::delete('/manutencoes-preventivas/{manutencaoPreventiva}', [ManutencaoPreventivaController::class, 'destroy'])
         ->name('manutencoes.preventivas.destroy');
-});
+
+    Route::delete(
+    '/equipamentos/arquivos/{arquivo}',
+        [EquipamentoController::class, 'destroyArquivo']
+    )->name('equipamentos.arquivos.destroy');
+    });
 
 require __DIR__.'/auth.php';

@@ -34,4 +34,8 @@ class Equipamento extends Model
     {
         return $this->hasMany(ManutencaoPreventiva::class);
     }
+    public function arquivos()
+    {
+        return $this->hasMany(EquipamentoArquivo::class);
+    }
 }

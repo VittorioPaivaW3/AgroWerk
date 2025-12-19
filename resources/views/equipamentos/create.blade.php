@@ -10,7 +10,7 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="px-6 py-6 text-gray-900 dark:text-gray-100">
 
-                    <form method="POST" action="{{ route('equipamentos.store') }}" x-data="equipamentoForm()">
+                    <form method="POST" action="{{ route('equipamentos.store') }}" enctype="multipart/form-data" x-data="equipamentoForm()">
                         @csrf
 
                         {{-- Nome --}}
@@ -149,6 +149,30 @@
                             @enderror
                         </div>
 
+                        {{-- Anexos (imagens / PDFs) --}}
+                        <div class="mb-6">
+                            <label for="anexos"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Anexos (imagens ou PDFs)
+                            </label>
+
+                            <input id="anexos" name="anexos[]" type="file" multiple
+                                accept="image/*,.pdf"
+                                class="block w-full text-sm text-gray-900 dark:text-gray-100
+                                        file:mr-4 file:py-2 file:px-4
+                                        file:rounded-md file:border-0
+                                        file:text-sm file:font-semibold
+                                        file:bg-indigo-50 file:text-indigo-700
+                                        hover:file:bg-indigo-100
+                                        dark:file:bg-gray-700 dark:file:text-gray-200">
+
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                Você pode selecionar múltiplos arquivos segurando CTRL (Windows) ou CMD (Mac).
+                            </p>
+
+                            @error('anexos.*')
+                                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                            @enderror
 
                         {{-- Campos extras dinâmicos --}}
                         <div class="mb-6">

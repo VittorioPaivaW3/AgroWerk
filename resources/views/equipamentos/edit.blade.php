@@ -12,6 +12,7 @@
 
                     <form method="POST"
                           action="{{ route('equipamentos.update', $equipamento) }}"
+                          enctype="multipart/form-data"
                           x-data='equipamentoForm(@json($equipamento->campos_extras))'>
                         @csrf
                         @method('PUT')
@@ -149,6 +150,99 @@
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
+
+{{-- ANEXAR ARQUIVOS --}}
+                        <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <label for="anexos"
+                                   class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Anexos (imagens ou PDFs)
+                            </label>
+                            <input id="anexos" name="anexos[]" type="file" multiple
+                                   accept="image/*,application/pdf"
+                                   class="block w-full text-sm text-gray-900 dark:text-gray-100
+                                          file:mr-4 file:py-2 file:px-4
+                                          file:rounded-md file:border-0
+                                          file:text-sm file:font-semibold
+                                          file:bg-indigo-50 file:text-indigo-700
+                                          hover:file:bg-indigo-100">
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                Formatos permitidos: JPG, JPEG, PNG, PDF. Máx. 4 MB por arquivo.
+                            </p>
+                            @error('anexos.*')
+                                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Botões --}}
+                        <div class="pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
+                            <a href="{{ route('equipamentos.index') }}"
+                               class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md
+                                      text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-widest
+                                      hover:bg-gray-50 dark:hover:bg-gray-700">
+                                Cancelar
+                            </a>
+                            <button type="submit"
+                                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md
+                                           text-xs font-semibold text-white uppercase tracking-widest
+                                           hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Salvar alterações
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
+            {{-- CARD: Arquivos já anexados (fora do form para evitar forms aninhados) --}}
+            @if($equipamento->arquivos && $equipamento->arquivos->count())
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="px-6 py-4 text-gray-900 dark:text-gray-100">
+                        <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
+                            Arquivos anexados
+                        </h3>
+
+                        <ul class="space-y-2">
+                            @foreach($equipamento->arquivos as $arquivo)
+                                @php
+                                    $isPdf = str_contains($arquivo->mime_type ?? '', 'pdf');
+                                @endphp
+
+                                <li class="flex items-center justify-between text-sm">
+                                    <div class="flex items-center gap-2">
+                                        <span class="inline-flex items-center justify-center h-8 w-8 rounded-md
+                                                     bg-gray-100 dark:bg-gray-700 text-xs font-semibold">
+                                            {{ $isPdf ? 'PDF' : 'IMG' }}
+                                        </span>
+
+                                        <a href="{{ asset('storage/' . $arquivo->path) }}"
+                                           target="_blank"
+                                           class="text-indigo-600 dark:text-indigo-400 hover:underline">
+                                            {{ $arquivo->nome_original ?? basename($arquivo->path) }}
+                                        </a>
+
+                                        @if($arquivo->size)
+                                            <span class="text-xs text-gray-500 dark:text-gray-400">
+                                                ({{ number_format($arquivo->size / 1024, 1, ',', '.') }} KB)
+                                            </span>
+                                        @endif
+                                    </div>
+
+                                    <form method="POST"
+                                          action="{{ route('equipamentos.arquivos.destroy', $arquivo) }}"
+                                          onsubmit="return confirm('Remover este anexo?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 text-xs font-semibold">
+                                            Remover
+                                        </button>
+                                    </form>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            @endif
 
                         {{-- Campos extras dinâmicos --}}
                         <div class="mb-6">

@@ -125,6 +125,57 @@
                         </div>
                     @endif
 
+                                        {{-- ARQUIVOS ANEXADOS --}}
+                    @if($equipamento->arquivos && $equipamento->arquivos->count())
+                        <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <h4 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                                Arquivos anexados
+                            </h4>
+
+                            <ul class="space-y-2">
+                                @foreach($equipamento->arquivos as $arquivo)
+                                    <li class="flex items-center justify-between text-sm">
+                                        <div class="flex items-center gap-2">
+                                            @php
+                                                $isPdf = str_contains($arquivo->mime_type ?? '', 'pdf');
+                                            @endphp
+
+                                            {{-- Ícone simples por tipo --}}
+                                            <span class="inline-flex items-center justify-center h-8 w-8 rounded-md
+                                                         bg-gray-100 dark:bg-gray-700 text-xs font-semibold">
+                                                {{ $isPdf ? 'PDF' : 'IMG' }}
+                                            </span>
+
+                                            <a href="{{ asset('storage/' . $arquivo->path) }}"
+                                               target="_blank"
+                                               class="text-indigo-600 dark:text-indigo-400 hover:underline">
+                                                {{ $arquivo->nome_original ?? basename($arquivo->path) }}
+                                            </a>
+
+                                            @if($arquivo->size)
+                                                <span class="text-xs text-gray-500 dark:text-gray-400">
+                                                    ({{ number_format($arquivo->size / 1024, 1, ',', '.') }} KB)
+                                                </span>
+                                            @endif
+                                        </div>
+
+                                        {{-- Botão de remover (vai para destroyArquivo) --}}
+                                        <form method="POST"
+                                              action="{{ route('equipamentos.arquivos.destroy', $arquivo) }}"
+                                              onsubmit="return confirm('Remover este anexo?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                    class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 text-xs font-semibold">
+                                                Remover
+                                            </button>
+                                        </form>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif            
+
                     {{-- Campos adicionais --}}
                     @if($equipamento->campos_extras && is_array($equipamento->campos_extras))
                         <div class="pt-4 border-t border-gray-200 dark:border-gray-700">

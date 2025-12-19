@@ -42,6 +42,10 @@
                         </x-slot>
 
                         <x-slot name="content">
+                             <x-dropdown-link :href="route('usuarios.index')">
+                                {{ __('Usuários') }}
+                            </x-dropdown-link>
+
                             <x-dropdown-link :href="route('setores.index')">
                                 {{ __('Setores') }}
                             </x-dropdown-link>
