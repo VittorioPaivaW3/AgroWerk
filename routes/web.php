@@ -70,4 +70,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     )->name('equipamentos.arquivos.destroy');
     });
 
+    Route::get(
+        '/equipamentos/arquivos/{arquivo}',
+        [EquipamentoController::class, 'showArquivo']
+    )->name('equipamentos.arquivos.show');
+
 require __DIR__.'/auth.php';

@@ -215,4 +215,18 @@ class EquipamentoController extends Controller
             ->route('equipamentos.edit', $equipamentoId)
             ->with('success', 'Anexo removido com sucesso!');
     }
+    
+    /**
+     * Exibe/fornece download de um arquivo do equipamento.
+     */
+    public function showArquivo(EquipamentoArquivo $arquivo)
+    {
+        if (! $arquivo->path || ! Storage::disk('public')->exists($arquivo->path)) {
+            abort(404);
+        }
+
+        $filename = $arquivo->nome_original ?? basename($arquivo->path);
+
+        return Storage::disk('public')->response($arquivo->path, $filename);
+    }
 }

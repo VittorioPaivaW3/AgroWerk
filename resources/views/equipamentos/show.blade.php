@@ -146,9 +146,9 @@
                                                 {{ $isPdf ? 'PDF' : 'IMG' }}
                                             </span>
 
-                                            <a href="{{ asset('storage/' . $arquivo->path) }}"
-                                               target="_blank"
-                                               class="text-indigo-600 dark:text-indigo-400 hover:underline">
+                                            <a href="{{ route('equipamentos.arquivos.show', $arquivo) }}"
+                                            target="_blank"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:underline">
                                                 {{ $arquivo->nome_original ?? basename($arquivo->path) }}
                                             </a>
 
