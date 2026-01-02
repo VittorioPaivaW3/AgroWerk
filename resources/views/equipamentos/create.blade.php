@@ -135,6 +135,22 @@
                             @enderror
                         </div>
 
+                        {{-- Equipamento de terceiros --}}
+                        <div class="mt-4">
+                            <label class="inline-flex items-center">
+                                <input
+                                    type="checkbox"
+                                    name="terceiro"
+                                    value="1"
+                                    class="rounded border-gray-300 text-emerald-600 shadow-sm focus:ring-emerald-500"
+                                    {{ old('terceiro') ? 'checked' : '' }}
+                                >
+                                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                                    Equipamento de terceiros
+                                </span>
+                            </label>
+                        </div>
+
                         {{-- Observações --}}
                         <div class="mb-6">
                             <label for="observacoes"
@@ -157,7 +173,7 @@
                             </label>
 
                             <input id="anexos" name="anexos[]" type="file" multiple
-                                accept="image/*,.pdf"
+                                accept=".pdf,.png,.jpg,.jpeg"
                                 class="block w-full text-sm text-gray-900 dark:text-gray-100
                                         file:mr-4 file:py-2 file:px-4
                                         file:rounded-md file:border-0

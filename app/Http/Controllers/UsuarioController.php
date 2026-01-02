@@ -32,12 +32,16 @@ class UsuarioController extends Controller
             'email'    => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
             'role'     => ['required', 'exists:roles,name'],
+            'valor_hora' => ['nullable', 'numeric', 'min:0'],
         ]);
 
         $user = User::create([
             'name'     => $data['name'],
             'email'    => $data['email'],
             'password' => Hash::make($data['password']),
+            'valor_hora' => in_array($data['role'], ['tecnico', 'gestor'], true)
+                ? ($data['valor_hora'] ?? null)
+                : null,
         ]);
 
         $user->assignRole($data['role']);
@@ -64,10 +68,14 @@ class UsuarioController extends Controller
             'email'    => ['required', 'email', 'max:255', 'unique:users,email,' . $usuario->id],
             'password' => ['nullable', 'string', 'min:6', 'confirmed'],
             'role'     => ['required', 'exists:roles,name'],
+            'valor_hora' => ['nullable', 'numeric', 'min:0'],
         ]);
 
         $usuario->name  = $data['name'];
         $usuario->email = $data['email'];
+        $usuario->valor_hora = in_array($data['role'], ['tecnico', 'gestor'], true)
+            ? ($data['valor_hora'] ?? null)
+            : null;
 
         if (!empty($data['password'])) {
             $usuario->password = Hash::make($data['password']);

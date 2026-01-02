@@ -26,7 +26,7 @@
                                    class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
                                           text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
                             @error('name')
-                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -40,7 +40,7 @@
                                    class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
                                           text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
                             @error('email')
-                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -54,7 +54,7 @@
                                        class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
                                               text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
                                 @error('password')
-                                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                                 @enderror
                             </div>
 
@@ -69,28 +69,62 @@
                             </div>
                         </div>
 
-                        {{-- Perfil --}}
-                        <div>
-                            <label for="role" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Perfil (papel)
-                            </label>
-                            <select id="role" name="role" required
-                                    class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                           text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
-                                <option value="">Selecione um perfil</option>
-                                @php
-                                    $currentRole = $usuario->roles->first()->name ?? null;
-                                @endphp
-                                @foreach($roles as $role)
-                                    <option value="{{ $role->name }}"
-                                        @selected(old('role', $currentRole) === $role->name)>
-                                        {{ ucfirst($role->name) }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('role')
-                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                            @enderror
+                        @php
+                            // Papel atual do usuário (ex: 'tecnico', 'gestor', etc)
+                            $currentRole = $usuario->roles->first()->name ?? null;
+                            $roleInitial = old('role', $currentRole);
+                        @endphp
+
+                        {{-- Perfil + Valor da hora (wrapper Alpine) --}}
+                        <div x-data="{ role: '{{ $roleInitial }}' }" class="space-y-4">
+
+                            {{-- Perfil --}}
+                            <div>
+                                <label for="role" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                    Perfil (papel)
+                                </label>
+                                <select id="role"
+                                        name="role"
+                                        x-model="role"
+                                        required
+                                        class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
+                                               text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">Selecione um perfil</option>
+                                    @foreach($roles as $role)
+                                        <option value="{{ $role->name }}"
+                                            @selected(old('role', $currentRole) === $role->name)>
+                                            {{ ucfirst($role->name) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('role')
+                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Valor da hora (só faz sentido pra técnico) --}}
+                            <div x-show="role === 'tecnico'" x-cloak>
+                                <label for="valor_hora" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                    Valor da hora (R$)
+                                </label>
+                                <input
+                                    id="valor_hora"
+                                    name="valor_hora"
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    value="{{ old('valor_hora', $usuario->valor_hora) }}"
+                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
+                                           text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500"
+                                />
+                                <p class="mt-1 text-xs text-gray-500">
+                                    Use ponto como separador decimal (ex: 75.50).
+                                </p>
+                                @error('valor_hora')
+                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                @enderror
+                            </div>
+
                         </div>
 
                         {{-- Botões --}}

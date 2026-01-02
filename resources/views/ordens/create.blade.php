@@ -1,0 +1,220 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Nova Ordem de Serviço') }}
+        </h2>
+    </x-slot>
+
+    <div class="py-8">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
+
+            {{-- Alertas --}}
+            @if (session('success'))
+                <div class="bg-green-100 border border-green-200 text-green-800 text-sm px-4 py-2 rounded-md">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            {{-- Card do formulário --}}
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="px-6 py-4 text-gray-900 dark:text-gray-100">
+
+                    <form method="POST"
+                          action="{{ route('ordens.store') }}"
+                          enctype="multipart/form-data"
+                          class="space-y-6">
+                        @csrf
+
+                        {{-- Solicitante (usuário logado) --}}
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
+                                Solicitante
+                            </p>
+                            <p class="mt-0.5 text-sm text-gray-900 dark:text-gray-100">
+                                {{ auth()->user()->name ?? auth()->user()->email }}
+                            </p>
+                        </div>
+
+                        {{-- Setor --}}
+                        <div>
+                            <label for="setor_id"
+                                   class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Setor <span class="text-red-500">*</span>
+                            </label>
+                            <select id="setor_id" name="setor_id" required
+                                    class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
+                                           text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="">Selecione um setor</option>
+                                @foreach($setores as $setor)
+                                    <option value="{{ $setor->id }}" @selected(old('setor_id') == $setor->id)>
+                                        {{ $setor->nome }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('setor_id')
+                                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Máquina --}}
+                        <div>
+                            <label for="equipamento_id"
+                                   class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Máquina / Equipamento <span class="text-red-500">*</span>
+                            </label>
+                            <select id="equipamento_id" name="equipamento_id" required
+                                    class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
+                                           text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="">Selecione um equipamento</option>
+                            </select>
+                            @error('equipamento_id')
+                                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Tipo + Prioridade --}}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {{-- Tipo --}}
+                            <div>
+                                <label for="tipo"
+                                       class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                    Tipo <span class="text-red-500">*</span>
+                                </label>
+                                <select id="tipo" name="tipo" required
+                                        class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
+                                               text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="corretiva" @selected(old('tipo') === 'corretiva')>Corretiva</option>
+                                    <option value="preventiva" @selected(old('tipo') === 'preventiva')>Preventiva</option>
+                                </select>
+                                @error('tipo')
+                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Prioridade --}}
+                            <div>
+                                <label for="prioridade"
+                                       class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                    Urgência / Prioridade <span class="text-red-500">*</span>
+                                </label>
+                                <select id="prioridade" name="prioridade" required
+                                        class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
+                                               text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="baixo" @selected(old('prioridade') === 'baixo')>Baixo</option>
+                                    <option value="medio" @selected(old('prioridade') === 'medio')>Médio</option>
+                                    <option value="alto" @selected(old('prioridade') === 'alto')>Alto</option>
+                                    <option value="muito_alto" @selected(old('prioridade') === 'muito_alto')>Muito Alto</option>
+                                </select>
+                                @error('prioridade')
+                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+
+                        {{-- Descrição --}}
+                        <div>
+                            <label for="descricao"
+                                   class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Descrição do problema / serviço <span class="text-red-500">*</span>
+                            </label>
+                            <textarea id="descricao" name="descricao" rows="4" required
+                                      class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
+                                             text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500"
+                                      placeholder="Descreva o problema, sintomas, local exato, etc.">{{ old('descricao') }}</textarea>
+                            @error('descricao')
+                                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Anexos --}}
+                        <div>
+                            <label for="anexos"
+                                   class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Anexos (fotos, PDFs)
+                            </label>
+                            <input id="anexos" name="anexos[]" type="file" multiple
+                                   accept="image/*,application/pdf"
+                                   class="block w-full text-sm text-gray-900 dark:text-gray-100
+                                          file:mr-4 file:py-2 file:px-4
+                                          file:rounded-md file:border-0
+                                          file:text-sm file:font-semibold
+                                          file:bg-indigo-50 file:text-indigo-700
+                                          hover:file:bg-indigo-100">
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                Formatos permitidos: JPG, JPEG, PNG, PDF. Máx. 4 MB por arquivo.
+                            </p>
+                            @error('anexos.*')
+                                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Botões --}}
+                        <div class="pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
+                            <a href="{{ auth()->check() && auth()->user()->hasRole('visualizador') ? route('dashboard.visualizador') : route('ordens.index') }}"
+                               class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md
+                                      text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-widest
+                                      hover:bg-gray-50 dark:hover:bg-gray-700">
+                                Cancelar
+                            </a>
+                            
+                            <button type="submit"
+                                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md
+                                           text-xs font-semibold text-white uppercase tracking-widest
+                                           hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Salvar OS
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const setorSelect = document.getElementById('setor_id');
+            const equipamentoSelect = document.getElementById('equipamento_id');
+            const equipamentos = @json($equipamentos->map->only(['id', 'nome', 'setor_id']));
+
+            const oldSetor = @json(old('setor_id'));
+            const oldEquip = @json(old('equipamento_id'));
+
+            const renderEquipamentos = (setorId) => {
+                equipamentoSelect.innerHTML = '<option value="">Selecione um equipamento</option>';
+
+                if (!setorId) {
+                    equipamentoSelect.value = '';
+                    equipamentoSelect.disabled = true;
+                    return;
+                }
+
+                equipamentoSelect.disabled = false;
+
+                const options = equipamentos.filter(eq => String(eq.setor_id) === String(setorId));
+
+                options.forEach(eq => {
+                    const opt = document.createElement('option');
+                    opt.value = eq.id;
+                    opt.textContent = eq.nome;
+                    if (String(oldEquip) === String(eq.id)) {
+                        opt.selected = true;
+                    }
+                    equipamentoSelect.appendChild(opt);
+                });
+
+                if (!equipamentoSelect.value && options.length) {
+                    equipamentoSelect.value = options[0].id;
+                }
+            };
+
+            setorSelect.addEventListener('change', (e) => {
+                equipamentoSelect.value = '';
+                renderEquipamentos(e.target.value);
+            });
+
+            renderEquipamentos(setorSelect.value || oldSetor);
+        });
+    </script>
+</x-app-layout>

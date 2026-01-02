@@ -28,21 +28,23 @@
                         Agenda de manutenções preventivas
                     </h3>
                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                        Visualize e cadastre manutenções preventivas vinculadas aos equipamentos.
+                        Visualize as manutenções preventivas vinculadas aos equipamentos.
                     </p>
                 </div>
 
-                <div class="flex justify-end">
-                    <button
-                        type="button"
-                        @click="openCreate = true"
-                        class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md
-                               font-semibold text-xs text-white uppercase tracking-widest
-                               hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                        Incluir Manutenção Preventiva
-                    </button>
-                </div>
+                @role('admin|gestor')
+                    <div class="flex justify-end">
+                        <button
+                            type="button"
+                            @click="openCreate = true"
+                            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md
+                                   font-semibold text-xs text-white uppercase tracking-widest
+                                   hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        >
+                            Incluir Manutenção Preventiva
+                        </button>
+                    </div>
+                @endrole
             </div>
 
             {{-- Alertas --}}
@@ -243,39 +245,41 @@
                                                 Ver
                                             </button>
 
-                                            {{-- Editar --}}
-                                            <a href="{{ route('manutencoes.preventivas.edit', $manutencao) }}"
-                                               class="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white text-xs font-semibold">
-                                                Editar
-                                            </a>
+                                            @role('admin|gestor')
+                                                {{-- Editar --}}
+                                                <a href="{{ route('manutencoes.preventivas.edit', $manutencao) }}"
+                                                   class="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white text-xs font-semibold">
+                                                    Editar
+                                                </a>
 
-                                            {{-- Concluir (se ainda não concluída) --}}
-                                            @if($status !== 'concluida')
+                                                {{-- Concluir (se ainda não concluída) --}}
+                                                @if($status !== 'concluida')
+                                                    <form method="POST"
+                                                          action="{{ route('manutencoes.preventivas.concluir', $manutencao) }}"
+                                                          class="inline">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <button type="submit"
+                                                                class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 text-xs font-semibold"
+                                                                onclick="return confirm('Marcar esta manutenção como concluída?')">
+                                                            Concluir
+                                                        </button>
+                                                    </form>
+                                                @endif
+
+                                                {{-- Excluir --}}
                                                 <form method="POST"
-                                                      action="{{ route('manutencoes.preventivas.concluir', $manutencao) }}"
+                                                      action="{{ route('manutencoes.preventivas.destroy', $manutencao) }}"
                                                       class="inline">
                                                     @csrf
-                                                    @method('PATCH')
+                                                    @method('DELETE')
                                                     <button type="submit"
-                                                            class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 text-xs font-semibold"
-                                                            onclick="return confirm('Marcar esta manutenção como concluída?')">
-                                                        Concluir
+                                                            class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 text-xs font-semibold"
+                                                            onclick="return confirm('Tem certeza que deseja excluir esta manutenção?')">
+                                                        Excluir
                                                     </button>
                                                 </form>
-                                            @endif
-
-                                            {{-- Excluir --}}
-                                            <form method="POST"
-                                                  action="{{ route('manutencoes.preventivas.destroy', $manutencao) }}"
-                                                  class="inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                        class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 text-xs font-semibold"
-                                                        onclick="return confirm('Tem certeza que deseja excluir esta manutenção?')">
-                                                    Excluir
-                                                </button>
-                                            </form>
+                                            @endrole
                                         </div>
                                     </td>
                                 </tr>
@@ -291,6 +295,7 @@
                 </div>
             </div>
 
+@role('admin|gestor')
 {{-- Modal de inclusão (teleportado pro body) --}}
 <template x-teleport="body">
     <div
@@ -390,6 +395,7 @@
         </div>
     </div>
 </template>
+@endrole
 {{-- Modal de VISUALIZAÇÃO (teleportado pro body) --}}
 <template x-teleport="body">
     <div

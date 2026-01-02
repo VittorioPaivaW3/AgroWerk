@@ -3,71 +3,112 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
+                @php
+                    $homeRoute = route('dashboard');
+                    if(auth()->check() && auth()->user()->hasRole('visualizador')) {
+                        $homeRoute = route('dashboard.visualizador');
+                    } elseif(auth()->check() && auth()->user()->hasRole('tecnico')) {
+                        $homeRoute = route('tecnico.dashboard');
+                    }
+                @endphp
+
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
+                    <a href="{{ $homeRoute }}">
                         <x-application-logo class="block h-12 w-auto fill-current text-gray-800 dark:text-gray-200" />
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex sm:items-center">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
 
-                    {{-- Dropdown Cadastro --}}
-                    <x-dropdown align="left" width="48">
-                        <x-slot name="trigger">
-                            <button
-                                type="button"
-                                class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent
-                                       text-sm font-medium leading-5
-                                       text-gray-500 dark:text-gray-400
-                                       hover:text-gray-700 dark:hover:text-gray-300
-                                       hover:border-gray-300 dark:hover:border-gray-700
-                                       focus:outline-none focus:text-gray-700 dark:focus:text-gray-300
-                                       focus:border-gray-300 dark:focus:border-gray-700
-                                       transition duration-150 ease-in-out"
-                            >
-                                Cadastro
+                    @unlessrole('visualizador')
+                        {{-- Dropdown Cadastro --}}
+                        <x-dropdown align="left" width="48">
+                            <x-slot name="trigger">
+                                <button
+                                    type="button"
+                                    class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent
+                                           text-sm font-medium leading-5
+                                           text-gray-500 dark:text-gray-400
+                                           hover:text-gray-700 dark:hover:text-gray-300
+                                           hover:border-gray-300 dark:hover:border-gray-700
+                                           focus:outline-none focus:text-gray-700 dark:focus:text-gray-300
+                                           focus:border-gray-300 dark:focus:border-gray-700
+                                           transition duration-150 ease-in-out"
+                                >
+                                    Cadastro
 
-                                <svg class="ms-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
-                                     viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                          d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z"
-                                          clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </x-slot>
+                                    <svg class="ms-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                         viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                              d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z"
+                                              clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </x-slot>
 
-                        <x-slot name="content">
-                             <x-dropdown-link :href="route('usuarios.index')">
-                                {{ __('Usuários') }}
-                            </x-dropdown-link>
+                            <x-slot name="content">
+                                @unlessrole('tecnico')
+                                    <x-dropdown-link :href="route('usuarios.index')">
+                                        {{ __('Usuários') }}
+                                    </x-dropdown-link>
 
-                            <x-dropdown-link :href="route('setores.index')">
-                                {{ __('Setores') }}
-                            </x-dropdown-link>
+                                    <x-dropdown-link :href="route('setores.index')">
+                                        {{ __('Setores') }}
+                                    </x-dropdown-link>
+                                @endunlessrole
 
-                            <x-dropdown-link :href="route('equipamentos.index')">
-                                {{ __('Equipamentos') }}
-                            </x-dropdown-link>
+                                <x-dropdown-link :href="route('equipamentos.index')">
+                                    {{ __('Equipamentos') }}
+                                </x-dropdown-link>
 
-                            {{-- Se tiver Técnicos, por exemplo --}}
-                            {{-- <x-dropdown-link :href="route('tecnicos.index')">
-                                {{ __('Técnicos') }}
-                            </x-dropdown-link> --}}
-                        </x-slot>
-                    </x-dropdown>
+                                {{-- <x-dropdown-link :href="route('tecnicos.index')">
+                                    {{ __('Técnicos') }}
+                                </x-dropdown-link> --}}
+                            </x-slot>
+                        </x-dropdown>
+                    @endunlessrole
 
-                    <x-nav-link :href="route('ordens.index')" :active="request()->routeIs('ordens.*')">
-                        {{ __('Ordens') }}
-                    </x-nav-link>
+                    {{-- Links padrão (admin/gestor) --}}
+                    @role('admin|gestor')
+                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                            Dashboard
+                        </x-nav-link>
 
-                    <x-nav-link :href="route('manutencoes.preventivas.index')" :active="request()->routeIs('manutencoes.preventivas.*')">
-                         {{ __('Manutenção preventiva') }}
-                    </x-nav-link>
+                        <x-nav-link :href="route('ordens.index')" :active="request()->routeIs('ordens.*')">
+                            Ordens de Serviço
+                        </x-nav-link>
+
+                        <x-nav-link :href="route('projetos.index')" :active="request()->routeIs('projetos.*')">
+                            {{ __('Projetos') }}
+                        </x-nav-link>
+                    @endrole
+
+                    {{-- Painel do visualizador --}}
+                    @role('visualizador')
+                        <x-nav-link :href="route('dashboard.visualizador')" :active="request()->routeIs('dashboard.visualizador')">
+                            Meu Painel
+                        </x-nav-link>
+
+                        <x-nav-link :href="route('ordens.create')" :active="request()->routeIs('ordens.create')">
+                            Abrir OS
+                        </x-nav-link>
+                    @endrole
+
+                    @auth
+                        @if(auth()->user()->hasRole('tecnico'))
+                            <x-nav-link :href="route('tecnico.dashboard')" :active="request()->routeIs('tecnico.dashboard')">
+                                {{ __('Painel do Técnico') }}
+                            </x-nav-link>
+                        @endif
+                    @endauth
+
+                    @unlessrole('visualizador')
+                        <x-nav-link :href="route('manutencoes.preventivas.index')" :active="request()->routeIs('manutencoes.preventivas.*')">
+                             {{ __('Manutenção preventiva') }}
+                        </x-nav-link>
+                    @endunlessrole
                 </div>
             </div>
 
@@ -167,14 +208,25 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-
-            <x-responsive-nav-link :href="route('ordens.index')" :active="request()->routeIs('ordens.*')">
-                {{ __('Ordens') }}
-            </x-responsive-nav-link>
-
+            @role('visualizador')
+                <x-responsive-nav-link :href="route('dashboard.visualizador')" :active="request()->routeIs('dashboard.visualizador')">
+                    {{ __('Meu Painel') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('ordens.create')" :active="request()->routeIs('ordens.create')">
+                    {{ __('Abrir OS') }}
+                </x-responsive-nav-link>
+            @elserole('admin|gestor')
+                <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                    {{ __('Dashboard') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('ordens.index')" :active="request()->routeIs('ordens.*')">
+                    {{ __('Ordens') }}
+                </x-responsive-nav-link>
+            @elserole('tecnico')
+                <x-responsive-nav-link :href="route('tecnico.dashboard')" :active="request()->routeIs('tecnico.dashboard')">
+                    {{ __('Painel do Tecnico') }}
+                </x-responsive-nav-link>
+            @endrole
         </div>
 
         <!-- Responsive Settings Options -->

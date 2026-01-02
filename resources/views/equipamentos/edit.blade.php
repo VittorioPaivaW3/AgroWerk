@@ -33,11 +33,11 @@
                             @enderror
                         </div>
 
-                        {{-- Código (opcional) --}}
+                        {{-- Codigo (opcional) --}}
                         <div class="mb-4">
                             <label for="codigo"
                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Código interno
+                                Codigo interno
                             </label>
                             <input id="codigo" name="codigo" type="text"
                                    value="{{ old('codigo', $equipamento->codigo) }}"
@@ -59,14 +59,14 @@
                                         text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
                                 <option value="ativo"     @selected(old('status', $equipamento->status) === 'ativo')>Ativo</option>
                                 <option value="inativo"   @selected(old('status', $equipamento->status) === 'inativo')>Inativo</option>
-                                <option value="manutencao"@selected(old('status', $equipamento->status) === 'manutencao')>Em manutenção</option>
+                                <option value="manutencao"@selected(old('status', $equipamento->status) === 'manutencao')>Em manutencao</option>
                             </select>
                             @error('status')
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        {{-- Cor / Identificação visual --}}
+                        {{-- Cor / Identificacao visual --}}
                         <div class="mb-4">
                             <label for="cor"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -120,11 +120,11 @@
                             @enderror
                         </div>
 
-                        {{-- Manutenção preventiva --}}
+                        {{-- Manutencao preventiva --}}
                         <div class="mb-4">
                             <label for="manutencao_preventiva"
                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Data de manutenção preventiva
+                                Data de manutencao preventiva
                             </label>
                             <input id="manutencao_preventiva" name="manutencao_preventiva" type="date"
                                 value="{{ old('manutencao_preventiva', $equipamento->manutencao_preventiva
@@ -137,11 +137,27 @@
                             @enderror
                         </div>
 
-                        {{-- Observações --}}
+                        {{-- Equipamento de terceiros --}}
+                        <div class="mt-4">
+                            <label class="inline-flex items-center">
+                                <input
+                                    type="checkbox"
+                                    name="terceiro"
+                                    value="1"
+                                    class="rounded border-gray-300 text-emerald-600 shadow-sm focus:ring-emerald-500"
+                                    {{ old('terceiro', $equipamento->terceiro ?? false) ? 'checked' : '' }}
+                                >
+                                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                                    Equipamento de terceiros
+                                </span>
+                            </label>
+                        </div>
+
+                        {{-- Observacoes --}}
                         <div class="mb-6">
                             <label for="observacoes"
                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Observações
+                                Observacoes
                             </label>
                             <textarea id="observacoes" name="observacoes" rows="3"
                                       class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
@@ -151,14 +167,14 @@
                             @enderror
                         </div>
 
-{{-- ANEXAR ARQUIVOS --}}
+                        {{-- Anexar arquivos --}}
                         <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
                             <label for="anexos"
                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Anexos (imagens ou PDFs)
                             </label>
                             <input id="anexos" name="anexos[]" type="file" multiple
-                                   accept="image/*,application/pdf"
+                                   accept=".pdf,.png,.jpg,.jpeg"
                                    class="block w-full text-sm text-gray-900 dark:text-gray-100
                                           file:mr-4 file:py-2 file:px-4
                                           file:rounded-md file:border-0
@@ -166,14 +182,63 @@
                                           file:bg-indigo-50 file:text-indigo-700
                                           hover:file:bg-indigo-100">
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                Formatos permitidos: JPG, JPEG, PNG, PDF. Máx. 4 MB por arquivo.
+                                Formatos permitidos: JPG, JPEG, PNG, PDF. Max. 4 MB por arquivo.
                             </p>
                             @error('anexos.*')
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        {{-- Botões --}}
+                        {{-- Campos extras dinamicos --}}
+                        <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                    Campos adicionais do equipamento
+                                </h3>
+                                <button type="button"
+                                        @click="addCampo()"
+                                        class="inline-flex items-center px-3 py-1.5 bg-gray-100 dark:bg-gray-700 border border-transparent rounded-md
+                                               text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-widest
+                                               hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    + Adicionar campo
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                                Ex.: Numero de serie, Potencia (cv), Fabricante, etc.
+                            </p>
+
+                            <template x-for="(campo, index) in campos" :key="index">
+                                <div class="mb-3 flex flex-col gap-2 md:flex-row md:items-center">
+                                    <div class="md:w-5/12">
+                                        <input
+                                            type="text"
+                                            x-model="campo.key"
+                                            :name="`extra_keys[${index}]`"
+                                            placeholder="Nome do campo"
+                                            class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
+                                                   text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                    </div>
+                                    <div class="md:flex-1">
+                                        <input
+                                            type="text"
+                                            x-model="campo.value"
+                                            :name="`extra_values[${index}]`"
+                                            placeholder="Valor"
+                                            class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
+                                                   text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                    </div>
+                                    <div class="md:w-auto flex justify-end">
+                                        <button type="button"
+                                                @click="removeCampo(index)"
+                                                class="inline-flex items-center px-2 py-1 text-xs text-red-500 hover:text-red-700">
+                                            Remover
+                                        </button>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+
+                        {{-- Botoes --}}
                         <div class="pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
                             <a href="{{ route('equipamentos.index') }}"
                                class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md
@@ -185,7 +250,7 @@
                                     class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md
                                            text-xs font-semibold text-white uppercase tracking-widest
                                            hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                Salvar alterações
+                                Salvar alteracoes
                             </button>
                         </div>
                     </form>
@@ -193,7 +258,7 @@
                 </div>
             </div>
 
-            {{-- CARD: Arquivos já anexados (fora do form para evitar forms aninhados) --}}
+            {{-- Lista de anexos atuais (fora do form) --}}
             @if($equipamento->arquivos && $equipamento->arquivos->count())
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="px-6 py-4 text-gray-900 dark:text-gray-100">
@@ -243,76 +308,6 @@
                     </div>
                 </div>
             @endif
-
-                        {{-- Campos extras dinâmicos --}}
-                        <div class="mb-6">
-                            <div class="flex items-center justify-between mb-2">
-                                <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                    Campos adicionais do equipamento
-                                </h3>
-                                <button type="button"
-                                        @click="addCampo()"
-                                        class="inline-flex items-center px-3 py-1.5 bg-gray-100 dark:bg-gray-700 border border-transparent rounded-md
-                                               text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-widest
-                                               hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                    + Adicionar campo
-                                </button>
-                            </div>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">
-                                Ex.: “Número de série”, “Potência (cv)”, “Fabricante”, etc.
-                            </p>
-
-                            <template x-for="(campo, index) in campos" :key="index">
-                                <div class="mb-3 flex flex-col gap-2 md:flex-row md:items-center">
-                                    <div class="md:w-5/12">
-                                        <input
-                                            type="text"
-                                            x-model="campo.key"
-                                            :name="`extra_keys[${index}]`"
-                                            placeholder="Nome do campo"
-                                            class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                                   text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
-                                    </div>
-                                    <div class="md:flex-1">
-                                        <input
-                                            type="text"
-                                            x-model="campo.value"
-                                            :name="`extra_values[${index}]`"
-                                            placeholder="Valor"
-                                            class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                                   text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
-                                    </div>
-                                    <div class="md:w-auto flex justify-end">
-                                        <button type="button"
-                                                @click="removeCampo(index)"
-                                                class="inline-flex items-center px-2 py-1 text-xs text-red-500 hover:text-red-700">
-                                            Remover
-                                        </button>
-                                    </div>
-                                </div>
-                            </template>
-                        </div>
-
-                        {{-- Botões --}}
-                        <div class="flex justify-between border-t border-gray-200 dark:border-gray-700 pt-4">
-                            <a href="{{ route('equipamentos.show', $equipamento) }}"
-                               class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md
-                                      text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-widest
-                                      hover:bg-gray-50 dark:hover:bg-gray-700">
-                                Cancelar
-                            </a>
-
-                            <button type="submit"
-                                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md
-                                           font-semibold text-xs text-white uppercase tracking-widest
-                                           hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                Salvar alterações
-                            </button>
-                        </div>
-                    </form>
-
-                </div>
-            </div>
         </div>
     </div>
 
@@ -320,19 +315,24 @@
         function equipamentoForm(initialExtras) {
             const camposIniciais = [];
 
-            // Se vier nulo, undefined ou vazio, usa objeto vazio
-            if (!initialExtras) {
-                initialExtras = {};
-            }
-
-            // Se vier como objeto {campo: valor, ...}
-            if (!Array.isArray(initialExtras)) {
-                for (const [key, value] of Object.entries(initialExtras)) {
-                    camposIniciais.push({ key, value });
+            if (initialExtras) {
+                if (Array.isArray(initialExtras)) {
+                    // Formato lista [{campo/label/key, valor/value}] - preserva duplicados
+                    initialExtras.forEach((item) => {
+                        const key = item?.campo ?? item?.label ?? item?.key ?? '';
+                        const value = item?.valor ?? item?.value ?? '';
+                        if (key !== '' || value !== '') {
+                            camposIniciais.push({ key, value });
+                        }
+                    });
+                } else {
+                    // Formato objeto associativo legado {campo: valor}
+                    Object.entries(initialExtras).forEach(([key, value]) => {
+                        camposIniciais.push({ key, value });
+                    });
                 }
             }
 
-            // Se não tiver nada, garante pelo menos uma linha
             if (camposIniciais.length === 0) {
                 camposIniciais.push({ key: '', value: '' });
             }

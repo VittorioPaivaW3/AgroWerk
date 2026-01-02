@@ -11,8 +11,21 @@ export default {
 
     theme: {
         extend: {
+            colors: {
+ 
+                'verdes' : {
+                   
+                    verde_claro:`#8DC63F`,
+                    verde_folha:`#63BE15`,
+                    verde_escuro:`#00381B`,
+                    verde_bandeira:`#00843D`,
+ 
+                },
+            },
+ 
+ 
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Josefin Sans', ...defaultTheme.fontFamily.sans],
             },
         },
     },

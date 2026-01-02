@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Support\RedirectsToHome;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,8 @@ use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
+    use RedirectsToHome;
+
     /**
      * Display the login view.
      */
@@ -28,7 +31,15 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $user = $request->user();
+        $home = $this->homeRoute($user);
+
+        // Tecnicos e visualizadores devem ir direto ao painel deles, mesmo que haja URL "intended"
+        if ($user && ($user->hasRole('tecnico') || $user->hasRole('visualizador'))) {
+            return redirect()->to($home);
+        }
+
+        return redirect()->intended($home);
     }
 
     /**
@@ -39,7 +50,6 @@ class AuthenticatedSessionController extends Controller
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
         return redirect('/');

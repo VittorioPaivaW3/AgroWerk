@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\OrdemServico;
+use Illuminate\Http\Request;
+
+class TecnicoDashboardController extends Controller
+{
+    public function index()
+    {
+        $userId = auth()->id();
+
+        // Somente OS onde o usuário logado é técnico
+        $queryBase = OrdemServico::with(['setor', 'equipamento', 'tecnicos'])
+            ->doTecnico($userId);
+
+        $osAbertas    = (clone $queryBase)->where('status', 'aberta')->count();
+        $osExecucao   = (clone $queryBase)->where('status', 'em_execucao')->count();
+        $osConcluidas = (clone $queryBase)->where('status', 'concluida')->count();
+
+        $ordens = $queryBase
+            ->latest()
+            ->paginate(10);
+
+        return view('tecnico.dashboard', [
+            'osAbertas'    => $osAbertas,
+            'osExecucao'   => $osExecucao,
+            'osConcluidas' => $osConcluidas,
+            'ordens'       => $ordens,
+        ]);
+    }
+}
+

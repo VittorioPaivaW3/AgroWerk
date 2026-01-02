@@ -56,15 +56,20 @@ class EquipamentoController extends Controller
 
             'manutencao_preventiva' => ['nullable', 'date'],
             'observacoes'           => ['nullable', 'string'],
+            'terceiro'  => ['nullable', 'boolean'],
 
             // múltiplos anexos
-            'anexos.*'              => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:4096'],
+            'anexos.*'              => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'mimetypes:image/jpeg,image/png,application/pdf', 'max:4096'],
 
             'extra_keys'     => ['nullable', 'array'],
             'extra_keys.*'   => ['nullable', 'string', 'max:255'],
             'extra_values'   => ['nullable', 'array'],
             'extra_values.*' => ['nullable', 'string'],
         ]);
+
+        $data['terceiro'] = $request->boolean('terceiro');
+
+        $equipamento = Equipamento::create($data);
 
         // monta campos extras
         $extras = [];
@@ -75,8 +80,14 @@ class EquipamentoController extends Controller
             $key   = trim($key ?? '');
             $value = $values[$index] ?? null;
 
+            // ignora linha totalmente vazia
             if ($key === '' && ($value === null || $value === '')) continue;
-            if ($key !== '') $extras[$key] = $value;
+
+            // guarda como lista para permitir chaves repetidas
+            $extras[] = [
+                'campo' => $key,
+                'valor' => $value,
+            ];
         }
 
         // cria equipamento
@@ -140,15 +151,19 @@ class EquipamentoController extends Controller
 
             'manutencao_preventiva' => ['nullable', 'date'],
             'observacoes'           => ['nullable', 'string'],
+            'terceiro'  => ['nullable', 'boolean'],
 
             // anexos novos (opcionais)
-            'anexos.*'              => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:4096'],
+            'anexos.*'              => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'mimetypes:image/jpeg,image/png,application/pdf', 'max:4096'],
 
             'extra_keys'     => ['nullable', 'array'],
             'extra_keys.*'   => ['nullable', 'string', 'max:255'],
             'extra_values'   => ['nullable', 'array'],
             'extra_values.*' => ['nullable', 'string'],
         ]);
+        $data['terceiro'] = $request->boolean('terceiro');
+
+        $equipamento->update($data);
 
         // monta campos extras
         $extras = [];
@@ -160,7 +175,11 @@ class EquipamentoController extends Controller
             $value = $values[$index] ?? null;
 
             if ($key === '' && ($value === null || $value === '')) continue;
-            if ($key !== '') $extras[$key] = $value;
+
+            $extras[] = [
+                'campo' => $key,
+                'valor' => $value,
+            ];
         }
 
         // atualiza equipamento

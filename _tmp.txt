@@ -1,0 +1,175 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Painel do Técnico') }}
+        </h2>
+    </x-slot>
+
+    <div class="py-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+
+            {{-- Cards de resumo --}}
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-4">
+                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                            OS Abertas
+                        </p>
+                        <p class="mt-2 text-3xl font-semibold text-gray-900 dark:text-gray-100">
+                            {{ $osAbertas }}
+                        </p>
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                            Aguardando início da execução.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-4">
+                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                            Em execução
+                        </p>
+                        <p class="mt-2 text-3xl font-semibold text-gray-900 dark:text-gray-100">
+                            {{ $osExecucao }}
+                        </p>
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                            OS em que você está trabalhando.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-4">
+                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                            Concluídas
+                        </p>
+                        <p class="mt-2 text-3xl font-semibold text-gray-900 dark:text-gray-100">
+                            {{ $osConcluidas }}
+                        </p>
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                            OS finalizadas atribuídas a você.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Lista de OS atribuídas ao técnico --}}
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="px-6 py-4">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        Ordens atribuídas
+                    </h3>
+                </div>
+
+                <div class="px-6 pb-4 overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead>
+                            <tr>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    Código
+                                </th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    Status
+                                </th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    Setor
+                                </th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    Equipamento
+                                </th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    Criada em
+                                </th>
+                                <th class="px-3 py-2 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    Ações
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                            @forelse($ordens as $os)
+                                @php
+                                    $status = strtolower($os->status ?? '');
+                                    $statusLabel = match ($status) {
+                                        'aberta'       => 'ABERTA',
+                                        'em_execucao'  => 'EM EXECUÇÃO',
+                                        'concluida'    => 'CONCLUÍDA',
+                                        'cancelada'    => 'CANCELADA',
+                                        default        => strtoupper(str_replace('_', ' ', $os->status ?? '—')),
+                                    };
+
+                                    $statusClasses = match ($status) {
+                                        'aberta'       => 'bg-emerald-100 text-emerald-800 border-emerald-300',
+                                        'em_execucao'  => 'bg-amber-100 text-amber-800 border-amber-300',
+                                        'concluida'    => 'bg-sky-100 text-sky-800 border-sky-300',
+                                        'cancelada'    => 'bg-red-100 text-red-800 border-red-300',
+                                        default        => 'bg-gray-100 text-gray-800 border-gray-300',
+                                    };
+
+                                    // prioridade da OS
+                                    $prioridadeRaw = $os->prioridade ?? null;
+                                    $prioridade = $prioridadeRaw ? strtolower(trim($prioridadeRaw)) : null;
+
+                                    // borda da linha pela prioridade
+                                    $priorityBorderClass = match ($prioridade) {
+                                        'alto', 'muito_alto'    => 'border-l-4 border-red-500',
+                                        'medio', 'médio'        => 'border-l-4 border-yellow-400',
+                                        'baixo'                 => 'border-l-4 border-sky-400',
+                                        default                 => 'border-l-4 border-transparent',
+                                    };
+
+                                    $setorNome = $os->setor->nome
+                                        ?? $os->equipamento->setor->nome
+                                        ?? '—';
+                                @endphp
+
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-900/40 {{ $priorityBorderClass }}">
+                                    <td class="px-3 py-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                        #{{ $os->codigo ?? $os->id }}
+                                    </td>
+                                    <td class="px-3 py-2 text-sm">
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-extrabold tracking-wide uppercase border shadow-sm {{ $statusClasses }}">
+                                            <span class="h-2.5 w-2.5 rounded-full
+                                                @if($status === 'aberta') bg-emerald-500
+                                                @elseif($status === 'em_execucao') bg-amber-500
+                                                @elseif($status === 'concluida') bg-sky-500
+                                                @elseif($status === 'cancelada') bg-red-500
+                                                @else bg-gray-400 @endif">
+                                            </span>
+                                            {{ $statusLabel }}
+                                        </span>
+                                    </td>
+                                    <td class="px-3 py-2 text-sm text-gray-900 dark:text-gray-100">
+                                        {{ $setorNome }}
+                                    </td>
+                                    <td class="px-3 py-2 text-sm text-gray-900 dark:text-gray-100">
+                                        {{ $os->equipamento->nome ?? '—' }}
+                                    </td>
+                                    <td class="px-3 py-2 text-sm text-gray-900 dark:text-gray-100">
+                                        {{ $os->created_at?->format('d/m/Y H:i') }}
+                                    </td>
+                                    <td class="px-3 py-2 text-sm text-right">
+                                        <a href="{{ route('ordens.show', $os) }}"
+                                        class="text-emerald-600 hover:text-emerald-900 dark:text-emerald-400 dark:hover:text-emerald-300 text-xs font-semibold">
+                                            Visualizar O.S
+                                        </a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="px-3 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                                        Nenhuma OS atribuída a você até o momento.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+
+                    <div class="mt-4">
+                        {{ $ordens->links() }}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</x-app-layout>

@@ -86,6 +86,24 @@
                             @enderror
                         </div>
 
+                    {{-- Valor da hora (só faz sentido pra técnico) --}}
+                    <div x-show="role === 'tecnico'" x-cloak>
+                        <x-input-label for="valor_hora" value="Valor da hora (R$)" />
+                        <x-text-input
+                            id="valor_hora"
+                            name="valor_hora"
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            class="mt-1 block w-full"
+                            :value="old('valor_hora')"   {{-- <-- apenas old(), nada de $us / $usuario --}}
+                        />
+                        <p class="mt-1 text-xs text-gray-500">
+                            Use ponto como separador decimal (ex: 75.50).
+                        </p>
+                        <x-input-error :messages="$errors->get('valor_hora')" class="mt-2" />
+                    </div>
+
                         {{-- Botões --}}
                         <div class="flex justify-between border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
                             <a href="{{ route('usuarios.index') }}"

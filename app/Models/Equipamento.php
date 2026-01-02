@@ -18,11 +18,13 @@ class Equipamento extends Model
         'campos_extras',
         'observacoes',
         'manutencao_preventiva',
+        'terceiro',
     ];
 
     protected $casts = [
         'manutencao_preventiva' => 'date',
         'campos_extras' => 'array',
+        'terceiro' => 'boolean',
     ];
 
     public function setor()

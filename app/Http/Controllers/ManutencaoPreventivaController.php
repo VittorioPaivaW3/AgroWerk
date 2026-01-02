@@ -12,30 +12,25 @@ class ManutencaoPreventivaController extends Controller
 {
     public function index(Request $request)
     {
-        // combos dos filtros
         $equipamentos = Equipamento::with('setor')
             ->orderBy('nome')
             ->get();
 
         $setores = Setor::orderBy('nome')->get();
 
-        // base da query
         $query = ManutencaoPreventiva::with(['equipamento.setor'])
             ->orderBy('data_prevista', 'asc');
 
-        // filtro por equipamento
         if ($request->filled('equipamento_id')) {
             $query->where('equipamento_id', $request->equipamento_id);
         }
 
-        // filtro por setor (via relacionamento com equipamento)
         if ($request->filled('setor_id')) {
             $query->whereHas('equipamento', function ($q) use ($request) {
                 $q->where('setor_id', $request->setor_id);
             });
         }
 
-        // filtro por data exata
         if ($request->filled('data')) {
             $query->whereDate('data_prevista', $request->data);
         }
@@ -87,6 +82,8 @@ class ManutencaoPreventivaController extends Controller
 
     public function store(Request $request)
     {
+        $this->bloqueiaTecnico();
+
         $data = $request->validate([
             'equipamento_id' => ['required', 'exists:equipamentos,id'],
             'descricao'      => ['required', 'string'],
@@ -97,10 +94,10 @@ class ManutencaoPreventivaController extends Controller
 
         return redirect()
             ->route('manutencoes.preventivas.index')
-            ->with('success', 'ManutenÃ§Ã£o preventiva incluÃ­da com sucesso!');
+            ->with('success', 'Manutenção preventiva incluída com sucesso!');
     }
 
-     public function show(ManutencaoPreventiva $manutencaoPreventiva)
+    public function show(ManutencaoPreventiva $manutencaoPreventiva)
     {
         $manutencaoPreventiva->load('equipamento.setor');
 
@@ -111,6 +108,8 @@ class ManutencaoPreventivaController extends Controller
 
     public function edit(ManutencaoPreventiva $manutencaoPreventiva)
     {
+        $this->bloqueiaTecnico();
+
         $equipamentos = Equipamento::orderBy('nome')->get();
 
         return view('manutencoes.preventivas.edit', [
@@ -121,6 +120,8 @@ class ManutencaoPreventivaController extends Controller
 
     public function update(Request $request, ManutencaoPreventiva $manutencaoPreventiva)
     {
+        $this->bloqueiaTecnico();
+
         $data = $request->validate([
             'equipamento_id' => ['required', 'exists:equipamentos,id'],
             'descricao'      => ['required', 'string'],
@@ -132,26 +133,39 @@ class ManutencaoPreventivaController extends Controller
 
         return redirect()
             ->route('manutencoes.preventivas.index')
-            ->with('success', 'ManutenÃ§Ã£o preventiva atualizada com sucesso!');
+            ->with('success', 'Manutenção preventiva atualizada com sucesso!');
     }
 
     public function concluir(ManutencaoPreventiva $manutencaoPreventiva)
     {
+        $this->bloqueiaTecnico();
+
         $manutencaoPreventiva->update([
             'status' => 'concluida',
         ]);
 
         return redirect()
             ->route('manutencoes.preventivas.index')
-            ->with('success', 'ManutenÃ§Ã£o preventiva marcada como concluÃ­da!');
+            ->with('success', 'Manutenção preventiva marcada como concluída!');
     }
 
     public function destroy(ManutencaoPreventiva $manutencaoPreventiva)
     {
+        $this->bloqueiaTecnico();
+
         $manutencaoPreventiva->delete();
 
         return redirect()
             ->route('manutencoes.preventivas.index')
-            ->with('success', 'ManutenÃ§Ã£o preventiva excluÃ­da com sucesso!');
+            ->with('success', 'Manutenção preventiva excluída com sucesso!');
+    }
+
+    protected function bloqueiaTecnico(): void
+    {
+        $user = auth()->user();
+
+        if ($user?->hasRole('tecnico')) {
+            abort(403, 'Técnicos apenas podem visualizar manutenções preventivas.');
+        }
     }
 }
