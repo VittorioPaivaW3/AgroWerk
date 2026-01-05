@@ -11,6 +11,7 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\TecnicoDashboardController;
 use App\Http\Controllers\ProjetoController;
 use App\Http\Controllers\DashboardVisualizadorController;
+use App\Http\Controllers\RelatorioController;
 
 // Redireciona raiz
 Route::get('/', function () {
@@ -143,6 +144,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
             '/painel-visualizador',
             [DashboardVisualizadorController::class, 'index']
         )->name('dashboard.visualizador');
+    });
+    
+    /*
+     |------------------------------------------------------------------
+     | RELATORIOS
+     |------------------------------------------------------------------
+     */
+    Route::middleware(['auth', 'verified', 'role:admin|gestor'])->group(function () {
+        Route::get('/relatorios', [RelatorioController::class, 'index'])
+        ->name('relatorios.index');
     });
 
     /*

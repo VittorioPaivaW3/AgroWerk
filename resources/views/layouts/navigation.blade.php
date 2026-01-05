@@ -83,6 +83,10 @@
                         <x-nav-link :href="route('projetos.index')" :active="request()->routeIs('projetos.*')">
                             {{ __('Projetos') }}
                         </x-nav-link>
+
+                        <x-nav-link :href="route('relatorios.index')" :active="request()->routeIs('relatorios.*')">
+                            {{ __('Relatórios') }}
+                        </x-nav-link>
                     @endrole
 
                     {{-- Painel do visualizador --}}
