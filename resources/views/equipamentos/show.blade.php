@@ -8,34 +8,38 @@
     <div class="py-8">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <div class="flex justify-between items-center">
-                <div>
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        {{ $equipamento->nome }}
-                    </h3>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                        Codigo: {{ $equipamento->codigo ?? $equipamento->id }}
-                    </p>
-                </div>
+            <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900">
+                <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
+                <div class="px-6 py-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                            {{ $equipamento->nome }}
+                        </h3>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                            Codigo: {{ $equipamento->codigo ?? $equipamento->id }}
+                        </p>
+                    </div>
 
-                <div class="flex gap-2">
-                    <a href="{{ route('equipamentos.edit', $equipamento) }}"
-                       class="inline-flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-700 border border-transparent rounded-md
-                              text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-widest
-                              hover:bg-gray-200 dark:hover:bg-gray-600">
-                        Editar
-                    </a>
+                    <div class="flex gap-2">
+                        <a href="{{ route('equipamentos.edit', $equipamento) }}"
+                           class="inline-flex items-center px-4 py-2 bg-verdes-verde_claro border border-transparent rounded-md
+                                  text-xs font-semibold text-white uppercase tracking-widest
+                                  hover:bg-verdes-verde_folha focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-verdes-verde_claro">
+                            Editar
+                        </a>
 
-                    <a href="{{ route('equipamentos.index') }}"
-                       class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md
-                              text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-widest
-                              hover:bg-gray-50 dark:hover:bg-gray-700">
-                        Voltar
-                    </a>
+                        <a href="{{ route('equipamentos.index') }}"
+                           class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md
+                                  text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-widest
+                                  hover:bg-gray-50 dark:hover:bg-gray-700">
+                            Voltar
+                        </a>
+                    </div>
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900">
+                <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
                 <div class="px-6 py-4 text-gray-900 dark:text-gray-100 space-y-4">
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -64,18 +68,17 @@
                                     'manutencao' => 'Em manutencao',
                                     default      => ($statusRaw ?: '-'),
                                 };
-                                $badgeStyle = match ($status) {
-                                    'ativo'      => 'background-color:#dcfce7;color:#166534;',
-                                    'inativo'    => 'background-color:#fee2e2;color:#991b1b;',
-                                    'manutencao' => 'background-color:#fef9c3;color:#854d0e;',
-                                    default      => 'background-color:#e5e7eb;color:#111827;',
+                                $badgeClass = match ($status) {
+                                    'ativo'      => 'bg-verdes-verde_claro/20 text-verdes-verde_escuro',
+                                    'inativo'    => 'bg-red-100 text-red-700',
+                                    'manutencao' => 'bg-yellow-100 text-yellow-800',
+                                    default      => 'bg-gray-200 text-gray-900',
                                 };
                             @endphp
 
                             <p class="mt-0.5">
                                 <span
-                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                                    style="{{ $badgeStyle }}">
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $badgeClass }}">
                                     {{ $statusLabel }}
                                 </span>
                             </p>
@@ -113,7 +116,7 @@
                     <p class="text-sm text-gray-900 dark:text-gray-100">
                         Pertence a: 
                         <span class="font-semibold">
-                            {{ $equipamento->terceiro ? 'Terceiros' : 'Próprio' }}
+                            {{ $equipamento->terceiro ? 'Terceiros' : 'Proprio' }}
                         </span>
                     </p>
 
@@ -151,7 +154,7 @@
 
                                             <a href="{{ route('equipamentos.arquivos.show', $arquivo) }}"
                                                target="_blank"
-                                               class="text-indigo-600 dark:text-indigo-400 hover:underline">
+                                               class="text-verdes-verde_claro dark:text-verdes-verde_claro hover:text-verdes-verde_folha hover:underline">
                                                 {{ $arquivo->nome_original ?? basename($arquivo->path) }}
                                             </a>
 

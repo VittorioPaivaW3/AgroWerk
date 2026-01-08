@@ -7,18 +7,29 @@
 
     <div class="py-8">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900">
+                <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
                 <div class="px-6 py-6 text-gray-900 dark:text-gray-100">
+                    <div class="flex flex-col gap-1 border-b border-gray-100 dark:border-white/10 pb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                            Edicao do equipamento
+                        </h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">
+                            Atualize os dados do equipamento.
+                        </p>
+                    </div>
 
                     <form method="POST"
                           action="{{ route('equipamentos.update', $equipamento) }}"
                           enctype="multipart/form-data"
-                          x-data='equipamentoForm(@json($equipamento->campos_extras))'>
+                          x-data='equipamentoForm(@json($equipamento->campos_extras))'
+                          class="mt-6 space-y-6">
                         @csrf
                         @method('PUT')
+                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 
                         {{-- Nome --}}
-                        <div class="mb-4">
+                        <div>
                             <label for="nome"
                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Nome do equipamento <span class="text-red-500">*</span>
@@ -27,14 +38,14 @@
                                    value="{{ old('nome', $equipamento->nome) }}"
                                    required
                                    class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                          text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                          text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
                             @error('nome')
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
 
                         {{-- Codigo (opcional) --}}
-                        <div class="mb-4">
+                        <div>
                             <label for="codigo"
                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Codigo interno
@@ -42,21 +53,21 @@
                             <input id="codigo" name="codigo" type="text"
                                    value="{{ old('codigo', $equipamento->codigo) }}"
                                    class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                          text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                          text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
                             @error('codigo')
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
 
                         {{-- Status --}}
-                        <div class="mb-4">
+                        <div>
                             <label for="status"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Status
                             </label>
                             <select id="status" name="status"
                                     class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                        text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                        text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
                                 <option value="ativo"     @selected(old('status', $equipamento->status) === 'ativo')>Ativo</option>
                                 <option value="inativo"   @selected(old('status', $equipamento->status) === 'inativo')>Inativo</option>
                                 <option value="manutencao"@selected(old('status', $equipamento->status) === 'manutencao')>Em manutencao</option>
@@ -67,7 +78,7 @@
                         </div>
 
                         {{-- Cor / Identificacao visual --}}
-                        <div class="mb-4">
+                        <div>
                             <label for="cor"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Cor do equipamento
@@ -99,14 +110,14 @@
                         </div>
 
                         {{-- Setor --}}
-                        <div class="mb-6">
+                        <div>
                             <label for="setor_id"
                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Setor <span class="text-red-500">*</span>
                             </label>
                             <select id="setor_id" name="setor_id" required
                                     class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                           text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                           text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
                                 <option value="">Selecione um setor</option>
                                 @foreach ($setores as $setor)
                                     <option value="{{ $setor->id }}"
@@ -121,7 +132,7 @@
                         </div>
 
                         {{-- Manutencao preventiva --}}
-                        <div class="mb-4">
+                        <div>
                             <label for="manutencao_preventiva"
                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Data de manutencao preventiva
@@ -131,20 +142,21 @@
                                         ? \Illuminate\Support\Carbon::parse($equipamento->manutencao_preventiva)->format('Y-m-d')
                                         : null) }}"
                                 class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                        text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                        text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
                             @error('manutencao_preventiva')
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
+                        </div>
 
                         {{-- Equipamento de terceiros --}}
-                        <div class="mt-4">
+                        <div class="rounded-lg border border-verdes-verde_claro/20 bg-verdes-verde_claro/5 p-3 dark:border-verdes-verde_claro/30 dark:bg-verdes-verde_claro/10">
                             <label class="inline-flex items-center">
                                 <input
                                     type="checkbox"
                                     name="terceiro"
                                     value="1"
-                                    class="rounded border-gray-300 text-emerald-600 shadow-sm focus:ring-emerald-500"
+                                    class="h-4 w-4 rounded border-gray-300 text-verdes-verde_claro shadow-sm focus:ring-verdes-verde_claro/40"
                                     {{ old('terceiro', $equipamento->terceiro ?? false) ? 'checked' : '' }}
                                 >
                                 <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">
@@ -154,21 +166,21 @@
                         </div>
 
                         {{-- Observacoes --}}
-                        <div class="mb-6">
+                        <div class="rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50/70 dark:bg-gray-900/40 p-4">
                             <label for="observacoes"
                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Observacoes
                             </label>
                             <textarea id="observacoes" name="observacoes" rows="3"
                                       class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                             text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">{{ old('observacoes', $equipamento->observacoes) }}</textarea>
+                                             text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">{{ old('observacoes', $equipamento->observacoes) }}</textarea>
                             @error('observacoes')
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
 
                         {{-- Anexar arquivos --}}
-                        <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <div class="rounded-xl border border-dashed border-gray-300 dark:border-white/10 bg-gray-50/70 dark:bg-gray-900/40 p-4">
                             <label for="anexos"
                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Anexos (imagens ou PDFs)
@@ -179,8 +191,10 @@
                                           file:mr-4 file:py-2 file:px-4
                                           file:rounded-md file:border-0
                                           file:text-sm file:font-semibold
-                                          file:bg-indigo-50 file:text-indigo-700
-                                          hover:file:bg-indigo-100">
+                                          file:bg-verdes-verde_claro file:text-white
+                                          hover:file:bg-verdes-verde_folha
+                                          dark:file:bg-verdes-verde_claro dark:file:text-white
+                                          dark:hover:file:bg-verdes-verde_folha">
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                                 Formatos permitidos: JPG, JPEG, PNG, PDF. Max. 4 MB por arquivo.
                             </p>
@@ -190,16 +204,16 @@
                         </div>
 
                         {{-- Campos extras dinamicos --}}
-                        <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <div class="rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50/70 dark:bg-gray-900/40 p-4">
                             <div class="flex items-center justify-between mb-2">
                                 <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">
                                     Campos adicionais do equipamento
                                 </h3>
                                 <button type="button"
                                         @click="addCampo()"
-                                        class="inline-flex items-center px-3 py-1.5 bg-gray-100 dark:bg-gray-700 border border-transparent rounded-md
-                                               text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-widest
-                                               hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        class="inline-flex items-center px-3 py-1.5 bg-verdes-verde_claro border border-transparent rounded-md
+                                               text-xs font-semibold text-white uppercase tracking-widest
+                                               hover:bg-verdes-verde_folha focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-verdes-verde_claro">
                                     + Adicionar campo
                                 </button>
                             </div>
@@ -216,7 +230,7 @@
                                             :name="`extra_keys[${index}]`"
                                             placeholder="Nome do campo"
                                             class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                                   text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                                   text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
                                     </div>
                                     <div class="md:flex-1">
                                         <input
@@ -225,7 +239,7 @@
                                             :name="`extra_values[${index}]`"
                                             placeholder="Valor"
                                             class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                                   text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                                   text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
                                     </div>
                                     <div class="md:w-auto flex justify-end">
                                         <button type="button"
@@ -247,9 +261,9 @@
                                 Cancelar
                             </a>
                             <button type="submit"
-                                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md
+                                    class="inline-flex items-center px-4 py-2 bg-verdes-verde_claro border border-transparent rounded-md
                                            text-xs font-semibold text-white uppercase tracking-widest
-                                           hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                           hover:bg-verdes-verde_folha focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-verdes-verde_claro">
                                 Salvar alteracoes
                             </button>
                         </div>
@@ -260,7 +274,8 @@
 
             {{-- Lista de anexos atuais (fora do form) --}}
             @if($equipamento->arquivos && $equipamento->arquivos->count())
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900">
+                    <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
                     <div class="px-6 py-4 text-gray-900 dark:text-gray-100">
                         <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
                             Arquivos anexados
@@ -281,7 +296,7 @@
 
                                         <a href="{{ route('equipamentos.arquivos.show', $arquivo) }}"
                                            target="_blank"
-                                           class="text-indigo-600 dark:text-indigo-400 hover:underline">
+                                           class="text-verdes-verde_claro dark:text-verdes-verde_claro hover:text-verdes-verde_folha hover:underline">
                                             {{ $arquivo->nome_original ?? basename($arquivo->path) }}
                                         </a>
 

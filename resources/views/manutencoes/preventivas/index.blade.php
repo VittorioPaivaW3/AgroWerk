@@ -16,53 +16,58 @@
                 data_prevista: '',
                 descricao: '',
                 status_label: '',
-                status_badge_style: ''
+                status_badge_class: ''
             }
          }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             {{-- Topo: título + botão --}}
-            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div>
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        Agenda de manutenções preventivas
-                    </h3>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                        Visualize as manutenções preventivas vinculadas aos equipamentos.
-                    </p>
-                </div>
-
-                @role('admin|gestor')
-                    <div class="flex justify-end">
-                        <button
-                            type="button"
-                            @click="openCreate = true"
-                            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md
-                                   font-semibold text-xs text-white uppercase tracking-widest
-                                   hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        >
-                            Incluir Manutenção Preventiva
-                        </button>
+            <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900">
+                <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
+                <div class="px-6 py-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                            Agenda de manutenções preventivas
+                        </h3>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                            Visualize as manutenções preventivas vinculadas aos equipamentos.
+                        </p>
                     </div>
-                @endrole
+
+                    @role('admin|gestor')
+                        <div class="flex justify-end">
+                            <button
+                                type="button"
+                                @click="openCreate = true"
+                                class="inline-flex items-center px-4 py-2 bg-verdes-verde_claro border border-transparent rounded-md
+                                       font-semibold text-xs text-white uppercase tracking-widest
+                                       hover:bg-verdes-verde_folha focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-verdes-verde_claro"
+                            >
+                                Incluir Manutenção Preventiva
+                            </button>
+                        </div>
+                    @endrole
+                </div>
             </div>
 
             {{-- Alertas --}}
             @if (session('success'))
-                <div class="bg-green-100 border border-green-200 text-green-800 text-sm px-4 py-2 rounded-md">
+                <div class="bg-verdes-verde_claro/15 border border-verdes-verde_claro/30 text-verdes-verde_escuro text-sm px-4 py-2 rounded-md">
                     {{ session('success') }}
                 </div>
             @endif
 
             {{-- CALENDÁRIO --}}
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900">
+                <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
                 <div class="px-4 py-4 sm:px-6 sm:py-6">
                     <div id="calendar"></div>
                 </div>
             </div>
 
             {{-- FILTROS DA LISTAGEM --}}
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900">
+                <div class="h-1 w-full bg-verdes-verde_claro/30"></div>
                 <div class="px-6 py-4">
                     <form method="GET"
                           action="{{ route('manutencoes.preventivas.index') }}"
@@ -76,7 +81,7 @@
                             </label>
                             <select id="equipamento_id" name="equipamento_id"
                                     class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                           text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                           text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
                                 <option value="">Todos</option>
                                 @foreach($equipamentos as $equipamento)
                                     <option value="{{ $equipamento->id }}"
@@ -96,7 +101,7 @@
                             </label>
                             <select id="setor_id" name="setor_id"
                                     class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                           text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                           text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
                                 <option value="">Todos</option>
                                 @foreach($setores as $setor)
                                     <option value="{{ $setor->id }}"
@@ -118,15 +123,15 @@
                                    name="data"
                                    value="{{ request('data') }}"
                                    class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                          text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                          text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
                         </div>
 
                         {{-- Botões --}}
                         <div class="flex gap-2 md:justify-end">
                             <button type="submit"
-                                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md
+                                    class="inline-flex items-center px-4 py-2 bg-verdes-verde_claro border border-transparent rounded-md
                                            font-semibold text-xs text-white uppercase tracking-widest
-                                           hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                           hover:bg-verdes-verde_folha focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-verdes-verde_claro">
                                 Filtrar
                             </button>
 
@@ -142,10 +147,11 @@
             </div>
 
             {{-- Tabela de manutenções --}}
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900">
+                <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
                 <div class="px-6 py-4 overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead>
+                        <thead class="bg-verdes-verde_claro/10 dark:bg-verdes-verde_claro/10">
                             <tr>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                     Equipamento
@@ -179,19 +185,19 @@
                                         default     => ($statusRaw ?: '—'),
                                     };
 
-                                    $badgeStyle = match ($status) {
-                                        'pendente'  => 'background-color:#fef9c3;color:#854d0e;',   // amarelo
-                                        'concluida' => 'background-color:#dcfce7;color:#166534;',   // verde
-                                        default     => 'background-color:#e5e7eb;color:#111827;',   // cinza
+                                    $badgeClass = match ($status) {
+                                        'pendente'  => 'bg-verdes-verde_claro/15 text-verdes-verde_folha',
+                                        'concluida' => 'bg-verdes-verde_folha text-white',
+                                        default     => 'bg-gray-200 text-gray-900',
                                     };
                                 @endphp
 
-                                <tr>
+                                <tr class="hover:bg-verdes-verde_claro/5 dark:hover:bg-verdes-verde_claro/10 transition">
                                     {{-- Equipamento --}}
                                     <td class="px-3 py-2 text-sm text-gray-900 dark:text-gray-100">
                                         @if($manutencao->equipamento)
                                             <a href="{{ route('equipamentos.show', $manutencao->equipamento) }}"
-                                               class="text-indigo-600 dark:text-indigo-400 hover:underline">
+                                               class="text-verdes-verde_claro dark:text-verdes-verde_claro hover:underline">
                                                 {{ $manutencao->equipamento->nome }}
                                             </a>
                                         @else
@@ -221,8 +227,7 @@
                                     {{-- Status --}}
                                     <td class="px-3 py-2 text-sm">
                                         <span
-                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                                            style="{{ $badgeStyle }}">
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $badgeClass }}">
                                             {{ $statusLabel }}
                                         </span>
                                     </td>
@@ -232,14 +237,14 @@
                                         <div class="inline-flex items-center gap-2">
                                             {{-- VER - abre modal --}}
                                             <button type="button"
-                                                class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 text-xs font-semibold"
+                                                class="text-verdes-verde_claro hover:text-verdes-verde_folha dark:text-verdes-verde_claro dark:hover:text-verdes-verde_folha text-xs font-semibold"
                                                 @click="
                                                     view.equipamento = '{{ $manutencao->equipamento->nome ?? '—' }}';
                                                     view.setor = '{{ $manutencao->equipamento->setor->nome ?? '—' }}';
                                                     view.data_prevista = '{{ $manutencao->data_prevista ? $manutencao->data_prevista->format('d/m/Y') : '—' }}';
                                                     view.descricao = @js($manutencao->descricao);
                                                     view.status_label = '{{ $statusLabel }}';
-                                                    view.status_badge_style = '{{ $badgeStyle }}';
+                                                    view.status_badge_class = '{{ $badgeClass }}';
                                                     openView = true;
                                                 ">
                                                 Ver
@@ -260,7 +265,7 @@
                                                         @csrf
                                                         @method('PATCH')
                                                         <button type="submit"
-                                                                class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 text-xs font-semibold"
+                                                                class="text-verdes-verde_folha hover:text-verdes-verde_claro dark:text-verdes-verde_claro dark:hover:text-verdes-verde_folha text-xs font-semibold"
                                                                 onclick="return confirm('Marcar esta manutenção como concluída?')">
                                                             Concluir
                                                         </button>
@@ -305,8 +310,9 @@
     >
         <div
             @click.away="openCreate = false"
-            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg mx-4"
+            class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-white/10 shadow-lg w-full max-w-lg mx-4"
         >
+            <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
             <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                 <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
                     Incluir Manutenção Preventiva
@@ -331,7 +337,7 @@
                     </label>
                     <select id="equipamento_id" name="equipamento_id" required
                             class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                   text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                   text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
                         <option value="">Selecione um equipamento</option>
                         @foreach($equipamentos as $equipamento)
                             <option value="{{ $equipamento->id }}" @selected(old('equipamento_id') == $equipamento->id)>
@@ -354,7 +360,7 @@
                     <input type="date" id="data_prevista" name="data_prevista"
                            value="{{ old('data_prevista') }}"
                            class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                  text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                  text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
                     @error('data_prevista')
                         <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                     @enderror
@@ -368,7 +374,7 @@
                     </label>
                     <textarea id="descricao" name="descricao" rows="4" required
                               class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                     text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500"
+                                     text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro"
                               placeholder="Ex.: Verificar rolamentos da esteira, lubrificar correntes, apertar parafusos, etc.">{{ old('descricao') }}</textarea>
                     @error('descricao')
                         <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
@@ -385,9 +391,9 @@
                         Cancelar
                     </button>
                     <button type="submit"
-                            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md
+                            class="inline-flex items-center px-4 py-2 bg-verdes-verde_claro border border-transparent rounded-md
                                    text-xs font-semibold text-white uppercase tracking-widest
-                                   hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                   hover:bg-verdes-verde_folha focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-verdes-verde_claro">
                         Salvar
                     </button>
                 </div>
@@ -405,8 +411,9 @@
     >
         <div
             @click.away="openView = false"
-            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg mx-4"
+            class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-white/10 shadow-lg w-full max-w-lg mx-4"
         >
+            <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
             <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                 <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
                     Detalhes da Manutenção Preventiva
@@ -450,7 +457,7 @@
                         <p class="mt-0.5 text-sm">
                             <span
                                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                                :style="view.status_badge_style"
+                                :class="view.status_badge_class"
                                 x-text="view.status_label">
                             </span>
                         </p>
@@ -486,8 +493,28 @@
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
 
-    {{-- Ajustes de tema para o FullCalendar no modo escuro --}}
+    {{-- Ajustes de tema para o FullCalendar --}}
     <style>
+        #calendar .fc-button-primary {
+            background-color: #8dc63f;
+            border-color: #63be15;
+            color: #fff;
+        }
+
+        #calendar .fc-button-primary:hover {
+            background-color: #63be15;
+        }
+
+        #calendar .fc-button-primary:disabled {
+            background-color: #cfe8a0;
+            border-color: #cfe8a0;
+            color: #4b5b2a;
+        }
+
+        #calendar .fc-day-today {
+            background-color: rgba(141, 198, 63, 0.15);
+        }
+
         .dark #calendar .fc {
             background-color: #111827; /* bg-gray-900 */
             color: #e5e7eb;           /* text-gray-200 */
@@ -506,24 +533,25 @@
             color: #e5e7eb;           /* text-gray-200 */
         }
 
-        .dark #calendar .fc-day-today {
-            background-color: rgba(79, 70, 229, 0.3); /* indigo-600 com transparência */
-        }
-
         .dark #calendar .fc-button-primary {
-            background-color: #111827; /* bg-gray-900 */
-            border-color: #4b5563;     /* gray-600 */
-            color: #e5e7eb;
+            background-color: #63be15;
+            border-color: #8dc63f;
+            color: #f8fafc;
         }
 
         .dark #calendar .fc-button-primary:hover {
-            background-color: #1f2937; /* gray-800 */
+            background-color: #8dc63f;
         }
 
         .dark #calendar .fc-button-primary:disabled {
-            background-color: #1f2937;
-            border-color: #4b5563;
+            background-color: #335f1a;
+            border-color: #335f1a;
             opacity: 0.8;
+            color: #e5e7eb;
+        }
+
+        .dark #calendar .fc-day-today {
+            background-color: rgba(141, 198, 63, 0.25);
         }
 
         .dark #calendar .fc-list,
@@ -543,6 +571,13 @@
                     left: 'prev,next today',
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
+                },
+                buttonText: {
+                    today: 'Hoje',
+                    month: 'Mês',
+                    week: 'Semana',
+                    day: 'Dia',
+                    list: 'Lista',
                 },
                 locale: 'pt-br',
                 height: 'auto',

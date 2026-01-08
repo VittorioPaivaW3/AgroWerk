@@ -34,6 +34,12 @@
             'baixo'      => 'border-l-4 border-emerald-500',
             default      => 'border-l-4 border-gray-200',
         };
+        $priorityBadgeClass = match ($prioridade) {
+            'muito_alto', 'alto' => 'bg-red-500',
+            'medio'              => 'bg-yellow-400',
+            'baixo'              => 'bg-verdes-verde_claro',
+            default              => 'bg-gray-200',
+        };
 
         // STATUS
         $statusRaw = $ordem->status ?? null;
@@ -53,6 +59,22 @@
             'concluida'    => 'bg-sky-50 text-sky-700 border-sky-200',
             'cancelada'    => 'bg-red-50 text-red-700 border-red-200',
             default        => 'bg-gray-50 text-gray-700 border-gray-200',
+        };
+
+        $statusIconLight = match ($status) {
+            'aberta'       => 'imagem/engrenagem_alerta.png',
+            'em_execucao'  => 'imagem/engrenagem_play.png',
+            'concluida'    => 'imagem/engrenagem.png',
+            'cancelada'    => 'imagem/engrenagem_alerta.png',
+            default        => 'imagem/engrenagem_alerta.png',
+        };
+
+        $statusIconDark = match ($status) {
+            'aberta'       => 'imagem/engrenagem_alerta_white.png',
+            'em_execucao'  => 'imagem/engrenagem_play_white.png',
+            'concluida'    => 'imagem/engrenagem_white.png',
+            'cancelada'    => 'imagem/engrenagem_alerta_white.png',
+            default        => 'imagem/engrenagem_alerta_white.png',
         };
 
         // TIPO
@@ -85,8 +107,18 @@
             <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg {{ $cardPriorityBorder }}">
                 <div class="px-5 py-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                     <div>
-                        <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                            <span>#{{ $ordem->codigo ?? $ordem->id }}</span>
+                        <div class="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
+                            <span class="inline-flex h-10 w-10 items-center justify-center rounded-md {{ $priorityBadgeClass }}"
+                                  title="Status {{ $statusLabel }} / Prioridade {{ strtoupper($prioridadeLabel) }}"
+                                  aria-label="Status {{ $statusLabel }} / Prioridade {{ strtoupper($prioridadeLabel) }}">
+                                <img src="{{ asset($statusIconLight) }}"
+                                     alt="Status {{ $statusLabel }}"
+                                     class="h-5 w-5 object-contain dark:hidden">
+                                <img src="{{ asset($statusIconDark) }}"
+                                     alt="Status {{ $statusLabel }}"
+                                     class="hidden h-5 w-5 object-contain dark:block">
+                            </span>
+                            <span class="font-semibold text-gray-900 dark:text-gray-100">#{{ $ordem->codigo ?? $ordem->id }}</span>
                         </div>
                         <h1 class="mt-0.5 text-lg font-semibold text-gray-900 dark:text-gray-100">
                             Detalhes da Solicitação
@@ -110,35 +142,6 @@
                         @endif
                     </div>
 
-                    <div class="flex flex-wrap gap-2 md:justify-end">
-                        {{-- Status --}}
-                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold border {{ $statusClasses }}">
-                            <span class="h-2 w-2 rounded-full
-                                @if($status === 'aberta') bg-emerald-500
-                                @elseif($status === 'em_execucao') bg-amber-500
-                                @elseif($status === 'concluida') bg-sky-500
-                                @elseif($status === 'cancelada') bg-red-500
-                                @else bg-gray-400 @endif">
-                            </span>
-                            {{ $statusLabel }}
-                        </span>
-
-                        {{-- Prioridade destaque --}}
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold border {{ $prioridadeBadgeClasses }}">
-                            @if($prioridade === 'muito_alto')
-                                🔥
-                            @elseif($prioridade === 'alto')
-                                ⚠️
-                            @elseif($prioridade === 'medio' || $prioridade === 'médio')
-                                ⬆️
-                            @elseif($prioridade === 'baixo')
-                                ⬇️
-                            @else
-                                •
-                            @endif
-                            {{ strtoupper($prioridadeLabel) }}
-                        </span>
-                    </div>
                 </div>
             </div>
 
@@ -377,14 +380,13 @@
     </div>
 
 </div>
-            </div>
 
             {{-- Rodapé ajustes --}}
-            <div class="flex justify-between items-center pt-1">
+            <div class="flex flex-wrap items-center justify-end gap-2 pt-1">
                 {{-- Voltar --}}
                 <a href="{{ auth()->check() && auth()->user()->hasRole('visualizador') ? route('dashboard.visualizador') : route('ordens.index') }}"
-                class="inline-flex items-center px-3.5 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md
-                        text-[11px] font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-widest
+                class="inline-flex items-center h-9 px-4 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md
+                        text-[11px] font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-widest leading-none
                         hover:bg-gray-200 dark:hover:bg-gray-700">
                     Voltar para lista
                 </a>
@@ -396,8 +398,8 @@
                             <form action="{{ route('ordens.executar', $ordem) }}" method="POST">
                                 @csrf
                                 <button type="submit"
-                                    class="inline-flex items-center px-3.5 py-2 bg-amber-500 hover:bg-amber-600 border border-amber-600 rounded-md
-                                        text-[11px] font-semibold text-white uppercase tracking-widest shadow-sm">
+                                    class="inline-flex items-center h-9 px-4 bg-amber-500 hover:bg-amber-600 border border-amber-600 rounded-md
+                                        text-[11px] font-semibold text-white uppercase tracking-widest leading-none shadow-sm">
                                     Executar ordem
                                 </button>
                             </form>
@@ -405,8 +407,8 @@
                             <form action="{{ route('ordens.concluir', $ordem) }}" method="POST">
                                 @csrf
                                 <button type="submit"
-                                    class="inline-flex items-center px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 border border-emerald-700 rounded-md
-                                        text-[11px] font-semibold text-white uppercase tracking-widest shadow-sm">
+                                    class="inline-flex items-center h-9 px-4 bg-verdes-verde_claro hover:bg-verdes-verde_folha border0 rounded-md
+                                        text-[11px] font-semibold text-white uppercase tracking-widest leading-none shadow-sm">
                                     Concluir ordem
                                 </button>
                             </form>

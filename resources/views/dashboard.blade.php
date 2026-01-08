@@ -15,10 +15,9 @@
                 <button type="button"
                         @click="open = !open"
                         class="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold
-                               bg-white/80 hover:bg-white text-gray-700
-                               dark:bg-gray-800/70 dark:hover:bg-gray-800 dark:text-gray-200
-                               ring-1 ring-black/5 dark:ring-white/10
-                               shadow-sm transition">
+                               bg-verdes-verde_claro text-white hover:bg-verdes-verde_folha
+                               ring-1 ring-verdes-verde_claro/30 dark:ring-verdes-verde_claro/40
+                               shadow-sm transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-verdes-verde_claro">
                     <span class="inline-flex h-5 w-5 items-center justify-center rounded-md">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M22 3H2l8 9v7l4 2v-9l8-9z"/>
@@ -54,8 +53,8 @@
                             <button type="button"
                                     @click="open=false"
                                     class="inline-flex items-center justify-center h-8 w-8 rounded-xl
-                                           bg-gray-100 hover:bg-gray-200 text-gray-700
-                                           dark:bg-white/10 dark:hover:bg-white/15 dark:text-gray-200 transition">
+                                           bg-verdes-verde_claro/10 hover:bg-verdes-verde_claro/20 text-verdes-verde_folha
+                                           dark:bg-verdes-verde_claro/15 dark:hover:bg-verdes-verde_claro/25 dark:text-verdes-verde_claro transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M18 6L6 18M6 6l12 12"/>
                                 </svg>
@@ -67,13 +66,13 @@
 
                             <div>
                                 <x-input-label for="inicio" value="Início" />
-                                <x-text-input id="inicio" name="inicio" type="date" class="mt-1 block w-full"
+                                <x-text-input id="inicio" name="inicio" type="date" class="mt-1 block w-full focus:border-verdes-verde_claro focus:ring-verdes-verde_claro"
                                               :value="request('inicio')" />
                             </div>
 
                             <div>
                                 <x-input-label for="fim" value="Fim" />
-                                <x-text-input id="fim" name="fim" type="date" class="mt-1 block w-full"
+                                <x-text-input id="fim" name="fim" type="date" class="mt-1 block w-full focus:border-verdes-verde_claro focus:ring-verdes-verde_claro"
                                               :value="request('fim')" />
                             </div>
 
@@ -81,7 +80,7 @@
                                 <x-input-label for="setor_id" value="Setor" />
                                 <select id="setor_id" name="setor_id"
                                         class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 text-sm
-                                               focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500">
+                                               focus:ring-2 focus:ring-verdes-verde_claro/40 focus:border-verdes-verde_claro">
                                     <option value="">Todos</option>
                                     @foreach($setores as $setor)
                                         <option value="{{ $setor->id }}" @selected(request('setor_id') == $setor->id)>{{ $setor->nome }}</option>
@@ -93,7 +92,7 @@
                                 <x-input-label for="tecnico_id" value="Técnico" />
                                 <select id="tecnico_id" name="tecnico_id"
                                         class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 text-sm
-                                               focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500">
+                                               focus:ring-2 focus:ring-verdes-verde_claro/40 focus:border-verdes-verde_claro">
                                     <option value="">Todos</option>
                                     @foreach($tecnicos as $tec)
                                         <option value="{{ $tec->id }}" @selected(request('tecnico_id') == $tec->id)>{{ $tec->name }}</option>
@@ -105,7 +104,7 @@
                                 <x-input-label for="status" value="Status" />
                                 <select id="status" name="status"
                                         class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 text-sm
-                                               focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500">
+                                               focus:ring-2 focus:ring-verdes-verde_claro/40 focus:border-verdes-verde_claro">
                                     <option value="">Todos</option>
                                     <option value="aberta" @selected(request('status') === 'aberta')>Aberta</option>
                                     <option value="em_execucao" @selected(request('status') === 'em_execucao')>Em execução</option>
@@ -117,9 +116,8 @@
                             <div class="md:col-span-5 flex flex-wrap gap-2 pt-1">
                                 <button type="submit"
                                         class="group inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-xs uppercase tracking-widest
-                                          bg-gray-100 hover:bg-gray-200 text-gray-700
-                                          dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200
-                                          shadow-sm active:scale-[0.98] transition">
+                                          bg-verdes-verde_claro hover:bg-verdes-verde_folha text-white
+                                          shadow-sm active:scale-[0.98] transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-verdes-verde_claro">
                                     <span class="inline-flex h-5 w-5 items-center justify-center rounded-md">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                             <path d="M22 3H2l8 9v7l4 2v-9l8-9z"/>
@@ -163,9 +161,9 @@
 
         // Paleta unificada de status
         $statusPalette = [
-            'aberta'      => ['hex' => '#fbbf24', 'tw' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/35 dark:text-yellow-200'],
-            'em_execucao' => ['hex' => '#60a5fa', 'tw' => 'bg-blue-100 text-blue-800 dark:bg-blue-900/35 dark:text-blue-200'],
-            'concluida'   => ['hex' => '#34d399', 'tw' => 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/35 dark:text-emerald-200'],
+            'aberta'      => ['hex' => '#8DC63F', 'tw' => 'bg-verdes-verde_claro/15 text-verdes-verde_escuro dark:bg-verdes-verde_claro/25 dark:text-verdes-verde_claro'],
+            'em_execucao' => ['hex' => '#00843D', 'tw' => 'bg-verdes-verde_bandeira/15 text-verdes-verde_bandeira dark:bg-verdes-verde_bandeira/25 dark:text-verdes-verde_bandeira'],
+            'concluida'   => ['hex' => '#63BE15', 'tw' => 'bg-verdes-verde_folha text-white dark:bg-verdes-verde_folha dark:text-white'],
             'cancelada'   => ['hex' => '#f87171', 'tw' => 'bg-red-100 text-red-800 dark:bg-red-900/35 dark:text-red-200'],
         ];
 
@@ -179,7 +177,7 @@
             {{-- ===== KPI Topo ===== --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {{-- Total --}}
-                <div class="kpi-card animate-in" style="animation-delay: 60ms">
+                <div class="kpi-card border-t-4 border-t-verdes-verde_claro animate-in" style="animation-delay: 60ms">
                     <div class="kpi-topline">
                         <p class="kpi-label">Total de OS</p>
                         <span class="kpi-pill">Período</span>
@@ -188,7 +186,7 @@
                 </div>
 
                 {{-- Abertas --}}
-                <div class="kpi-card animate-in" style="animation-delay: 120ms">
+                <div class="kpi-card border-t-4 border-t-verdes-verde_claro animate-in" style="animation-delay: 120ms">
                     <div class="kpi-topline">
                         <p class="kpi-label">OS Abertas</p>
                         <span class="kpi-dot" style="background: {{ $statusPalette['aberta']['hex'] }}"></span>
@@ -198,7 +196,7 @@
                 </div>
 
                 {{-- Em execução --}}
-                <div class="kpi-card animate-in" style="animation-delay: 180ms">
+                <div class="kpi-card border-t-4 border-t-verdes-verde_claro animate-in" style="animation-delay: 180ms">
                     <div class="kpi-topline">
                         <p class="kpi-label">Em Execução</p>
                         <span class="kpi-dot" style="background: {{ $statusPalette['em_execucao']['hex'] }}"></span>
@@ -208,7 +206,7 @@
                 </div>
 
                 {{-- Concluídas hoje --}}
-                <div class="kpi-card animate-in" style="animation-delay: 240ms">
+                <div class="kpi-card border-t-4 border-t-verdes-verde_claro animate-in" style="animation-delay: 240ms">
                     <div class="kpi-topline">
                         <p class="kpi-label">Concluídas Hoje</p>
                         <span class="kpi-dot" style="background: {{ $statusPalette['concluida']['hex'] }}"></span>
@@ -221,7 +219,7 @@
             {{-- ===== Gráficos ===== --}}
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 {{-- Principal grande: Mensal --}}
-                <div class="chart-card chart-card--xl lg:col-span-8 animate-in" style="animation-delay: 140ms">
+                <div class="chart-card chart-card--xl border-t-4 border-t-verdes-verde_claro lg:col-span-8 animate-in" style="animation-delay: 140ms">
                     <div class="p-6">
                         <div class="flex items-center justify-between gap-4 mb-4">
                             <div>
@@ -230,9 +228,9 @@
                             </div>
                             <button type="button"
                                     class="text-xs font-semibold px-3 py-1.5 rounded-lg
-                                           bg-gray-100 hover:bg-gray-200 text-gray-700
-                                           dark:bg-white/10 dark:hover:bg-white/15 dark:text-gray-200 transition">
-                                Actions
+                                           bg-verdes-verde_claro/10 text-verdes-verde_escuro hover:bg-verdes-verde_claro/20
+                                           dark:bg-verdes-verde_claro/15 dark:text-verdes-verde_claro dark:hover:bg-verdes-verde_claro/25 transition">
+                                Acoes
                             </button>
                         </div>
                         <div class="chart-wrap chart-wrap--xl">
@@ -242,7 +240,7 @@
                 </div>
 
                 {{-- Lateral: Status doughnut + % --}}
-                <div class="chart-card chart-card--xl lg:col-span-4 animate-in" style="animation-delay: 200ms">
+                <div class="chart-card chart-card--xl border-t-4 border-t-verdes-verde_claro lg:col-span-4 animate-in" style="animation-delay: 200ms">
                     <div class="p-6">
                         <div class="flex items-center justify-between gap-4 mb-4">
                             <div>
@@ -282,7 +280,7 @@
                 </div>
 
                 {{-- Setor --}}
-                <div class="chart-card chart-card--lg lg:col-span-4 animate-in order-1 lg:order-1" style="animation-delay: 240ms">
+                <div class="chart-card chart-card--lg border-t-4 border-t-verdes-verde_claro lg:col-span-4 animate-in order-1 lg:order-1" style="animation-delay: 240ms">
                     <div class="p-6">
                         <div class="flex items-center justify-between gap-4 mb-4">
                             <div>
@@ -297,7 +295,7 @@
                 </div>
 
                 {{-- Técnico --}}
-                <div class="chart-card chart-card--lg lg:col-span-4 animate-in order-3 lg:order-3" style="animation-delay: 280ms">
+                <div class="chart-card chart-card--lg border-t-4 border-t-verdes-verde_claro lg:col-span-4 animate-in order-3 lg:order-3" style="animation-delay: 280ms">
                     <div class="p-6">
                         <div class="flex items-center justify-between gap-4 mb-4">
                             <div>
@@ -312,7 +310,7 @@
                 </div>
 
                 {{-- Tipo de manutençõo --}}
-                <div class="chart-card chart-card--lg lg:col-span-4 animate-in order-2 lg:order-2" style="animation-delay: 260ms">
+                <div class="chart-card chart-card--lg border-t-4 border-t-verdes-verde_claro lg:col-span-4 animate-in order-2 lg:order-2" style="animation-delay: 260ms">
                     <div class="p-6">
                         <div class="flex items-center justify-between gap-4 mb-4">
                             <div>
@@ -328,8 +326,8 @@
             </div>
 
             {{-- ===== Tabela últimas OS ===== --}}
-            <div class="ui-card animate-in" style="animation-delay: 320ms">
-                <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-700/60">
+            <div class="ui-card border-t-4 border-t-verdes-verde_claro animate-in" style="animation-delay: 320ms">
+                <div class="px-6 py-5 border-b border-verdes-verde_claro/20 dark:border-verdes-verde_claro/30">
                     <div class="flex items-start justify-between gap-4">
                         <div>
                             <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
@@ -344,12 +342,11 @@
 
                 <div class="px-6 pb-4 overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead>
+                        <thead class="bg-verdes-verde_claro/10 dark:bg-verdes-verde_claro/10">
                         <tr>
                             <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Código</th>
                             <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Solicitante</th>
-                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Prioridade</th>
+                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tecnico atribuido</th>
                             <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Criada em</th>
                             <th class="px-3 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Ações</th>
                         </tr>
@@ -371,6 +368,22 @@
 
                                 $statusClasses = $statusPalette[$status]['tw'] ?? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
 
+                                $statusIcon = match ($status) {
+                                    'aberta'      => 'imagem/engrenagem_alerta.png',
+                                    'em_execucao' => 'imagem/engrenagem_play.png',
+                                    'concluida'   => 'imagem/engrenagem.png',
+                                    'cancelada'   => 'imagem/engrenagem_alerta.png',
+                                    default       => 'imagem/engrenagem_alerta.png',
+                                };
+
+                                $statusIconDark = match ($status) {
+                                    'aberta'      => 'imagem/engrenagem_alerta_white.png',
+                                    'em_execucao' => 'imagem/engrenagem_play_white.png',
+                                    'concluida'   => 'imagem/engrenagem_white.png',
+                                    'cancelada'   => 'imagem/engrenagem_alerta_white.png',
+                                    default       => 'imagem/engrenagem_alerta_white.png',
+                                };
+
                                 $prioridadeRaw = $os->prioridade ?? null;
                                 $prioridade = $prioridadeRaw ? strtolower(trim($prioridadeRaw)) : null;
 
@@ -383,34 +396,47 @@
                                 };
 
                                 $prioridadeClasses = match ($prioridade) {
-                                    'baixo'              => 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/35 dark:text-emerald-200',
+                                    'baixo'              => 'bg-verdes-verde_claro/15 text-verdes-verde_escuro dark:bg-verdes-verde_claro/25 dark:text-verdes-verde_claro',
                                     'medio', 'médio'     => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/35 dark:text-yellow-200',
                                     'alto'               => 'bg-orange-100 text-orange-800 dark:bg-orange-900/35 dark:text-orange-200',
                                     'muito_alto'         => 'bg-red-100 text-red-800 dark:bg-red-900/35 dark:text-red-200',
                                     default              => 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200',
                                 };
+
+                                $priorityBadgeClass = match ($prioridade) {
+                                    'muito_alto', 'alto' => 'bg-red-500',
+                                    'medio'             => 'bg-yellow-400',
+                                    'baixo'             => 'bg-verdes-verde_claro',
+                                    default             => 'bg-gray-200',
+                                };
                             @endphp
 
-                            <tr class="hover:bg-gray-50/70 dark:hover:bg-gray-700/25 transition">
+                            <tr class="hover:bg-verdes-verde_claro/5 dark:hover:bg-verdes-verde_claro/10 transition">
                                 <td class="px-3 py-3 text-sm text-gray-900 dark:text-gray-100 whitespace-nowrap">
-                                    <span class="font-semibold">#{{ $os->codigo ?? $os->id }}</span>
+                                    <div class="flex items-center gap-3">
+                                        <span class="inline-flex h-8 w-8 items-center justify-center rounded-md {{ $priorityBadgeClass }}"
+                                              title="Status {{ $statusLabel }}" aria-label="Status {{ $statusLabel }}">
+                                            <img src="{{ asset($statusIcon) }}"
+                                                 alt="Status {{ $statusLabel }}"
+                                                 class="h-4 w-4 object-contain dark:hidden">
+                                            <img src="{{ asset($statusIconDark) }}"
+                                                 alt="Status {{ $statusLabel }}"
+                                                 class="hidden h-4 w-4 object-contain dark:block">
+                                        </span>
+                                        <span class="font-semibold">#{{ $os->codigo ?? $os->id }}</span>
+                                    </div>
                                 </td>
 
                                 <td class="px-3 py-3 text-sm text-gray-900 dark:text-gray-100">
                                     {{ $os->solicitante->name ?? '-' }}
                                 </td>
 
-                                <td class="px-3 py-3 text-sm">
-                                    <span class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-medium {{ $statusClasses }}">
-                                        <span class="h-1.5 w-1.5 rounded-full bg-current opacity-70"></span>
-                                        {{ $statusLabel }}
-                                    </span>
-                                </td>
-
-                                <td class="px-3 py-3 text-sm">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ $prioridadeClasses }}">
-                                        {{ $prioridadeLabel }}
-                                    </span>
+                                <td class="px-3 py-3 text-sm text-gray-900 dark:text-gray-100">
+                                    @if($os->tecnicos->count())
+                                        {{ $os->tecnicos->pluck('name')->join(', ') }}
+                                    @else
+                                        <span class="text-gray-500">Sem tecnico</span>
+                                    @endif
                                 </td>
 
                                 <td class="px-3 py-3 text-sm text-gray-900 dark:text-gray-100 whitespace-nowrap">
@@ -419,7 +445,7 @@
 
                                 <td class="px-3 py-3 text-sm text-right whitespace-nowrap">
                                     <a href="{{ route('ordens.show', $os) }}"
-                                       class="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300
+                                       class="inline-flex items-center gap-2 text-verdes-verde_claro hover:text-verdes-verde_folha dark:text-verdes-verde_claro dark:hover:text-verdes-verde_folha
                                               text-xs font-semibold transition">
                                         Ver detalhes
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -482,9 +508,9 @@
         .dark .kpi-sub{ color: rgba(156,163,175,1); }
         .kpi-pill{
             font-size:.70rem; font-weight:700; padding:.25rem .5rem; border-radius:.6rem;
-            background: rgba(243,244,246,1); color: rgba(55,65,81,1);
+            background: rgba(141,198,63,0.18); color: #00381B;
         }
-        .dark .kpi-pill{ background: rgba(255,255,255,.10); color: rgba(229,231,235,1); }
+        .dark .kpi-pill{ background: rgba(141,198,63,0.25); color: #8DC63F; }
         .kpi-dot{ width:.6rem; height:.6rem; border-radius:999px; }
         .kpi-bar{ margin-top: .9rem; height: .45rem; border-radius: 999px; overflow:hidden; }
         .kpi-bar-fill{ height: 100%; border-radius: 999px; }
@@ -543,9 +569,9 @@
     };
 
     const STATUS = {
-      aberta:      { label: 'Aberta',      color: '#fbbf24' },
-      em_execucao: { label: 'Em execução', color: '#60a5fa' },
-      concluida:   { label: 'Concluída',   color: '#34d399' },
+      aberta:      { label: 'Aberta',      color: '#8DC63F' },
+      em_execucao: { label: 'Em execução', color: '#00843D' },
+      concluida:   { label: 'Concluída',   color: '#63BE15' },
       cancelada:   { label: 'Cancelada',   color: '#f87171' },
     };
 
@@ -673,7 +699,7 @@
               borderRadius: 10,
               borderSkipped: false,
               data: mensalValues,
-              backgroundColor: 'rgba(96, 165, 250, 1)',
+              backgroundColor: STATUS.aberta.color,
               borderWidth: 2,
             }]
           },
@@ -751,7 +777,7 @@
             datasets: [{
               label: 'OS',
               data: tecnicoValues,
-              backgroundColor: STATUS.aberta.color,
+              backgroundColor: STATUS.em_execucao.color,
               borderRadius: 10,
               borderSkipped: false,
             }]
@@ -779,7 +805,7 @@
             datasets: [{
               label: 'OS',
               data: tipoValues,
-              backgroundColor: STATUS.cancelada.color,
+              backgroundColor: STATUS.concluida.color,
               borderRadius: 10,
               borderSkipped: false,
             }]

@@ -9,28 +9,32 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             {{-- Barra superior: título + botão --}}
-            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div>
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        Lista de equipamentos
-                    </h3>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                        Visualize e filtre os equipamentos cadastrados no sistema.
-                    </p>
-                </div>
+            <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900">
+                <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
+                <div class="px-6 py-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                            Lista de equipamentos
+                        </h3>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                            Visualize e filtre os equipamentos cadastrados no sistema.
+                        </p>
+                    </div>
 
-                <div class="flex justify-end">
-                    <a href="{{ route('equipamentos.create') }}"
-                       class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-md
-                              font-semibold text-xs text-white uppercase tracking-widest
-                              hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
-                        Cadastrar Equipamento
-                    </a>
+                    <div class="flex justify-end">
+                        <a href="{{ route('equipamentos.create') }}"
+                           class="inline-flex items-center px-4 py-2 bg-verdes-verde_claro border border-transparent rounded-md
+                                  font-semibold text-xs text-white uppercase tracking-widest
+                                  hover:bg-verdes-verde_folha focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-verdes-verde_claro">
+                            Cadastrar Equipamento
+                        </a>
+                    </div>
                 </div>
             </div>
 
             {{-- Filtros --}}
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900">
+                <div class="h-1 w-full bg-verdes-verde_claro/30"></div>
                 <div class="px-6 py-4">
                     <form method="GET" action="{{ route('equipamentos.index') }}"
                           class="grid grid-cols-1 gap-4 md:grid-cols-3 md:items-end">
@@ -41,7 +45,7 @@
                             </label>
                             <select id="setor_id" name="setor_id"
                                     class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                           text-sm text-gray-900 dark:text-gray-100 focus:border-emerald-500 focus:ring-emerald-500">
+                                           text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
                                 <option value="">Todos</option>
                                 @foreach ($setores as $setor)
                                     <option value="{{ $setor->id }}" @selected(request('setor_id') == $setor->id)>
@@ -60,15 +64,15 @@
                                    value="{{ request('search') }}"
                                    placeholder="Digite o nome do equipamento..."
                                    class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                          text-sm text-gray-900 dark:text-gray-100 focus:border-emerald-500 focus:ring-emerald-500">
+                                          text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
                         </div>
 
                         {{-- Botões --}}
                         <div class="flex gap-2 md:justify-end">
                             <button type="submit"
-                                    class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-md
+                                    class="inline-flex items-center px-4 py-2 bg-verdes-verde_claro border border-transparent rounded-md
                                            font-semibold text-xs text-white uppercase tracking-widest
-                                           hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
+                                           hover:bg-verdes-verde_folha focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-verdes-verde_claro">
                                 Filtrar
                             </button>
 
@@ -84,7 +88,8 @@
             </div>
 
             {{-- Tabela de equipamentos --}}
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900">
+                <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
                 <div class="px-6 py-4 overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead>
@@ -119,11 +124,11 @@
                                         default      => ($statusRaw ?: '—'),
                                     };
 
-                                    $badgeStyle = match ($status) {
-                                        'ativo'      => 'background-color:#dcfce7;color:#166534;',   // verde claro
-                                        'inativo'    => 'background-color:#fee2e2;color:#991b1b;',   // vermelho claro
-                                        'manutencao' => 'background-color:#fef9c3;color:#854d0e;',   // amarelo claro
-                                        default      => 'background-color:#e5e7eb;color:#111827;',   // cinza
+                                    $badgeClass = match ($status) {
+                                        'ativo'      => 'bg-verdes-verde_claro/20 text-verdes-verde_claro',
+                                        'inativo'    => 'bg-red-100 text-red-700',
+                                        'manutencao' => 'bg-yellow-100 text-yellow-800',
+                                        default      => 'bg-gray-200 text-gray-900',
                                     };
                                 @endphp
 
@@ -145,14 +150,13 @@
                                     </td>
                                     <td class="px-3 py-2 text-sm">
                                         <span
-                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                                            style="{{ $badgeStyle }}">
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $badgeClass }}">
                                             {{ $statusLabel }}
                                         </span>
                                     </td>
                                     <td class="px-3 py-2 text-sm text-right space-x-2">
                                         <a href="{{ route('equipamentos.show', $equipamento) }}"
-                                           class="text-emerald-600 hover:text-emerald-900 dark:text-emerald-400 dark:hover:text-emerald-300 text-xs font-semibold">
+                                           class="text-verdes-verde_claro hover:text-verdes-verde_folha dark:text-verdes-verde_claro dark:hover:text-verdes-verde_folha text-xs font-semibold">
                                             Ver
                                         </a>
                                         <a href="{{ route('equipamentos.edit', $equipamento) }}"

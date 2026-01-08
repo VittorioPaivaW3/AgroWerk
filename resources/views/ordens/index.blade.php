@@ -6,37 +6,46 @@
     </x-slot>
 
     <div class="py-8" x-data="ordensPage()">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <div class="mb-4 flex justify-between items-center">
-                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                    Todas as ordens
-                </h3>
+            <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900">
+                <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
+                <div class="px-6 py-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                            Todas as ordens
+                        </h3>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                            Acompanhe o status e a distribuicao das OS.
+                        </p>
+                    </div>
 
-                @role('admin|gestor')
-                    <a href="{{ route('ordens.create') }}"
-                       class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-md
-                              font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700
-                              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
-                        Nova OS
-                    </a>
-                @endrole
+                    @role('admin|gestor')
+                        <a href="{{ route('ordens.create') }}"
+                           class="inline-flex items-center px-4 py-2 bg-verdes-verde_claro border border-transparent rounded-md
+                                  font-semibold text-xs text-white uppercase tracking-widest hover:bg-verdes-verde_folha
+                                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-verdes-verde_claro">
+                            Nova OS
+                        </a>
+                    @endrole
+                </div>
             </div>
 
             {{-- Filtros --}}
-            <div class="mb-4 bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg">
+            <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900">
+                <div class="h-1 w-full bg-verdes-verde_claro/30"></div>
                 <form method="GET" action="{{ route('ordens.index') }}" class="grid grid-cols-1 sm:grid-cols-4 gap-4 px-6 py-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="data">Data</label>
                         <input type="date" id="data" name="data"
                                value="{{ request('data') }}"
-                               class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                               class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="setor_id">Setor</label>
                         <select id="setor_id" name="setor_id"
-                                class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
                             <option value="">Todos</option>
                             @foreach($setores ?? [] as $setor)
                                 <option value="{{ $setor->id }}" @selected(request('setor_id') == $setor->id)>{{ $setor->nome }}</option>
@@ -47,7 +56,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="tecnico_id">Tecnico</label>
                         <select id="tecnico_id" name="tecnico_id"
-                                class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
                             <option value="">Todos</option>
                             @foreach($tecnicos ?? [] as $tec)
                                 <option value="{{ $tec->id }}" @selected(request('tecnico_id') == $tec->id)>{{ $tec->name }}</option>
@@ -58,7 +67,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="concluida">Status</label>
                         <select id="concluida" name="concluida"
-                                class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
                             <option value="" @selected(request('concluida', '0') === '')>Todas</option>
                             <option value="1" @selected(request('concluida', '0') === '1')>Concluidas</option>
                             <option value="0" @selected(request('concluida', '0') === '0')>Nao concluidas</option>
@@ -71,7 +80,7 @@
                             Limpar
                         </a>
                         <button type="submit"
-                                class="inline-flex items-center px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                class="inline-flex items-center px-4 py-2 rounded-md bg-verdes-verde_claro text-white text-sm font-semibold hover:bg-verdes-verde_folha focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-verdes-verde_claro">
                             Filtrar
                         </button>
                     </div>
@@ -79,12 +88,12 @@
             </div>
 
             {{-- Tabela --}}
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900">
+                <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
                 <div class="px-6 py-4 overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead>
+                        <thead class="bg-verdes-verde_claro/10 dark:bg-verdes-verde_claro/10">
                             <tr>
-                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Codigo</th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Setor</th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Equipamento</th>
@@ -110,20 +119,35 @@
                                         default        => ($statusRaw ? strtoupper(str_replace('_', ' ', $statusRaw)) : '-'),
                                     };
 
-                                    $statusClasses = match ($status) {
-                                        'aberta'       => 'bg-emerald-100 text-emerald-800 border-emerald-300',
-                                        'em_execucao'  => 'bg-amber-100 text-amber-800 border-amber-300',
-                                        'concluida'    => 'bg-sky-100 text-sky-800 border-sky-300',
-                                        'cancelada'    => 'bg-red-100 text-red-800 border-red-300',
-                                        default        => 'bg-gray-100 text-gray-800 border-gray-300',
+                                    $statusIcon = match ($status) {
+                                        'aberta'      => 'imagem/engrenagem_alerta.png',
+                                        'em_execucao' => 'imagem/engrenagem_play.png',
+                                        'concluida'   => 'imagem/engrenagem.png',
+                                        'cancelada'   => 'imagem/engrenagem_alerta.png',
+                                        default       => 'imagem/engrenagem_alerta.png',
+                                    };
+
+                                    $statusIconDark = match ($status) {
+                                        'aberta'      => 'imagem/engrenagem_alerta_white.png',
+                                        'em_execucao' => 'imagem/engrenagem_play_white.png',
+                                        'concluida'   => 'imagem/engrenagem_white.png',
+                                        'cancelada'   => 'imagem/engrenagem_alerta_white.png',
+                                        default       => 'imagem/engrenagem_alerta_white.png',
                                     };
 
                                     $rowPriorityClass = match ($prioridade) {
-                                        'muito_alto' => 'border-l-4 border-red-700 bg-red-50 dark:bg-red-900/40',
-                                        'alto'       => 'border-l-4 border-red-600 bg-red-50 dark:bg-red-900/30',
-                                        'medio'      => 'border-l-4 border-yellow-400 bg-yellow-50 dark:bg-yellow-900/20',
-                                        'baixo'      => 'border-l-4 border-emerald-500 bg-emerald-50 dark:bg-emerald-900/10',
+                                        'muito_alto' => 'border-l-4 border-red-700',
+                                        'alto'       => 'border-l-4 border-red-600',
+                                        'medio'      => 'border-l-4 border-yellow-400',
+                                        'baixo'      => 'border-l-4 border-verdes-verde_claro',
                                         default      => 'border-l-4 border-gray-300',
+                                    };
+
+                                    $priorityBadgeClass = match ($prioridade) {
+                                        'muito_alto', 'alto' => 'bg-red-500',
+                                        'medio'             => 'bg-yellow-400',
+                                        'baixo'             => 'bg-verdes-verde_claro',
+                                        default             => 'bg-gray-200',
                                     };
 
                                     $setorNome = $os->setor->nome
@@ -131,21 +155,20 @@
                                         ?? '-';
                                 @endphp
 
-                                <tr class="{{ $rowPriorityClass }} transition-colors hover:bg-gray-50 dark:hover:bg-gray-900/40">
-                                    <td class="px-3 py-2 text-sm">
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-extrabold tracking-wide uppercase border shadow-sm {{ $statusClasses }}">
-                                            <span class="h-2.5 w-2.5 rounded-full
-                                                @if($status === 'aberta') bg-emerald-500
-                                                @elseif($status === 'em_execucao') bg-amber-500
-                                                @elseif($status === 'concluida') bg-sky-500
-                                                @elseif($status === 'cancelada') bg-red-500
-                                                @else bg-gray-400 @endif">
+                                <tr class="{{ $rowPriorityClass }} transition-colors hover:bg-verdes-verde_claro/5 dark:hover:bg-verdes-verde_claro/10">
+                                    <td class="px-3 py-2 text-sm text-gray-900 dark:text-gray-100">
+                                        <div class="flex items-center gap-3">
+                                            <span class="inline-flex h-8 w-8 items-center justify-center rounded-md {{ $priorityBadgeClass }}"
+                                                  title="Status {{ $statusLabel }}" aria-label="Status {{ $statusLabel }}">
+                                                <img src="{{ asset($statusIcon) }}"
+                                                     alt="Status {{ $statusLabel }}"
+                                                     class="h-4 w-4 object-contain dark:hidden">
+                                                <img src="{{ asset($statusIconDark) }}"
+                                                     alt="Status {{ $statusLabel }}"
+                                                     class="hidden h-4 w-4 object-contain dark:block">
                                             </span>
-                                            {{ $statusLabel }}
-                                        </span>
-                                    </td>
-                                    <td class="px-3 py-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
-                                        #{{ $os->codigo ?? $os->id }}
+                                            <span class="font-semibold">#{{ $os->codigo ?? $os->id }}</span>
+                                        </div>
                                     </td>
                                     <td class="px-3 py-2 text-sm text-gray-900 dark:text-gray-100">
                                         {{ $setorNome }}
@@ -166,7 +189,7 @@
                                     <td class="px-3 py-2 text-sm text-right">
                                         <div class="inline-flex items-center gap-3">
                                             <a href="{{ route('ordens.show', $os) }}"
-                                               class="text-emerald-600 hover:text-emerald-900 dark:text-emerald-400 dark:hover:text-emerald-300 text-xs font-semibold">
+                                               class="text-verdes-verde_claro hover:text-verdes-verde_folha dark:text-verdes-verde_claro dark:hover:text-verdes-verde_folha text-xs font-semibold">
                                                 Ver
                                             </a>
 
@@ -180,7 +203,7 @@
                                             @role('admin|gestor')
                                                 @if($status !== 'em_execucao' && $status !== 'concluida')
                                                     <button type="button"
-                                                        class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-200"
+                                                        class="text-xs font-semibold text-verdes-verde_claro hover:text-verdes-verde_folha dark:text-verdes-verde_claro dark:hover:text-verdes-verde_folha"
                                                         @click="openModal({
                                                             id: {{ $os->id }},
                                                             codigo: @json($os->codigo ?? $os->id),
@@ -199,12 +222,12 @@
                                             @endphp
                                             @if($status === 'concluida' && $isAdminOuGestor)
                                                 @if(!is_null($os->custo_total))
-                                                    <span class="inline-flex items-center px-2.5 py-1 bg-emerald-50 border border-emerald-200 rounded-md text-[11px] font-semibold text-emerald-700 uppercase tracking-widest">
+                                                    <span class="inline-flex items-center px-2.5 py-1 bg-verdes-verde_claro/10 border border-verdes-verde_claro/30 rounded-md text-[11px] font-semibold text-verdes-verde_escuro uppercase tracking-widest">
                                                         Custo atribuido
                                                     </span>
                                                 @else
                                                     <button type="button"
-                                                        class="inline-flex items-center px-2.5 py-1 bg-sky-50 border border-sky-200 rounded-md text-[11px] font-semibold text-sky-700 uppercase tracking-widest hover:bg-sky-100"
+                                                        class="inline-flex items-center px-2.5 py-1 bg-verdes-verde_claro/15 border border-verdes-verde_claro/30 rounded-md text-[11px] font-semibold text-verdes-verde_escuro uppercase tracking-widest hover:bg-verdes-verde_claro/25"
                                                         @click="openCustoModal({
                                                             id: {{ $os->id }},
                                                             codigo: @json($os->codigo ?? $os->id),
@@ -219,7 +242,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="px-3 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                                    <td colspan="6" class="px-3 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
                                         Nenhuma ordem de servico encontrada.
                                     </td>
                                 </tr>
@@ -237,7 +260,7 @@
         {{-- Modal atribuição --}}
         <div x-show="open" x-cloak class="fixed inset-0 z-50 flex items-center justify-center" style="display:none;" @keydown.escape.window="closeModal()">
             <div class="absolute inset-0 bg-black/40" @click="closeModal()"></div>
-            <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg p-6 space-y-4" @click.stop>
+            <div class="relative bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-white/10 border-t-4 border-t-verdes-verde_claro shadow-xl w-full max-w-lg p-6 space-y-4" @click.stop>
                 <div class="flex items-start justify-between">
                     <div>
                         <p class="text-xs uppercase text-gray-500 dark:text-gray-400 font-semibold">Atribuir tecnico/gestor</p>
@@ -254,7 +277,7 @@
                             <div class="space-y-1 max-h-48 overflow-y-auto pr-1">
                                 <template x-for="tec in tecnicosDisponiveis" :key="tec.id">
                                     <label class="flex items-center gap-2 text-sm text-gray-800 dark:text-gray-100">
-                                        <input type="checkbox" :value="tec.id" name="tecnicos[]" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500" x-model="selecionadosTecnicos">
+                                        <input type="checkbox" :value="tec.id" name="tecnicos[]" class="rounded border-gray-300 text-verdes-verde_claro focus:ring-verdes-verde_claro" x-model="selecionadosTecnicos">
                                         <span x-text="tec.name"></span>
                                     </label>
                                 </template>
@@ -266,7 +289,7 @@
                             <div class="space-y-1 max-h-48 overflow-y-auto pr-1">
                                 <template x-for="ges in gestoresDisponiveis" :key="ges.id">
                                     <label class="flex items-center gap-2 text-sm text-gray-800 dark:text-gray-100">
-                                        <input type="checkbox" :value="ges.id" name="gestores[]" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500" x-model="selecionadosGestores">
+                                        <input type="checkbox" :value="ges.id" name="gestores[]" class="rounded border-gray-300 text-verdes-verde_claro focus:ring-verdes-verde_claro" x-model="selecionadosGestores">
                                         <span x-text="ges.name"></span>
                                     </label>
                                 </template>
@@ -299,7 +322,7 @@
 
                     <div class="flex justify-end gap-3 pt-2">
                         <button type="button" class="px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700" @click="closeModal()">Cancelar</button>
-                        <button type="submit" class="px-4 py-2 rounded-md bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">Salvar</button>
+                        <button type="submit" class="px-4 py-2 rounded-md bg-verdes-verde_claro text-white text-sm font-semibold hover:bg-verdes-verde_folha focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-verdes-verde_claro">Salvar</button>
                     </div>
                 </form>
             </div>
@@ -308,7 +331,7 @@
         {{-- Modal custo --}}
         <div x-show="openCusto" x-cloak class="fixed inset-0 z-50 flex items-center justify-center" style="display:none;" @keydown.escape.window="closeCustoModal()">
             <div class="absolute inset-0 bg-black/40" @click="closeCustoModal()"></div>
-            <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6 space-y-4" @click.stop>
+            <div class="relative bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-white/10 border-t-4 border-t-verdes-verde_claro shadow-xl w-full max-w-md p-6 space-y-4" @click.stop>
                 <div class="flex items-start justify-between">
                     <div>
                         <p class="text-xs uppercase text-gray-500 dark:text-gray-400 font-semibold">Atribuir custo</p>
@@ -324,13 +347,13 @@
                     <div class="relative rounded-md shadow-sm">
                         <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 text-sm">R$</span>
                         <input id="custo_total_modal" name="custo_total" type="number" step="0.01" min="0" x-model="custoTotal"
-                               class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:ring-emerald-500 focus:border-emerald-500"
+                               class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:ring-verdes-verde_claro focus:border-verdes-verde_claro"
                                required>
                     </div>
 
                     <div class="flex justify-end gap-2 pt-4">
                         <button type="button" class="px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700" @click="closeCustoModal()">Cancelar</button>
-                        <button type="submit" class="px-4 py-2 rounded-md bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">Salvar</button>
+                        <button type="submit" class="px-4 py-2 rounded-md bg-verdes-verde_claro text-white text-sm font-semibold hover:bg-verdes-verde_folha focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-verdes-verde_claro">Salvar</button>
                     </div>
                 </form>
             </div>

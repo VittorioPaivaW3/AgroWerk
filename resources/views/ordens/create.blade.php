@@ -10,23 +10,32 @@
 
             {{-- Alertas --}}
             @if (session('success'))
-                <div class="bg-green-100 border border-green-200 text-green-800 text-sm px-4 py-2 rounded-md">
+                <div class="bg-verdes-verde_claro/15 border border-verdes-verde_claro/30 text-verdes-verde_escuro text-sm px-4 py-2 rounded-md">
                     {{ session('success') }}
                 </div>
             @endif
 
             {{-- Card do formulário --}}
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="px-6 py-4 text-gray-900 dark:text-gray-100">
+            <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900">
+                <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
+                <div class="px-6 py-6 text-gray-900 dark:text-gray-100">
+                    <div class="flex flex-col gap-1 border-b border-gray-100 dark:border-white/10 pb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                            Dados da ordem
+                        </h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">
+                            Preencha os campos para abrir a ordem de serviço.
+                        </p>
+                    </div>
 
                     <form method="POST"
                           action="{{ route('ordens.store') }}"
                           enctype="multipart/form-data"
-                          class="space-y-6">
+                          class="mt-6 space-y-6">
                         @csrf
 
                         {{-- Solicitante (usuário logado) --}}
-                        <div>
+                        <div class="rounded-lg border border-verdes-verde_claro/20 bg-verdes-verde_claro/5 p-3 dark:border-verdes-verde_claro/30 dark:bg-verdes-verde_claro/10">
                             <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
                                 Solicitante
                             </p>
@@ -35,41 +44,46 @@
                             </p>
                         </div>
 
-                        {{-- Setor --}}
-                        <div>
-                            <label for="setor_id"
-                                   class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Setor <span class="text-red-500">*</span>
-                            </label>
-                            <select id="setor_id" name="setor_id" required
-                                    class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                           text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
-                                <option value="">Selecione um setor</option>
-                                @foreach($setores as $setor)
-                                    <option value="{{ $setor->id }}" @selected(old('setor_id') == $setor->id)>
-                                        {{ $setor->nome }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('setor_id')
-                                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            {{-- Setor --}}
+                            <div>
+                                <label for="setor_id"
+                                       class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                    Setor <span class="text-red-500">*</span>
+                                </label>
+                                <select id="setor_id" name="setor_id" required
+                                        class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
+                                               text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
+                                    <option value="">Selecione um setor</option>
+                                    @foreach($setores as $setor)
+                                        <option value="{{ $setor->id }}" @selected(old('setor_id') == $setor->id)>
+                                            {{ $setor->nome }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('setor_id')
+                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                @enderror
+                            </div>
 
-                        {{-- Máquina --}}
-                        <div>
-                            <label for="equipamento_id"
-                                   class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Máquina / Equipamento <span class="text-red-500">*</span>
-                            </label>
-                            <select id="equipamento_id" name="equipamento_id" required
-                                    class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                           text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
-                                <option value="">Selecione um equipamento</option>
-                            </select>
-                            @error('equipamento_id')
-                                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                            @enderror
+                            {{-- Máquina --}}
+                            <div>
+                                <label for="equipamento_id"
+                                       class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                    Máquina / Equipamento <span class="text-red-500">*</span>
+                                </label>
+                                <select id="equipamento_id" name="equipamento_id" required
+                                        class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
+                                               text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
+                                    <option value="">Selecione um equipamento</option>
+                                </select>
+                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                    Selecione um setor para carregar os equipamentos.
+                                </p>
+                                @error('equipamento_id')
+                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                @enderror
+                            </div>
                         </div>
 
                         {{-- Tipo + Prioridade --}}
@@ -82,7 +96,7 @@
                                 </label>
                                 <select id="tipo" name="tipo" required
                                         class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                               text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                               text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
                                     <option value="corretiva" @selected(old('tipo') === 'corretiva')>Corretiva</option>
                                     <option value="preventiva" @selected(old('tipo') === 'preventiva')>Preventiva</option>
                                 </select>
@@ -99,7 +113,7 @@
                                 </label>
                                 <select id="prioridade" name="prioridade" required
                                         class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                               text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                               text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
                                     <option value="baixo" @selected(old('prioridade') === 'baixo')>Baixo</option>
                                     <option value="medio" @selected(old('prioridade') === 'medio')>Médio</option>
                                     <option value="alto" @selected(old('prioridade') === 'alto')>Alto</option>
@@ -112,14 +126,14 @@
                         </div>
 
                         {{-- Descrição --}}
-                        <div>
+                        <div class="rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50/70 dark:bg-gray-900/40 p-4">
                             <label for="descricao"
                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Descrição do problema / serviço <span class="text-red-500">*</span>
                             </label>
                             <textarea id="descricao" name="descricao" rows="4" required
                                       class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
-                                             text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500"
+                                             text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro"
                                       placeholder="Descreva o problema, sintomas, local exato, etc.">{{ old('descricao') }}</textarea>
                             @error('descricao')
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
@@ -127,7 +141,7 @@
                         </div>
 
                         {{-- Anexos --}}
-                        <div>
+                        <div class="rounded-xl border border-dashed border-gray-300 dark:border-white/10 bg-gray-50/70 dark:bg-gray-900/40 p-4">
                             <label for="anexos"
                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Anexos (fotos, PDFs)
@@ -138,8 +152,10 @@
                                           file:mr-4 file:py-2 file:px-4
                                           file:rounded-md file:border-0
                                           file:text-sm file:font-semibold
-                                          file:bg-indigo-50 file:text-indigo-700
-                                          hover:file:bg-indigo-100">
+                                          file:bg-verdes-verde_claro file:text-white
+                                          hover:file:bg-verdes-verde_folha
+                                          dark:file:bg-verdes-verde_claro dark:file:text-white
+                                          dark:hover:file:bg-verdes-verde_folha">
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                                 Formatos permitidos: JPG, JPEG, PNG, PDF. Máx. 4 MB por arquivo.
                             </p>
@@ -158,9 +174,9 @@
                             </a>
                             
                             <button type="submit"
-                                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md
+                                    class="inline-flex items-center px-4 py-2 bg-verdes-verde_claro border border-transparent rounded-md
                                            text-xs font-semibold text-white uppercase tracking-widest
-                                           hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                           hover:bg-verdes-verde_folha focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-verdes-verde_claro">
                                 Salvar OS
                             </button>
                         </div>

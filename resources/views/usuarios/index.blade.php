@@ -9,29 +9,31 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             {{-- Topo --}}
-            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div>
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        Lista de usuários
-                    </h3>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                        Gerencie os usuários e seus perfis de acesso.
-                    </p>
-                </div>
+            <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900">
+                <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
+                <div class="px-6 py-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                            Lista de usuários
+                        </h3>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                            Gerencie os usuários e seus perfis de acesso.
+                        </p>
+                    </div>
 
-                <div class="flex justify-end">
-                    <a href="{{ route('usuarios.create') }}"
-                       class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md
-                              font-semibold text-xs text-white uppercase tracking-widest
-                              hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Novo Usuário
-                    </a>
+                    <div class="flex justify-end">
+                        <a href="{{ route('usuarios.create') }}"
+                           class="inline-flex items-center px-4 py-2 bg-verdes-verde_claro border border-transparent rounded-md
+                                  font-semibold text-xs text-white uppercase tracking-widest
+                                  hover:bg-verdes-verde_folha focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-verdes-verde_claro">
+                            Novo Usuário
+                        </a>
+                    </div>
                 </div>
             </div>
-
             {{-- Alertas --}}
             @if (session('success'))
-                <div class="bg-green-100 border border-green-200 text-green-800 text-sm px-4 py-2 rounded-md">
+                <div class="bg-verdes-verde_claro/15 border border-verdes-verde_claro/30 text-verdes-verde_escuro text-sm px-4 py-2 rounded-md">
                     {{ session('success') }}
                 </div>
             @endif
@@ -43,10 +45,11 @@
             @endif
 
             {{-- Tabela --}}
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900">
+                <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
                 <div class="px-6 py-4 overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead>
+                        <thead class="bg-verdes-verde_claro/10 dark:bg-verdes-verde_claro/10">
                         <tr>
                             <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 Nome
@@ -64,7 +67,7 @@
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @forelse($usuarios as $usuario)
-                            <tr>
+                            <tr class="hover:bg-verdes-verde_claro/5 dark:hover:bg-verdes-verde_claro/10 transition">
                                 <td class="px-3 py-2 text-sm text-gray-900 dark:text-gray-100">
                                     {{ $usuario->name }}
                                 </td>
@@ -76,7 +79,7 @@
                                 </td>
                                 <td class="px-3 py-2 text-sm text-right space-x-2">
                                     <a href="{{ route('usuarios.edit', $usuario) }}"
-                                       class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 text-xs font-semibold">
+                                       class="text-verdes-verde_claro hover:text-verdes-verde_folha dark:text-verdes-verde_claro dark:hover:text-verdes-verde_folha text-xs font-semibold">
                                         Editar
                                     </a>
 

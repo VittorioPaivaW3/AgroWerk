@@ -1,12 +1,10 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="relative overflow-hidden rounded-2xl border border-gray-200/70 bg-white/70 shadow-sm backdrop-blur
-                    dark:border-white/10 dark:bg-gray-900/60">
+        <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm
+                    dark:border-white/10 dark:bg-gray-900">
 
             {{-- barra de acento (marca) --}}
-            <div class="h-1 w-full"
-                 style="background-image: linear-gradient(90deg, #023D1D 0%, #009640 45%, #94C11F 100%);">
-            </div>
+            <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
 
             <div class="flex items-center justify-between gap-4 px-6 py-4">
                 <div>
@@ -28,18 +26,24 @@
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
 
                 {{-- Card 1 --}}
-                <div class="group relative overflow-hidden rounded-2xl border border-gray-200/70 bg-white/70 shadow-sm backdrop-blur
+                <div class="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm
                             hover:shadow-md transition
-                            dark:border-white/10 dark:bg-gray-900/60">
-                    <div class="h-1 w-full"
-                         style="background-image: linear-gradient(90deg, #023D1D 0%, #009640 45%, #94C11F 100%);">
-                    </div>
+                            dark:border-white/10 dark:bg-gray-900">
+                    <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
 
-                    <div class="p-5 transition group-hover:-translate-y-[1px]">
-                        <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                            OS Abertas
-                        </p>
-                        <p class="mt-2 text-3xl font-extrabold text-[#009640]">
+                    <div class="p-6 transition group-hover:-translate-y-[1px]">
+                        <div class="flex items-start justify-between gap-4">
+                            <p class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                OS Abertas
+                            </p>
+                            <img src="{{ asset('imagem/engrenagem_alerta.png') }}"
+                                 alt="Engrenagem alerta"
+                                 class="h-9 w-9 object-contain opacity-90 dark:hidden">
+                            <img src="{{ asset('imagem/engrenagem_alerta_white.png') }}"
+                                 alt="Engrenagem alerta branca"
+                                 class="hidden h-9 w-9 object-contain opacity-90 dark:block">
+                        </div>
+                        <p class="mt-2 text-3xl font-extrabold text-verdes-verde_claro">
                             {{ $osAbertas }}
                         </p>
                         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
@@ -49,18 +53,24 @@
                 </div>
 
                 {{-- Card 2 --}}
-                <div class="group relative overflow-hidden rounded-2xl border border-gray-200/70 bg-white/70 shadow-sm backdrop-blur
+                <div class="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm
                             hover:shadow-md transition
-                            dark:border-white/10 dark:bg-gray-900/60">
-                    <div class="h-1 w-full"
-                         style="background-image: linear-gradient(90deg, #023D1D 0%, #009640 45%, #94C11F 100%);">
-                    </div>
+                            dark:border-white/10 dark:bg-gray-900">
+                    <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
 
-                    <div class="p-5 transition group-hover:-translate-y-[1px]">
-                        <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                            Em execucao
-                        </p>
-                        <p class="mt-2 text-3xl font-extrabold text-amber-500">
+                    <div class="p-6 transition group-hover:-translate-y-[1px]">
+                        <div class="flex items-start justify-between gap-4">
+                            <p class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                Em execucao
+                            </p>
+                            <img src="{{ asset('imagem/engrenagem_play.png') }}"
+                                 alt="Engrenagem em execucao"
+                                 class="h-9 w-9 object-contain opacity-90 dark:hidden">
+                            <img src="{{ asset('imagem/engrenagem_play_white.png') }}"
+                                 alt="Engrenagem em execucao branca"
+                                 class="hidden h-9 w-9 object-contain opacity-90 dark:block">
+                        </div>
+                        <p class="mt-2 text-3xl font-extrabold text-verdes-verde_claro">
                             {{ $osExecucao }}
                         </p>
                         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
@@ -70,18 +80,24 @@
                 </div>
 
                 {{-- Card 3 --}}
-                <div class="group relative overflow-hidden rounded-2xl border border-gray-200/70 bg-white/70 shadow-sm backdrop-blur
+                <div class="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm
                             hover:shadow-md transition
-                            dark:border-white/10 dark:bg-gray-900/60">
-                    <div class="h-1 w-full"
-                         style="background-image: linear-gradient(90deg, #023D1D 0%, #009640 45%, #94C11F 100%);">
-                    </div>
+                            dark:border-white/10 dark:bg-gray-900">
+                    <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
 
-                    <div class="p-5 transition group-hover:-translate-y-[1px]">
-                        <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                            Concluidas
-                        </p>
-                        <p class="mt-2 text-3xl font-extrabold text-sky-500">
+                    <div class="p-6 transition group-hover:-translate-y-[1px]">
+                        <div class="flex items-start justify-between gap-4">
+                            <p class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                Concluidas
+                            </p>
+                            <img src="{{ asset('imagem/engrenagem.png') }}"
+                                 alt="Engrenagem concluida"
+                                 class="h-9 w-9 object-contain opacity-90 dark:hidden">
+                            <img src="{{ asset('imagem/engrenagem_white.png') }}"
+                                 alt="Engrenagem concluida branca"
+                                 class="hidden h-9 w-9 object-contain opacity-90 dark:block">
+                        </div>
+                        <p class="mt-2 text-3xl font-extrabold text-verdes-verde_claro">
                             {{ $osConcluidas }}
                         </p>
                         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
@@ -93,12 +109,10 @@
             </div>
 
             {{-- Lista de OS atribuidas ao tecnico --}}
-            <div class="relative overflow-hidden rounded-2xl border border-gray-200/70 bg-white/70 shadow-sm backdrop-blur
-                        dark:border-white/10 dark:bg-gray-900/60">
+            <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm
+                        dark:border-white/10 dark:bg-gray-900">
 
-                <div class="h-1 w-full"
-                     style="background-image: linear-gradient(90deg, #023D1D 0%, #009640 45%, #94C11F 100%);">
-                </div>
+                <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
 
                 <div class="px-6 py-4 flex items-center justify-between gap-4">
                     <div>
@@ -110,14 +124,14 @@
                         </p>
                     </div>
 
-                    <form method="GET" class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-200">
+                    <form method="GET" class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300">
                         <label class="inline-flex items-center gap-2 cursor-pointer select-none">
                             <input type="checkbox"
                                    name="mostrar_concluidas"
                                    value="1"
                                    @checked($mostrarConcluidas)
                                    onchange="this.form.submit()"
-                                   class="rounded border-gray-300 text-[#009640] shadow-sm focus:ring-[#94C11F]">
+                                   class="h-4 w-4 rounded border-gray-300 text-verdes-verde_claro shadow-sm focus:ring-verdes-verde_claro/40">
                             <span>Mostrar concluidas</span>
                         </label>
                     </form>
@@ -125,19 +139,10 @@
 
                 <div class="px-6 pb-4 overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-white/10">
-                        <thead class="sticky top-0 z-10 bg-white/80 backdrop-blur dark:bg-gray-900/70">
+                        <thead class="sticky top-0 z-10 bg-white dark:bg-gray-900">
                             <tr>
-                                <th class="px-3 py-3 text-left text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                <th class="pl-3 pr-3 py-3 text-left text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                     Codigo
-                                </th>
-                                <th class="px-3 py-3 text-left text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                    Status
-                                </th>
-                                <th class="px-3 py-3 text-left text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                    Setor
-                                </th>
-                                <th class="px-3 py-3 text-left text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                    Equipamento
                                 </th>
                                 <th class="px-3 py-3 text-left text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                     Criada em
@@ -159,34 +164,32 @@
                                         'cancelada'    => 'CANCELADA',
                                         default        => strtoupper(str_replace('_', ' ', $os->status ?? '-')),
                                     };
+                                    $statusIcon = match ($status) {
+                                        'aberta'      => 'imagem/engrenagem_alerta.png',
+                                        'em_execucao' => 'imagem/engrenagem_play.png',
+                                        'concluida'   => 'imagem/engrenagem.png',
+                                        'cancelada'   => 'imagem/engrenagem_alerta.png',
+                                        default       => 'imagem/engrenagem_alerta.png',
+                                    };
 
-                                    $statusClasses = match ($status) {
-                                        'aberta'       => 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20 dark:bg-emerald-400/10 dark:text-emerald-200 dark:border-emerald-300/20',
-                                        'em_execucao'  => 'bg-amber-500/10 text-amber-700 border-amber-500/20 dark:bg-amber-400/10 dark:text-amber-200 dark:border-amber-300/20',
-                                        'concluida'    => 'bg-sky-500/10 text-sky-700 border-sky-500/20 dark:bg-sky-400/10 dark:text-sky-200 dark:border-sky-300/20',
-                                        'cancelada'    => 'bg-red-500/10 text-red-700 border-red-500/20 dark:bg-red-400/10 dark:text-red-200 dark:border-red-300/20',
-                                        default        => 'bg-gray-500/10 text-gray-700 border-gray-500/20 dark:bg-white/10 dark:text-gray-200 dark:border-white/10',
+                                    $statusIconDark = match ($status) {
+                                        'aberta'      => 'imagem/engrenagem_alerta_white.png',
+                                        'em_execucao' => 'imagem/engrenagem_play_white.png',
+                                        'concluida'   => 'imagem/engrenagem_white.png',
+                                        'cancelada'   => 'imagem/engrenagem_alerta_white.png',
+                                        default       => 'imagem/engrenagem_alerta_white.png',
                                     };
 
                                     $prioridadeRaw = $os->prioridade ?? null;
                                     $prioridade = $prioridadeRaw ? strtolower(trim($prioridadeRaw)) : null;
 
-                                    // borda da linha: concluida verde; caso contrario, segue prioridade
-                                    $priorityBorderClass = match (true) {
-                                        $status === 'concluida'      => 'border-l-4 border-[#009640]',
-                                        $prioridade === 'alto',
-                                        $prioridade === 'muito_alto' => 'border-l-4 border-red-500',
-                                        $prioridade === 'medio'      => 'border-l-4 border-amber-400',
-                                        $prioridade === 'baixo'      => 'border-l-4 border-sky-400',
-                                        default                      => 'border-l-4 border-transparent',
-                                    };
-
-                                    $dotClass = match ($status) {
-                                        'aberta'      => 'bg-emerald-500',
-                                        'em_execucao' => 'bg-amber-500',
-                                        'concluida'   => 'bg-sky-500',
-                                        'cancelada'   => 'bg-red-500',
-                                        default       => 'bg-gray-400',
+                                    // faixa de prioridade (alto em vermelho)
+                                    $priorityBarClass = match (true) {
+                                        $prioridade === 'alto'
+                                            || $prioridade === 'muito_alto' => 'bg-red-500',
+                                        $prioridade === 'medio'            => 'bg-yellow-400',
+                                        $prioridade === 'baixo'            => 'bg-verdes-verde_claro',
+                                        default                            => 'bg-verdes-verde_claro/40',
                                     };
 
                                     $setorNome = $os->setor->nome
@@ -195,23 +198,25 @@
                                 @endphp
 
                                 <tr class="hover:bg-gray-50/70 dark:hover:bg-white/5 transition">
-                                    <td class="px-3 py-3 text-sm font-semibold text-gray-900 dark:text-gray-100 {{ $priorityBorderClass }}">
-                                        #{{ $os->codigo ?? $os->id }}
-                                    </td>
-
-                                    <td class="px-3 py-3 text-sm">
-                                        <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-extrabold tracking-wide uppercase border {{ $statusClasses }}">
-                                            <span class="h-2.5 w-2.5 rounded-full {{ $dotClass }}"></span>
-                                            {{ $statusLabel }}
-                                        </span>
-                                    </td>
-
                                     <td class="px-3 py-3 text-sm text-gray-900 dark:text-gray-100">
-                                        {{ $setorNome }}
-                                    </td>
-
-                                    <td class="px-3 py-3 text-sm text-gray-900 dark:text-gray-100">
-                                        {{ $os->equipamento->nome ?? '-' }}
+                                        <div class="flex items-center gap-3">
+                                            <span class="flex h-11 w-11 items-center justify-center rounded-md {{ $priorityBarClass }}"
+                                                  title="Status {{ $statusLabel }}">
+                                                <img src="{{ asset($statusIcon) }}"
+                                                     alt="Status {{ $statusLabel }}"
+                                                     class="h-8 w-8 object-contain opacity-90 dark:hidden">
+                                                <img src="{{ asset($statusIconDark) }}"
+                                                     alt="Status {{ $statusLabel }}"
+                                                     class="hidden h-8 w-8 object-contain opacity-90 dark:block">
+                                            </span>
+                                            <div class="min-w-0 leading-tight">
+                                                <div class="font-semibold">#{{ $os->codigo ?? $os->id }}</div>
+                                                <div class="mt-0.5 max-w-[260px] text-xs font-normal text-gray-600 dark:text-gray-300 truncate"
+                                                     title="{{ $setorNome }} - {{ $os->equipamento->nome ?? '-' }}">
+                                                    {{ $setorNome }} - {{ $os->equipamento->nome ?? '-' }}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </td>
 
                                     <td class="px-3 py-3 text-sm text-gray-900 dark:text-gray-100">
@@ -221,16 +226,16 @@
                                     <td class="px-3 py-3 text-sm text-right">
                                         <a href="{{ route('ordens.show', $os) }}"
                                            class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold
-                                                  bg-[#009640]/10 text-[#023D1D] hover:bg-[#009640]/15
-                                                  dark:bg-[#009640]/15 dark:text-emerald-200 dark:hover:bg-[#009640]/25 transition">
+                                                  bg-verdes-verde_claro/10 text-verdes-verde_claro hover:bg-verdes-verde_claro/15
+                                                  dark:bg-verdes-verde_claro/15 dark:text-verdes-verde_claro dark:hover:bg-verdes-verde_claro/25 transition">
                                             Visualizar O.S
-                                            <span class="text-[#009640]">→</span>
+                                            <span class="text-verdes-verde_claro">→</span>
                                         </a>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-3 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                                    <td colspan="3" class="px-3 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
                                         Nenhuma OS atribuida a voce ate o momento.
                                     </td>
                                 </tr>
