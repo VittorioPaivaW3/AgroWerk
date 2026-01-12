@@ -62,11 +62,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('ordens.show');
 
     Route::get('/ordens/{orden}/edit', [OrdemServicoController::class, 'edit'])
-        ->middleware('role:admin')
+        ->middleware('role:admin|visualizador')
         ->name('ordens.edit');
 
     Route::match(['put', 'patch'], '/ordens/{orden}', [OrdemServicoController::class, 'update'])
-        ->middleware('role:admin')
+        ->middleware('role:admin|visualizador')
         ->name('ordens.update');
 
     // Atribuir técnico/gestor (modal da lista)
@@ -154,6 +154,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['auth', 'verified', 'role:admin|gestor'])->group(function () {
         Route::get('/relatorios', [RelatorioController::class, 'index'])
         ->name('relatorios.index');
+
+        Route::get('/relatorios/os-status', [RelatorioController::class, 'osPorStatus'])
+            ->name('relatorios.os-status');
+
+        Route::get('/relatorios/tempo-medio-atendimento', [RelatorioController::class, 'tempoMedioAtendimento'])
+            ->name('relatorios.tempo-medio');
+
+        Route::get('/relatorios/custo-os', [RelatorioController::class, 'custoOsPeriodo'])
+            ->name('relatorios.custo-os');
+
+        Route::get('/relatorios/os-por-setor-equip', [RelatorioController::class, 'osPorSetorEquipamento'])
+            ->name('relatorios.os-setor-equip');
+
+        Route::get('/relatorios/produtividade-tecnico', [RelatorioController::class, 'produtividadeTecnico'])
+            ->name('relatorios.produtividade-tecnico');
+
+        Route::get('/relatorios/projetos-investimentos', [RelatorioController::class, 'projetosInvestimentos'])
+            ->name('relatorios.projetos-investimentos');
     });
 
     /*

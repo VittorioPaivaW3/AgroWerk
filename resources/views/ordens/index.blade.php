@@ -66,11 +66,16 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="concluida">Status</label>
+                        @php
+                            $concluidaFiltro = request()->has('concluida')
+                                ? request('concluida')
+                                : '0';
+                        @endphp
                         <select id="concluida" name="concluida"
                                 class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
-                            <option value="" @selected(request('concluida', '0') === '')>Todas</option>
-                            <option value="1" @selected(request('concluida', '0') === '1')>Concluidas</option>
-                            <option value="0" @selected(request('concluida', '0') === '0')>Nao concluidas</option>
+                            <option value="" @selected($concluidaFiltro === '')>Todas</option>
+                            <option value="1" @selected($concluidaFiltro === '1')>Concluidas</option>
+                            <option value="0" @selected($concluidaFiltro === '0')>Nao concluidas</option>
                         </select>
                     </div>
 

@@ -384,10 +384,20 @@
             {{-- Rodapé ajustes --}}
             <div class="flex flex-wrap items-center justify-end gap-2 pt-1">
                 {{-- Voltar --}}
-                <a href="{{ auth()->check() && auth()->user()->hasRole('visualizador') ? route('dashboard.visualizador') : route('ordens.index') }}"
-                class="inline-flex items-center h-9 px-4 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md
-                        text-[11px] font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-widest leading-none
-                        hover:bg-gray-200 dark:hover:bg-gray-700">
+                @php
+                    $user = auth()->user();
+                    $voltarUrl = route('ordens.index');
+
+                    if ($user && $user->hasRole('visualizador')) {
+                        $voltarUrl = route('dashboard.visualizador');
+                    } elseif ($user && $user->hasRole('tecnico')) {
+                        $voltarUrl = route('tecnico.dashboard');
+                    }
+                @endphp
+                <a href="{{ $voltarUrl }}"
+                   class="inline-flex items-center h-9 px-4 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md
+                          text-[11px] font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-widest leading-none
+                          hover:bg-gray-200 dark:hover:bg-gray-700">
                     Voltar para lista
                 </a>
 

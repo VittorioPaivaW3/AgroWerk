@@ -24,7 +24,9 @@ class OrdemServicoController extends Controller
         }
 
         $filters = $request->only(['data', 'setor_id', 'tecnico_id', 'concluida']);
-        $filters['concluida'] = $request->query('concluida', '0');
+        $filters['concluida'] = $request->has('concluida')
+            ? $request->query('concluida')
+            : '0'; // default nao concluidas, mas respeita "Todas" se vier vazio
 
         $ordens = OrdemServico::with(['setor', 'tecnicos:id,name', 'gestores:id,name'])
             ->when(!empty($filters['data']), function ($q) use ($filters) {
@@ -190,7 +192,16 @@ class OrdemServicoController extends Controller
      */
     public function edit(OrdemServico $orden)
     {
-        $this->exigeAdmin();
+        $user = auth()->user();
+
+        $isAdmin = $user?->hasRole('admin') ?? false;
+        $isVisualizador = $user?->hasRole('visualizador') ?? false;
+
+        if (! $isAdmin && ! $isVisualizador) {
+            abort(403, 'Apenas administradores ou visualizadores (autor da OS) podem editar.');
+        }
+
+        // visualizador só pode editar se for autor e OS em aberto, sem atribuições (validado no helper)
         $this->autorizaVisualizador($orden, true);
 
         $ordem = $orden->load([
@@ -223,7 +234,31 @@ class OrdemServicoController extends Controller
      */
     public function update(Request $request, OrdemServico $orden)
     {
-        $this->exigeAdmin();
+        $user = auth()->user();
+        $isAdmin = $user?->hasRole('admin') ?? false;
+        $isVisualizador = $user?->hasRole('visualizador') ?? false;
+
+        if (! $isAdmin && ! $isVisualizador) {
+            abort(403, 'Apenas administradores ou visualizadores (autor da OS) podem editar.');
+        }
+
+        // Visualizador (autor) s¢ pode alterar a descri‡Æo enquanto a OS est  aberta
+        if ($isVisualizador && ! $isAdmin) {
+            $this->autorizaVisualizador($orden, true);
+
+            $data = $request->validate([
+                'descricao' => ['required', 'string'],
+            ]);
+
+            $orden->update([
+                'descricao' => $data['descricao'],
+            ]);
+
+            return redirect()
+                ->route('ordens.show', $orden)
+                ->with('success', 'Ordem de servi‡o atualizada com sucesso.');
+        }
+
         $this->autorizaVisualizador($orden, true);
 
         $ordem = $orden;
