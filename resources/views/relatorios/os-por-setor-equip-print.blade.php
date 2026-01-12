@@ -6,9 +6,12 @@
     <style>
         :root {
             --ink: #111827;
-            --muted: #4b5563;
+            --muted: #6b7280;
             --border: #e5e7eb;
-            --bg: #f7f9fc;
+            --bg: #f3f4f6;
+            --card: #ffffff;
+            --accent: #8DC63F;
+            --shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
         }
         @page {
             size: A4 landscape;
@@ -17,27 +20,31 @@
         * { box-sizing: border-box; }
         body {
             margin: 0;
-            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-family: "Josefin Sans", "Figtree", "Helvetica Neue", Arial, sans-serif;
             color: var(--ink);
             background: var(--bg);
         }
         .page {
-            background: #fff;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 16px 20px;
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
         }
         header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            border-bottom: 2px solid var(--ink);
-            padding-bottom: 10px;
-            margin-bottom: 14px;
+            gap: 16px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 14px 16px;
+            box-shadow: var(--shadow);
         }
         .title h1 {
             margin: 0;
-            font-size: 22px;
+            font-size: 20px;
+            font-weight: 700;
             letter-spacing: 0.2px;
         }
         .title p {
@@ -49,29 +56,33 @@
             text-align: right;
             font-size: 12px;
             color: var(--muted);
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
         }
         .meta strong { color: var(--ink); }
         .pill-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 8px;
-            margin-bottom: 14px;
+            gap: 10px;
+            margin: 0;
         }
         .pill {
             border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 8px 10px;
-            background: #fff;
+            border-radius: 12px;
+            padding: 10px 12px;
+            background: #f9fafb;
         }
         .pill .label {
             text-transform: uppercase;
             font-size: 10px;
             color: var(--muted);
-            letter-spacing: 0.5px;
+            letter-spacing: 0.08em;
             margin-bottom: 4px;
+            font-weight: 600;
         }
         .pill .value {
-            font-weight: 700;
+            font-weight: 600;
             font-size: 14px;
             color: var(--ink);
         }
@@ -79,23 +90,26 @@
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 12px;
-            margin-top: 10px;
+            margin: 0;
         }
         .card {
             border: 1px solid var(--border);
-            border-radius: 6px;
-            background: #fff;
-            padding: 10px 12px;
+            border-radius: 16px;
+            background: var(--card);
+            padding: 12px 14px;
+            box-shadow: var(--shadow);
         }
         .card h3 {
-            margin: 0 0 8px;
-            font-size: 15px;
+            margin: 0 0 10px;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
         }
         .item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 6px 0;
+            padding: 8px 0;
             border-top: 1px solid var(--border);
         }
         .item:first-child { border-top: none; }
@@ -104,7 +118,12 @@
         .item-total { font-weight: 700; font-size: 15px; color: var(--ink); }
         @media print {
             body { background: #fff; }
-            .page { border: none; border-radius: 0; }
+            .page { padding: 0; }
+            header,
+            .pill,
+            .card {
+                box-shadow: none;
+            }
         }
     </style>
 </head>

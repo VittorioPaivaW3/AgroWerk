@@ -23,7 +23,7 @@
                 </a>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border border-gray-100 dark:border-gray-800">
+            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro border border-gray-100 dark:border-gray-800">
                 <div class="px-6 py-5 space-y-3">
                     <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                         <div>
@@ -61,7 +61,7 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border border-gray-100 dark:border-gray-800">
+                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro border border-gray-100 dark:border-gray-800">
                     <div class="px-5 py-4">
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Ranking de setores</h3>
@@ -87,7 +87,7 @@
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border border-gray-100 dark:border-gray-800">
+                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro border border-gray-100 dark:border-gray-800">
                     <div class="px-5 py-4">
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Ranking de equipamentos</h3>

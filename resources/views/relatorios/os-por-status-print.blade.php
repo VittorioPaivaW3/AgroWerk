@@ -11,10 +11,12 @@
     <style>
         :root {
             --ink: #111827;
-            --muted: #4b5563;
+            --muted: #6b7280;
             --border: #e5e7eb;
-            --accent: #0f766e;
-            --bg: #f7f9fc;
+            --bg: #f3f4f6;
+            --card: #ffffff;
+            --accent: #8DC63F;
+            --shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
         }
         @page {
             size: A4 landscape;
@@ -23,27 +25,31 @@
         * { box-sizing: border-box; }
         body {
             margin: 0;
-            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-family: "Josefin Sans", "Figtree", "Helvetica Neue", Arial, sans-serif;
             color: var(--ink);
             background: var(--bg);
         }
         .page {
-            background: #fff;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 16px 20px;
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
         }
         header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            border-bottom: 2px solid var(--ink);
-            padding-bottom: 10px;
-            margin-bottom: 14px;
+            gap: 16px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 14px 16px;
+            box-shadow: var(--shadow);
         }
         .title h1 {
             margin: 0;
-            font-size: 22px;
+            font-size: 20px;
+            font-weight: 700;
             letter-spacing: 0.2px;
         }
         .title p {
@@ -55,6 +61,9 @@
             text-align: right;
             font-size: 12px;
             color: var(--muted);
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
         }
         .meta strong {
             color: var(--ink);
@@ -62,24 +71,25 @@
         .pill-grid {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 8px;
-            margin-bottom: 14px;
+            gap: 10px;
+            margin: 0;
         }
         .pill {
             border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 8px 10px;
-            background: #fff;
+            border-radius: 12px;
+            padding: 10px 12px;
+            background: #f9fafb;
         }
         .pill .label {
             text-transform: uppercase;
             font-size: 10px;
             color: var(--muted);
-            letter-spacing: 0.5px;
+            letter-spacing: 0.08em;
             margin-bottom: 4px;
+            font-weight: 600;
         }
         .pill .value {
-            font-weight: 700;
+            font-weight: 600;
             font-size: 14px;
             color: var(--ink);
         }
@@ -87,18 +97,20 @@
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 10px;
-            margin-bottom: 16px;
+            margin: 0;
         }
         .kpi {
             border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 10px 12px;
-            background: #fff;
+            border-radius: 12px;
+            padding: 12px 14px;
+            background: var(--card);
+            box-shadow: var(--shadow);
         }
         .kpi .kpi-title {
             font-size: 13px;
             font-weight: 600;
             margin: 0;
+            color: var(--ink);
         }
         .kpi .kpi-number {
             margin: 8px 0 4px;
@@ -110,24 +122,52 @@
             color: var(--muted);
             margin: 0;
         }
-        table {
+        .table-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        .table-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 12px;
+            padding: 12px 16px 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        .table-head h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+        }
+        .table-wrap {
+            overflow: hidden;
+        }
+        .report-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 6px;
             font-size: 12px;
         }
-        th, td {
+        .report-table th,
+        .report-table td {
             padding: 8px 10px;
-            border: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
         }
-        th {
+        .report-table th {
             text-align: left;
-            background: #eef2f7;
+            background: #f8fafc;
             font-size: 11px;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.08em;
             text-transform: uppercase;
+            color: var(--muted);
         }
-        td.desc {
+        .report-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .report-table td.desc {
             max-width: 340px;
         }
         @media print {
@@ -135,8 +175,13 @@
                 background: #fff;
             }
             .page {
-                border: none;
-                border-radius: 0;
+                padding: 0;
+            }
+            header,
+            .pill,
+            .kpi,
+            .table-card {
+                box-shadow: none;
             }
         }
     </style>
@@ -192,48 +237,53 @@
                 </div>
             @endforeach
         </div>
-
-        <h3 style="margin: 12px 0 8px; font-size: 15px; letter-spacing: 0.2px;">Detalhamento das OS</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 8%;">Código</th>
-                    <th style="width: 12%;">Status</th>
-                    <th style="width: 20%;">Setor</th>
-                    <th style="width: 18%;">Equipamento</th>
-                    <th style="width: 14%;">Criada em</th>
-                    <th>Descrição</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($ordens as $ordem)
-                    @php
-                        $statusKey = $ordem->status ?? '';
-                        $statusLabel = $statusLabels[$statusKey] ?? Str::title(str_replace('_', ' ', $statusKey));
-                        $setorNome = $ordem->setor->nome
-                            ?? $ordem->equipamento->setor->nome
-                            ?? '-';
-                        $descricaoCurta = $ordem->descricao
-                            ? Str::limit(strip_tags($ordem->descricao), 160)
-                            : '-';
-                    @endphp
-                    <tr>
-                        <td>#{{ $ordem->codigo ?? $ordem->id }}</td>
-                        <td>{{ $statusLabel }}</td>
-                        <td>{{ $setorNome }}</td>
-                        <td>{{ $ordem->equipamento->nome ?? '-' }}</td>
-                        <td>{{ $ordem->created_at?->format('d/m/Y H:i') }}</td>
-                        <td class="desc">{{ $descricaoCurta }}</td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="6" style="text-align:center; color: var(--muted); padding: 14px;">
-                            Nenhuma OS encontrada para o período selecionado.
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+        <div class="table-card">
+            <div class="table-head">
+                <h3>Detalhamento das OS</h3>
+            </div>
+            <div class="table-wrap">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 8%;">Código</th>
+                            <th style="width: 12%;">Status</th>
+                            <th style="width: 20%;">Setor</th>
+                            <th style="width: 18%;">Equipamento</th>
+                            <th style="width: 14%;">Criada em</th>
+                            <th>Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($ordens as $ordem)
+                            @php
+                                $statusKey = $ordem->status ?? '';
+                                $statusLabel = $statusLabels[$statusKey] ?? Str::title(str_replace('_', ' ', $statusKey));
+                                $setorNome = $ordem->setor->nome
+                                    ?? $ordem->equipamento->setor->nome
+                                    ?? '-';
+                                $descricaoCurta = $ordem->descricao
+                                    ? Str::limit(strip_tags($ordem->descricao), 160)
+                                    : '-';
+                            @endphp
+                            <tr>
+                                <td>#{{ $ordem->codigo ?? $ordem->id }}</td>
+                                <td>{{ $statusLabel }}</td>
+                                <td>{{ $setorNome }}</td>
+                                <td>{{ $ordem->equipamento->nome ?? '-' }}</td>
+                                <td>{{ $ordem->created_at?->format('d/m/Y H:i') }}</td>
+                                <td class="desc">{{ $descricaoCurta }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" style="text-align:center; color: var(--muted); padding: 14px;">
+                                    Nenhuma OS encontrada para o período selecionado.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -242,3 +292,7 @@
     </script>
 </body>
 </html>
+
+
+
+

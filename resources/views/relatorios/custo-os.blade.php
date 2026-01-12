@@ -29,7 +29,7 @@
                 </a>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border border-gray-100 dark:border-gray-800">
+            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro border border-gray-100 dark:border-gray-800">
                 <div class="px-6 py-5 space-y-4">
                     <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                         <div>
@@ -79,7 +79,7 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border border-gray-100 dark:border-gray-800 px-5 py-4">
+                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro border border-gray-100 dark:border-gray-800 px-5 py-4">
                     <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Custo total</p>
                     <p class="mt-2 text-2xl font-bold text-gray-900 dark:text-gray-100">
                         {{ $formatMoney($totalCustoGeral) ?? 'Sem dados' }}
@@ -88,7 +88,7 @@
                         Materiais + mão de obra (se houver) das OS filtradas.
                     </p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border border-gray-100 dark:border-gray-800 px-5 py-4">
+                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro border border-gray-100 dark:border-gray-800 px-5 py-4">
                     <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Custo materiais</p>
                     <p class="mt-2 text-2xl font-bold text-gray-900 dark:text-gray-100">
                         {{ $formatMoney($totalCustoMaterial) ?? 'Sem dados' }}
@@ -97,7 +97,7 @@
                         Somente campo custo_total.
                     </p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border border-gray-100 dark:border-gray-800 px-5 py-4">
+                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro border border-gray-100 dark:border-gray-800 px-5 py-4">
                     <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Custo mão de obra</p>
                     <p class="mt-2 text-2xl font-bold text-gray-900 dark:text-gray-100">
                         {{ $formatMoney($totalCustoMaoObra) ?? 'Sem dados' }}
@@ -109,7 +109,7 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border border-gray-100 dark:border-gray-800 px-5 py-4">
+                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro border border-gray-100 dark:border-gray-800 px-5 py-4">
                     <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Custo médio (materiais)</p>
                     <p class="mt-2 text-2xl font-bold text-gray-900 dark:text-gray-100">
                         {{ $formatMoney($custoMedioMaterial) ?? 'Sem dados' }}
@@ -118,7 +118,7 @@
                         Sobre {{ $comCustoMaterialCount }} OS com custo_total informado.
                     </p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border border-gray-100 dark:border-gray-800 px-5 py-4">
+                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro border border-gray-100 dark:border-gray-800 px-5 py-4">
                     <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Custo médio (total)</p>
                     <p class="mt-2 text-2xl font-bold text-gray-900 dark:text-gray-100">
                         {{ $formatMoney($custoMedioGeral) ?? 'Sem dados' }}
@@ -129,7 +129,7 @@
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg">
+            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro">
                 <div class="px-6 py-4">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Ordens no período</h3>

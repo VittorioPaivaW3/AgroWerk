@@ -23,7 +23,7 @@
                 </a>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border border-gray-100 dark:border-gray-800">
+            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro border border-gray-100 dark:border-gray-800">
                 <div class="px-6 py-5 space-y-4">
                     <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                         <div>
@@ -85,7 +85,7 @@
                         $valor = $card['dados']['formatado'] ?? null;
                         $consideradas = $card['dados']['consideradas'] ?? 0;
                     @endphp
-                    <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border border-gray-100 dark:border-gray-800 px-5 py-4">
+                    <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro border border-gray-100 dark:border-gray-800 px-5 py-4">
                         <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $card['titulo'] }}</p>
                         <p class="mt-2 text-2xl font-bold text-gray-900 dark:text-gray-100">
                             {{ $valor ?? 'Sem dados' }}
@@ -97,7 +97,7 @@
                 @endforeach
             </div>
 
-            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg">
+            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro">
                 <div class="px-6 py-4">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Ordens no período</h3>

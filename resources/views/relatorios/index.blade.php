@@ -30,16 +30,12 @@
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
 
                 {{-- 1. OS por status / período --}}
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg flex flex-col">
+                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border border-gray-200 dark:border-white/10 border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro flex flex-col">
                     <div class="px-5 py-4 flex-1 flex flex-col">
                         <div class="flex items-center justify-between">
                             <h4 class="text-base font-semibold text-gray-900 dark:text-gray-100">
                                 OS por status e período
                             </h4>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold
-                                         bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                Pronto
-                            </span>
                         </div>
                         <p class="mt-2 text-sm text-gray-600 dark:text-gray-400 flex-1">
                             Quantidade de ordens abertas, em execução, concluídas e canceladas
@@ -58,16 +54,12 @@
                 </div>
 
                 {{-- 2. Tempo médio de atendimento --}}
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg flex flex-col">
+                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border border-gray-200 dark:border-white/10 border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro flex flex-col">
                     <div class="px-5 py-4 flex-1 flex flex-col">
                         <div class="flex items-center justify-between">
                             <h4 class="text-base font-semibold text-gray-900 dark:text-gray-100">
                                 Tempo médio de atendimento
                             </h4>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold
-                                         bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                Pronto
-                            </span>
                         </div>
                         <p class="mt-2 text-sm text-gray-600 dark:text-gray-400 flex-1">
                             Mede o tempo entre abertura, início de execução e conclusão das OS.
@@ -86,16 +78,12 @@
                 </div>
 
                 {{-- 3. Custo das OS por período --}}
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg flex flex-col">
+                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border border-gray-200 dark:border-white/10 border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro flex flex-col">
                     <div class="px-5 py-4 flex-1 flex flex-col">
                         <div class="flex items-center justify-between">
                             <h4 class="text-base font-semibold text-gray-900 dark:text-gray-100">
                                 Custo das OS por período
                             </h4>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold
-                                         bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                Pronto
-                            </span>
                         </div>
                         <p class="mt-2 text-sm text-gray-600 dark:text-gray-400 flex-1">
                             Soma de custos de mão de obra e custos totais das ordens concluídas
@@ -114,16 +102,12 @@
                 </div>
 
                 {{-- 4. OS por setor / equipamento --}}
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg flex flex-col">
+                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border border-gray-200 dark:border-white/10 border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro flex flex-col">
                     <div class="px-5 py-4 flex-1 flex flex-col">
                         <div class="flex items-center justify-between">
                             <h4 class="text-base font-semibold text-gray-900 dark:text-gray-100">
                                 OS por setor e equipamento
                             </h4>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold
-                                         bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                Pronto
-                            </span>
                         </div>
                         <p class="mt-2 text-sm text-gray-600 dark:text-gray-400 flex-1">
                             Ranking de setores e equipamentos com maior número de ocorrências,
@@ -142,16 +126,12 @@
                 </div>
 
                 {{-- 5. Produtividade por técnico --}}
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg flex flex-col">
+                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border border-gray-200 dark:border-white/10 border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro flex flex-col">
                     <div class="px-5 py-4 flex-1 flex flex-col">
                         <div class="flex items-center justify-between">
                             <h4 class="text-base font-semibold text-gray-900 dark:text-gray-100">
                                 Produtividade por técnico
                             </h4>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold
-                                         bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                Pronto
-                            </span>
                         </div>
                         <p class="mt-2 text-sm text-gray-600 dark:text-gray-400 flex-1">
                             Quantidade de OS executadas, tempo médio por OS e custo estimado
@@ -170,16 +150,12 @@
                 </div>
 
                 {{-- 6. Projetos / investimentos --}}
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg flex flex-col">
+                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border border-gray-200 dark:border-white/10 border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro flex flex-col">
                     <div class="px-5 py-4 flex-1 flex flex-col">
                         <div class="flex items-center justify-between">
                             <h4 class="text-base font-semibold text-gray-900 dark:text-gray-100">
                                 Projetos e investimentos
                             </h4>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold
-                                         bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                Pronto
-                            </span>
                         </div>
                         <p class="mt-2 text-sm text-gray-600 dark:text-gray-400 flex-1">
                             Visão dos projetos cadastrados, comparando orçamento previsto x

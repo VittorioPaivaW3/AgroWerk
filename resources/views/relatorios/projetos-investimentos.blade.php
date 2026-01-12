@@ -29,7 +29,7 @@
                 </a>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border border-gray-100 dark:border-gray-800">
+            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro border border-gray-100 dark:border-gray-800">
                 <div class="px-6 py-5 space-y-4">
                     <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                         <div>
@@ -77,7 +77,7 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border border-gray-100 dark:border-gray-800 px-5 py-4">
+                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro border border-gray-100 dark:border-gray-800 px-5 py-4">
                     <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Total de projetos</p>
                     <p class="mt-2 text-2xl font-bold text-gray-900 dark:text-gray-100">
                         {{ $totalProjetos }}
@@ -86,7 +86,7 @@
                         Projetos no período filtrado.
                     </p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border border-gray-100 dark:border-gray-800 px-5 py-4">
+                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro border border-gray-100 dark:border-gray-800 px-5 py-4">
                     <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Variação total</p>
                     <p class="mt-2 text-2xl font-bold text-gray-900 dark:text-gray-100">
                         {{ $formatMoney($totalVariacao) ?? 'Sem dados' }}
@@ -95,7 +95,7 @@
                         Real - Previsto (soma de todos).
                     </p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border border-gray-100 dark:border-gray-800 px-5 py-4">
+                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro border border-gray-100 dark:border-gray-800 px-5 py-4">
                     <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Orçamento médio (real)</p>
                     <p class="mt-2 text-2xl font-bold text-gray-900 dark:text-gray-100">
                         {{ $totalProjetos ? $formatMoney($totalReal / max($totalProjetos,1)) : 'Sem dados' }}
@@ -106,7 +106,7 @@
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg">
+            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro">
                 <div class="px-6 py-4">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Projetos no período</h3>

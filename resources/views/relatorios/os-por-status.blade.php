@@ -49,7 +49,7 @@
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg">
+            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro">
                 <div class="px-6 py-5 space-y-3">
                     <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                         <div>
@@ -93,16 +93,10 @@
                         $count = (int)($statusCounts[$statusKey] ?? 0);
                         $label = $statusLabels[$statusKey] ?? Str::title(str_replace('_', ' ', $statusKey));
                         $percent = $totalGeral > 0 ? round(($count / $totalGeral) * 100) : 0;
-                        $chipClass = match ($statusKey) {
-                            'aberta' => 'bg-yellow-50 text-yellow-800 border-yellow-200',
-                            'em_execucao' => 'bg-blue-50 text-blue-800 border-blue-200',
-                            'concluida' => 'bg-emerald-50 text-emerald-800 border-emerald-200',
-                            'cancelada' => 'bg-red-50 text-red-800 border-red-200',
-                            default => 'bg-gray-100 text-gray-700 border-gray-200',
-                        };
+                        $chipClass = 'bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-900/40 dark:text-gray-200 dark:border-gray-700';
                     @endphp
 
-                    <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border border-gray-100 dark:border-gray-800">
+                    <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro border border-gray-100 dark:border-gray-800">
                         <div class="px-5 py-4 space-y-2">
                             <div class="flex items-center justify-between">
                                 <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $label }}</p>
@@ -117,7 +111,7 @@
                 @endforeach
             </div>
 
-            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg">
+            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-t-4 border-t-verdes-verde_claro dark:border-t-verdes-verde_claro">
                 <div class="px-6 py-4">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Ordens no período</h3>
@@ -149,13 +143,7 @@
                                         $descricaoCurta = $ordem->descricao
                                             ? Str::limit(strip_tags($ordem->descricao), 110)
                                             : '-';
-                                        $statusChip = match ($statusKey) {
-                                            'aberta' => 'bg-yellow-50 text-yellow-800 border-yellow-200',
-                                            'em_execucao' => 'bg-blue-50 text-blue-800 border-blue-200',
-                                            'concluida' => 'bg-emerald-50 text-emerald-800 border-emerald-200',
-                                            'cancelada' => 'bg-red-50 text-red-800 border-red-200',
-                                            default => 'bg-gray-100 text-gray-700 border-gray-200',
-                                        };
+                                        $statusChip = 'bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-900/40 dark:text-gray-200 dark:border-gray-700';
                                     @endphp
                                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-900/40">
                                         <td class="px-3 py-2 text-sm text-gray-900 dark:text-gray-100 whitespace-nowrap">#{{ $ordem->codigo ?? $ordem->id }}</td>
