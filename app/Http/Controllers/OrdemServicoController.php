@@ -147,6 +147,7 @@ class OrdemServicoController extends Controller
                     'nome_original'    => $file->getClientOriginalName(),
                     'mime_type'        => $file->getClientMimeType(),
                     'size'             => $file->getSize(),
+                    'is_conclusao'     => false,
                 ]);
             }
         }
@@ -343,6 +344,7 @@ class OrdemServicoController extends Controller
                     'nome_original' => $file->getClientOriginalName(),
                     'mime_type'     => $file->getClientMimeType(),
                     'size'          => $file->getSize(),
+                    'is_conclusao'  => false,
                 ]);
             }
         }
@@ -443,32 +445,51 @@ class OrdemServicoController extends Controller
     }
 
     /**
-     * Técnico conclui a OS.
+     * Tecnico conclui a OS.
      */
-    public function concluir(OrdemServico $orden)
+    public function concluir(Request $request, OrdemServico $orden)
     {
         $ordem = $orden;
         $user  = Auth::user();
 
-        // Garante que o usuário é um técnico atribuído
+        // Garante que o usuario e um tecnico atribuido
         $ehTecnicoDaOrdem = $ordem->tecnicos()->where('users.id', $user->id)->exists();
 
         if (!$ehTecnicoDaOrdem) {
-            abort(403, 'Você não tem permissão para concluir esta OS.');
+            abort(403, 'Voce nao tem permissao para concluir esta OS.');
         }
 
         if ($ordem->status !== 'em_execucao') {
-            return back()->with('error', 'Só é possível concluir ordens EM EXECUÇÃO.');
+            return back()->with('error', 'So e possivel concluir ordens EM EXECUCAO.');
         }
+
+        $data = $request->validate([
+            'observacao_conclusao' => ['nullable', 'string'],
+            'anexo_conclusao'      => ['nullable', 'file', 'mimes:jpg,jpeg,png', 'max:2048'],
+        ]);
 
         $ordem->status = 'concluida';
         $ordem->fim_execucao_em = now();
+        $ordem->observacao_conclusao = $data['observacao_conclusao'] ?? $ordem->observacao_conclusao;
         $ordem->save();
 
-        return back()->with('success', 'Ordem concluída com sucesso.');
-    }
+        if ($request->hasFile('anexo_conclusao') && $request->file('anexo_conclusao')) {
+            $file = $request->file('anexo_conclusao');
+            $path = $file->store('ordens/anexos', 'public');
 
-    protected function autorizaVisualizador(OrdemServico $ordem, bool $paraEditar = false): void
+            OrdemServicoAnexo::create([
+                'ordem_servico_id' => $ordem->id,
+                'path'             => $path,
+                'nome_original'    => $file->getClientOriginalName(),
+                'mime_type'        => $file->getClientMimeType(),
+                'size'             => $file->getSize(),
+                'is_conclusao'     => true,
+            ]);
+        }
+
+        return back()->with('success', 'Ordem concluida com sucesso.');
+    }
+protected function autorizaVisualizador(OrdemServico $ordem, bool $paraEditar = false): void
     {
         $user = auth()->user();
 
@@ -545,3 +566,5 @@ class OrdemServicoController extends Controller
         }
     }
 }
+
+

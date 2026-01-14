@@ -31,7 +31,7 @@
                     <div class="max-w-xs space-y-2">
                         <h2 class="text-lg font-semibold">Bem-vindo de volta!</h2>
                         <p class="text-xs text-white/80">
-                            Entre para acessar sua conta e acompanhar as manutencoes.
+                            Entre para acessar sua conta e acompanhar as manutenções
                         </p>
                     </div>
 
@@ -105,12 +105,6 @@
                                        name="remember">
                                 Lembrar de mim
                             </label>
-
-                            @if (Route::has('password.request'))
-                                <a class="font-semibold text-verdes-verde_claro hover:text-verdes-verde_folha transition" href="{{ route('password.request') }}">
-                                    Esqueceu sua senha?
-                                </a>
-                            @endif
                         </div>
 
                         <x-primary-button class="w-full justify-center rounded-lg bg-verdes-verde_claro hover:bg-verdes-verde_folha text-white text-sm normal-case tracking-normal py-2.5 focus:ring-verdes-verde_claro focus:ring-offset-0">

@@ -19,6 +19,7 @@ class OrdemServico extends Model
         'tipo',
         'prioridade',
         'descricao',
+        'observacao_conclusao',
         'status',
         'previsao_conclusao',
         'inicio_execucao_em',

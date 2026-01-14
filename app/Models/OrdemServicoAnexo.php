@@ -12,6 +12,7 @@ class OrdemServicoAnexo extends Model
         'nome_original',
         'mime_type',
         'size',
+        'is_conclusao',
     ];
 
     public function ordemServico()

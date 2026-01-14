@@ -290,6 +290,18 @@
                         {{ $ordem->descricao ?: 'Nenhuma descrição informada.' }}
                     </p>
                 </div>
+                @if($ordem->observacao_conclusao)
+                    <div class="mt-3">
+                        <p class="text-[11px] uppercase text-gray-500 dark:text-gray-400 font-semibold">
+                            Observacao da conclusao
+                        </p>
+                        <div class="mt-1 rounded-md border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-900/60 px-3 py-3">
+                            <p class="text-sm text-gray-900 dark:text-gray-100 whitespace-pre-line">
+                                {{ $ordem->observacao_conclusao }}
+                            </p>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
@@ -327,7 +339,7 @@
                         @endphp
 
                         <div class="border border-gray-100 dark:border-gray-700 rounded-md p-3 flex flex-col gap-2">
-                            <div class="flex items-center justify-between gap-3 text-sm">
+                            <div class="flex items-start justify-between gap-3 text-sm">
                                 <div class="flex items-center gap-2 min-w-0">
                                     <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-200 text-xs">
                                         {{ strtoupper($ext) }}
@@ -343,6 +355,11 @@
                                 </div>
 
                                 <div class="flex items-center gap-2">
+                                    @if($anexo->is_conclusao)
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-sky-100 text-sky-700 border border-sky-200">
+                                            Conclusao
+                                        </span>
+                                    @endif
                                     <a href="{{ $url }}"
                                     target="_blank"
                                     class="text-emerald-600 hover:text-emerald-900 dark:text-emerald-400 dark:hover:text-emerald-300 text-[11px] font-semibold">
@@ -381,8 +398,11 @@
 
 </div>
 
-            {{-- Rodapé ajustes --}}
-            <div class="flex flex-wrap items-center justify-end gap-2 pt-1">
+            {{-- Rodape ajustes --}}
+            <div
+                class="flex flex-wrap items-center justify-end gap-2 pt-1"
+                x-data="{ concluirModal: @json($errors->has('observacao_conclusao') || $errors->has('anexo_conclusao')) }"
+            >
                 {{-- Voltar --}}
                 @php
                     $user = auth()->user();
@@ -401,7 +421,7 @@
                     Voltar para lista
                 </a>
 
-                {{-- Ações do técnico --}}
+                {{-- Acoes do tecnico --}}
                 @if($ehTecnicoDaOrdem)
                     <div class="flex items-center gap-2">
                         @if($ordem->status === 'aberta')
@@ -414,18 +434,91 @@
                                 </button>
                             </form>
                         @elseif($ordem->status === 'em_execucao')
-                            <form action="{{ route('ordens.concluir', $ordem) }}" method="POST">
-                                @csrf
-                                <button type="submit"
-                                    class="inline-flex items-center h-9 px-4 bg-verdes-verde_claro hover:bg-verdes-verde_folha border0 rounded-md
-                                        text-[11px] font-semibold text-white uppercase tracking-widest leading-none shadow-sm">
-                                    Concluir ordem
-                                </button>
-                            </form>
+                            <button type="button"
+                                @click="concluirModal = true"
+                                class="inline-flex items-center h-9 px-4 bg-verdes-verde_claro hover:bg-verdes-verde_folha border0 rounded-md
+                                    text-[11px] font-semibold text-white uppercase tracking-widest leading-none shadow-sm">
+                                Concluir ordem
+                            </button>
                         @endif
+                    </div>
+
+                    {{-- Modal Concluir --}}
+                    <div
+                        x-cloak
+                        x-show="concluirModal"
+                        x-transition.opacity
+                        class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+                    ></div>
+                    <div
+                        x-cloak
+                        x-show="concluirModal"
+                        x-transition
+                        class="fixed inset-0 z-50 flex items-center justify-center px-4"
+                    >
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg border border-gray-200 dark:border-gray-700">
+                            <div class="px-5 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs uppercase font-semibold text-gray-500 dark:text-gray-400">Conclusao da OS</p>
+                                    <p class="text-sm text-gray-900 dark:text-gray-100 font-semibold mt-0.5">{{ $ordem->codigo ?? $ordem->id }}</p>
+                                </div>
+                                <button type="button" class="text-gray-400 hover:text-gray-600" @click="concluirModal = false">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <form action="{{ route('ordens.concluir', $ordem) }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                <div class="px-5 py-4 space-y-4">
+                                    <div>
+                                        <label for="observacao_conclusao" class="text-[11px] uppercase text-gray-500 dark:text-gray-400 font-semibold">
+                                            Observacao (opcional)
+                                        </label>
+                                        <textarea
+                                            id="observacao_conclusao"
+                                            name="observacao_conclusao"
+                                            rows="3"
+                                            class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro"
+                                            placeholder="Descreva o que foi feito ou observado ao concluir"
+                                        >{{ old('observacao_conclusao') }}</textarea>
+                                        @error('observacao_conclusao')
+                                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <div>
+                                        <label for="anexo_conclusao" class="text-[11px] uppercase text-gray-500 dark:text-gray-400 font-semibold">
+                                            Foto da execucao (opcional)
+                                        </label>
+                                        <input
+                                            type="file"
+                                            name="anexo_conclusao"
+                                            id="anexo_conclusao"
+                                            accept=".jpg,.jpeg,.png"
+                                            class="mt-1 block w-full text-sm text-gray-900 dark:text-gray-100 file:mr-3 file:py-2 file:px-3 file:rounded-md file:border-0 file:text-[11px] file:uppercase file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 dark:file:bg-gray-700 dark:file:text-gray-200"
+                                        >
+                                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Formatos JPG ou PNG, ate 2MB.</p>
+                                        @error('anexo_conclusao')
+                                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="px-5 py-3 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-2">
+                                    <button type="button"
+                                        @click="concluirModal = false"
+                                        class="inline-flex items-center h-9 px-4 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-[11px] font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-widest leading-none">
+                                        Cancelar
+                                    </button>
+                                    <button type="submit"
+                                        class="inline-flex items-center h-9 px-4 rounded-md bg-verdes-verde_claro hover:bg-verdes-verde_folha text-white text-[11px] font-semibold uppercase tracking-widest leading-none shadow-sm">
+                                        Concluir OS
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 @endif
             </div>
         </div>
     </div>
 </x-app-layout>
+

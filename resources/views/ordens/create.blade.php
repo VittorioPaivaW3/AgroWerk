@@ -117,7 +117,6 @@
                                     <option value="baixo" @selected(old('prioridade') === 'baixo')>Baixo</option>
                                     <option value="medio" @selected(old('prioridade') === 'medio')>Médio</option>
                                     <option value="alto" @selected(old('prioridade') === 'alto')>Alto</option>
-                                    <option value="muito_alto" @selected(old('prioridade') === 'muito_alto')>Muito Alto</option>
                                 </select>
                                 @error('prioridade')
                                     <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
