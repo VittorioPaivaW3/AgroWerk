@@ -6,6 +6,8 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'Laravel') }}</title>
+        <link rel="icon" type="image/svg+xml" href="{{ asset('imagem/Logo-AgroWerk.svg') }}" media="(prefers-color-scheme: light)">
+        <link rel="icon" type="image/png" href="{{ asset('imagem/Logo_AgroWerk_white.png') }}" media="(prefers-color-scheme: dark)">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
