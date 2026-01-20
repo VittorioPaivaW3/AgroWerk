@@ -16,6 +16,10 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'Laravel') }}</title>
+        <link rel="manifest" href="{{ asset('manifest.webmanifest') }}">
+        <meta name="theme-color" content="#00843D">
+        <meta name="application-name" content="{{ config('app.name', 'AgroWerk') }}">
+        <link rel="apple-touch-icon" href="{{ asset('icons/icon-192x192.png') }}">
         <link rel="icon" type="image/svg+xml" href="{{ asset('imagem/Logo-AgroWerk.svg') }}" media="(prefers-color-scheme: light)">
         <link rel="icon" type="image/png" href="{{ asset('imagem/Logo_AgroWerk_white.png') }}" media="(prefers-color-scheme: dark)">
 

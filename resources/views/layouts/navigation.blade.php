@@ -212,6 +212,22 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
+            @unlessrole('visualizador')
+                @unlessrole('tecnico')
+                    <x-responsive-nav-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios.*')">
+                        {{ __('Usuários') }}
+                    </x-responsive-nav-link>
+
+                    <x-responsive-nav-link :href="route('setores.index')" :active="request()->routeIs('setores.*')">
+                        {{ __('Setores') }}
+                    </x-responsive-nav-link>
+                @endunlessrole
+
+                <x-responsive-nav-link :href="route('equipamentos.index')" :active="request()->routeIs('equipamentos.*')">
+                    {{ __('Equipamentos') }}
+                </x-responsive-nav-link>
+            @endunlessrole
+
             @role('visualizador')
                 <x-responsive-nav-link :href="route('dashboard.visualizador')" :active="request()->routeIs('dashboard.visualizador')">
                     {{ __('Meu Painel') }}
@@ -224,13 +240,25 @@
                     {{ __('Dashboard') }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('ordens.index')" :active="request()->routeIs('ordens.*')">
-                    {{ __('Ordens') }}
+                    {{ __('Ordens de Serviço') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('projetos.index')" :active="request()->routeIs('projetos.*')">
+                    {{ __('Projetos') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('relatorios.index')" :active="request()->routeIs('relatorios.*')">
+                    {{ __('Relatórios') }}
                 </x-responsive-nav-link>
             @elserole('tecnico')
                 <x-responsive-nav-link :href="route('tecnico.dashboard')" :active="request()->routeIs('tecnico.dashboard')">
                     {{ __('Painel do Tecnico') }}
                 </x-responsive-nav-link>
             @endrole
+
+            @unlessrole('visualizador')
+                <x-responsive-nav-link :href="route('manutencoes.preventivas.index')" :active="request()->routeIs('manutencoes.preventivas.*')">
+                    {{ __('Manutenção preventiva') }}
+                </x-responsive-nav-link>
+            @endunlessrole
         </div>
 
         <!-- Responsive Settings Options -->
