@@ -33,6 +33,7 @@
         $statusLabel = match ($status) {
             'aberta'       => 'Aberta',
             'em_execucao'  => 'Em execução',
+            'pausada'      => 'Pausada',
             'concluida'    => 'Concluída',
             'cancelada'    => 'Cancelada',
             default        => $statusRaw ? ucfirst(str_replace('_', ' ', $statusRaw)) : '—',
@@ -41,6 +42,7 @@
         $statusClasses = match ($status) {
             'aberta'       => 'bg-verdes-verde_claro/20 text-verdes-verde_escuro border-verdes-verde_claro/40',
             'em_execucao'  => 'bg-amber-50 text-amber-700 border-amber-200',
+            'pausada'      => 'bg-blue-50 text-blue-700 border-blue-200',
             'concluida'    => 'bg-verdes-verde_folha text-white border-verdes-verde_folha',
             'cancelada'    => 'bg-red-50 text-red-700 border-red-200',
             default        => 'bg-gray-50 text-gray-700 border-gray-200',
@@ -76,6 +78,7 @@
                             <span class="h-2 w-2 rounded-full
                                 @if($status === 'aberta') bg-verdes-verde_claro
                                 @elseif($status === 'em_execucao') bg-amber-500
+                                @elseif($status === 'pausada') bg-blue-500
                                 @elseif($status === 'concluida') bg-verdes-verde_folha
                                 @elseif($status === 'cancelada') bg-red-500
                                 @else bg-gray-400 @endif">
@@ -126,6 +129,7 @@
                                     $statusOptions = [
                                         'aberta'      => 'Aberta',
                                         'em_execucao' => 'Em execução',
+                                        'pausada'     => 'Pausada',
                                         'concluida'   => 'Concluída',
                                         'cancelada'   => 'Cancelada',
                                     ];

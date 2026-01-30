@@ -62,10 +62,6 @@
                                 <x-dropdown-link :href="route('equipamentos.index')">
                                     {{ __('Equipamentos') }}
                                 </x-dropdown-link>
-
-                                {{-- <x-dropdown-link :href="route('tecnicos.index')">
-                                    {{ __('Técnicos') }}
-                                </x-dropdown-link> --}}
                             </x-slot>
                         </x-dropdown>
                     @endunlessrole
@@ -108,13 +104,45 @@
                         @endif
                     @endauth
 
-                    @unlessrole('visualizador')
-                        <x-nav-link :href="route('manutencoes.preventivas.index')" :active="request()->routeIs('manutencoes.preventivas.*')">
-                             {{ __('Manutenção preventiva') }}
-                        </x-nav-link>
+                                        @unlessrole('visualizador')
+                        {{-- Dropdown Preventiva --}}
+                        <x-dropdown align="left" width="48">
+                            <x-slot name="trigger">
+                                <button
+                                    type="button"
+                                    class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent
+                                           text-sm font-medium leading-5
+                                           text-gray-500 dark:text-gray-400
+                                           hover:text-verdes-verde_folha dark:hover:text-verdes-verde_claro
+                                           hover:border-verdes-verde_claro/60 dark:hover:border-verdes-verde_claro/40
+                                           focus:outline-none focus:text-verdes-verde_folha dark:focus:text-verdes-verde_claro
+                                           focus:border-verdes-verde_claro/60 dark:focus:border-verdes-verde_claro/40
+                                           transition duration-150 ease-in-out"
+                                >
+                                    Preventiva
+
+                                    <svg class="ms-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                         viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                              d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z"
+                                              clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </x-slot>
+
+                            <x-slot name="content">
+                                <x-dropdown-link :href="route('manutencoes.preventivas.index')">
+                                    {{ __('Manutenção preventiva') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('equipamentos.horimetros')">
+                                    {{ __('Horímetro') }}
+                                </x-dropdown-link>
+                            </x-slot>
+                        </x-dropdown>
                     @endunlessrole
                 </div>
             </div>
+            
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
@@ -257,6 +285,9 @@
             @unlessrole('visualizador')
                 <x-responsive-nav-link :href="route('manutencoes.preventivas.index')" :active="request()->routeIs('manutencoes.preventivas.*')">
                     {{ __('Manutenção preventiva') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('equipamentos.horimetros')" :active="request()->routeIs('equipamentos.horimetros')">
+                    {{ __('Horímetro') }}
                 </x-responsive-nav-link>
             @endunlessrole
         </div>

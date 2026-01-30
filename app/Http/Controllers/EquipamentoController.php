@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Equipamento;
 use App\Models\Setor;
 use App\Models\EquipamentoArquivo;
+use App\Models\ManutencaoAlerta;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -53,6 +55,8 @@ class EquipamentoController extends Controller
             'setor_id'  => ['required', 'exists:setores,id'],
 
             'status'    => ['required', 'in:ativo,inativo,manutencao'],
+            'vida_util_h' => ['nullable', 'integer', 'min:0'],
+            'horimetro'   => ['nullable', 'numeric', 'min:0'],
 
             'manutencao_preventiva' => ['nullable', 'date'],
             'observacoes'           => ['nullable', 'string'],
@@ -68,8 +72,6 @@ class EquipamentoController extends Controller
         ]);
 
         $data['terceiro'] = $request->boolean('terceiro');
-
-        $equipamento = Equipamento::create($data);
 
         // monta campos extras
         $extras = [];
@@ -97,9 +99,12 @@ class EquipamentoController extends Controller
             'cor'                   => $data['cor'] ?? null,
             'setor_id'              => $data['setor_id'],
             'status'                => $data['status'] ?? 'ativo',
+            'vida_util_h'           => $data['vida_util_h'] ?? null,
+            'horimetro'             => $data['horimetro'] ?? null,
             'manutencao_preventiva' => $data['manutencao_preventiva'] ?? null,
             'observacoes'           => $data['observacoes'] ?? null,
             'campos_extras'         => ! empty($extras) ? $extras : null,
+            'terceiro'              => $data['terceiro'] ?? false,
         ]);
 
         // salva anexos (se houver)
@@ -148,6 +153,8 @@ class EquipamentoController extends Controller
             'setor_id'  => ['required', 'exists:setores,id'],
 
             'status'    => ['required', 'in:ativo,inativo,manutencao'],
+            'vida_util_h' => ['nullable', 'integer', 'min:0'],
+            'horimetro'   => ['nullable', 'numeric', 'min:0'],
 
             'manutencao_preventiva' => ['nullable', 'date'],
             'observacoes'           => ['nullable', 'string'],
@@ -162,8 +169,6 @@ class EquipamentoController extends Controller
             'extra_values.*' => ['nullable', 'string'],
         ]);
         $data['terceiro'] = $request->boolean('terceiro');
-
-        $equipamento->update($data);
 
         // monta campos extras
         $extras = [];
@@ -189,9 +194,12 @@ class EquipamentoController extends Controller
             'cor'                   => $data['cor'] ?? null,
             'setor_id'              => $data['setor_id'],
             'status'                => $data['status'] ?? 'ativo',
+            'vida_util_h'           => $data['vida_util_h'] ?? null,
+            'horimetro'             => $data['horimetro'] ?? null,
             'manutencao_preventiva' => $data['manutencao_preventiva'] ?? null,
             'observacoes'           => $data['observacoes'] ?? null,
             'campos_extras'         => ! empty($extras) ? $extras : null,
+            'terceiro'              => $data['terceiro'] ?? false,
         ]);
 
         // adiciona novos anexos sem apagar os antigos
@@ -247,5 +255,119 @@ class EquipamentoController extends Controller
         $filename = $arquivo->nome_original ?? basename($arquivo->path);
 
         return Storage::disk('public')->response($arquivo->path, $filename);
+    }
+
+    /**
+     * Lista equipamentos com vida útil e horímetro para lançamento.
+     */
+    public function horimetros()
+    {
+        $equipamentos = Equipamento::with(['alertas' => function ($q) {
+                $q->orderByDesc('created_at');
+            }])
+            ->select('id', 'nome', 'codigo', 'vida_util_h', 'horimetro')
+            ->orderBy('nome')
+            ->get();
+
+        return view('equipamentos.horimetros', compact('equipamentos'));
+    }
+
+    public function storeHorimetro(Request $request, Equipamento $equipamento)
+    {
+        $data = $request->validate([
+            'horimetro' => ['required', 'numeric', 'min:0'],
+        ]);
+
+        $equipamento->horimetro = ($equipamento->horimetro ?? 0) + $data['horimetro'];
+        $equipamento->save();
+
+        return redirect()
+            ->route('equipamentos.horimetros')
+            ->with('success', 'Horímetro lançado com sucesso!');
+    }
+
+    public function zerarHorimetro(Equipamento $equipamento)
+    {
+        $equipamento->horimetro = 0;
+        $equipamento->save();
+
+        return redirect()
+            ->route('equipamentos.horimetros')
+            ->with('success', 'Horímetro zerado após manutenção.');
+    }
+
+    public function storeAlerta(Request $request)
+    {
+        $data = $request->validate([
+            'equipamento_id'    => ['required', 'exists:equipamentos,id'],
+            'mensagem'          => ['nullable', 'string', 'max:2000'],
+            'tipo'              => ['required', 'in:data,horimetro'],
+            'recorrente'        => ['nullable', 'boolean'],
+            'dias_recorrencia'  => ['nullable', 'integer', 'min:1'],
+            'data_inicio_recorrencia' => ['nullable', 'date'],
+            'data_alerta'       => ['nullable', 'date'],
+            'horimetro_alvo'    => ['nullable', 'numeric', 'min:0'],
+        ]);
+
+        $data['recorrente'] = $request->boolean('recorrente');
+
+        if ($data['tipo'] === 'data') {
+            if ($data['recorrente']) {
+                $request->validate([
+                    'dias_recorrencia' => ['required', 'integer', 'min:1'],
+                    'data_inicio_recorrencia' => ['required', 'date'],
+                ]);
+                $data['data_alerta'] = null; // não usada em recorrente
+            } else {
+                $request->validate([
+                    'data_alerta' => ['required', 'date'],
+                ]);
+                $data['dias_recorrencia'] = null;
+                $data['data_inicio_recorrencia'] = null;
+            }
+            $data['horimetro_alvo'] = null;
+        }
+
+        if ($data['tipo'] === 'horimetro') {
+            $request->validate([
+                'horimetro_alvo' => ['required', 'numeric', 'min:0'],
+            ]);
+            $data['recorrente'] = false;
+            $data['dias_recorrencia'] = null;
+            $data['data_alerta'] = null;
+        }
+
+        ManutencaoAlerta::create($data);
+
+        return redirect()
+            ->route('equipamentos.horimetros')
+            ->with('success', 'Alerta de manutenção criado com sucesso!');
+    }
+
+    /**
+     * Envia um alerta de teste para os gestores/admins usando o primeiro equipamento disponível.
+     */
+    public function testeAlerta()
+    {
+        $equipamento = Equipamento::first();
+        if (! $equipamento) {
+            return redirect()
+                ->route('equipamentos.horimetros')
+                ->with('error', 'Nenhum equipamento cadastrado para enviar alerta de teste.');
+        }
+
+        $alerta = ManutencaoAlerta::create([
+            'equipamento_id'   => $equipamento->id,
+            'mensagem'         => 'Alerta de teste - ignore.',
+            'tipo'             => 'data',
+            'recorrente'       => false,
+            'data_alerta'      => now()->addDay()->toDateString(),
+            'dias_recorrencia' => null,
+            'horimetro_alvo'   => null,
+        ]);
+
+        return redirect()
+            ->route('equipamentos.horimetros')
+            ->with('success', 'Alerta de teste enviado para administradores/gestores.');
     }
 }

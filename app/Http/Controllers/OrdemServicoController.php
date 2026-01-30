@@ -9,6 +9,7 @@ use App\Models\Equipamento;
 use App\Models\OrdemServicoAnexo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class OrdemServicoController extends Controller
 {
@@ -271,7 +272,7 @@ class OrdemServicoController extends Controller
 
         $data = $request->validate([
             'descricao'      => ['nullable', 'string'],
-            'status'         => ['required', 'in:aberta,em_execucao,concluida,cancelada'],
+            'status'         => ['required', 'in:aberta,em_execucao,pausada,concluida,cancelada'],
             'tipo'           => ['nullable', 'in:corretiva,preventiva'],
             'prioridade'     => ['nullable', 'in:baixo,medio,médio,alto,muito_alto'],
             'solicitante_id' => ['nullable', 'exists:users,id'],
@@ -439,6 +440,9 @@ class OrdemServicoController extends Controller
 
         $ordem->status = 'em_execucao';
         $ordem->inicio_execucao_em = now();
+        $ordem->pausada_em = null;
+        $ordem->total_minutos_pausa = 0;
+        $ordem->observacao_pausa = null;
         $ordem->save();
 
         return back()->with('success', 'Ordem colocada em execução.');
@@ -461,6 +465,11 @@ class OrdemServicoController extends Controller
 
         if ($ordem->status !== 'em_execucao') {
             return back()->with('error', 'So e possivel concluir ordens EM EXECUCAO.');
+        }
+
+        // Se existir pausa em aberto, acumula antes de concluir
+        if ($ordem->pausada_em) {
+            $this->acumulaPausa($ordem);
         }
 
         $data = $request->validate([
@@ -489,7 +498,125 @@ class OrdemServicoController extends Controller
 
         return back()->with('success', 'Ordem concluida com sucesso.');
     }
-protected function autorizaVisualizador(OrdemServico $ordem, bool $paraEditar = false): void
+
+    /**
+     * Tecnico pausa a OS em execucao.
+     */
+    public function pausar(Request $request, OrdemServico $orden)
+    {
+        $ordem = $orden;
+        $user  = Auth::user();
+
+        $ehTecnicoDaOrdem = $ordem->tecnicos()->where('users.id', $user->id)->exists();
+
+        if (! $ehTecnicoDaOrdem) {
+            abort(403, 'Você não tem permissão para pausar esta OS.');
+        }
+
+        if ($ordem->status !== 'em_execucao') {
+            return back()->with('error', 'Só é possível pausar ordens EM EXECUÇÃO.');
+        }
+
+        if ($ordem->pausada_em) {
+            return back()->with('error', 'Esta OS já está pausada.');
+        }
+
+        $data = $request->validate([
+            'observacao_pausa' => ['required', 'string'],
+        ], [
+            'observacao_pausa.required' => 'Descreva o motivo da pausa.',
+        ]);
+
+        $ordem->status = 'pausada';
+        $ordem->pausada_em = now();
+        $ordem->observacao_pausa = $data['observacao_pausa'];
+        $ordem->save();
+
+        Log::info('OS pausa iniciada', [
+            'ordem_id'   => $ordem->id,
+            'pausada_em' => $ordem->pausada_em?->toDateTimeString(),
+            'status'     => $ordem->status,
+            'user_id'    => $user->id ?? null,
+        ]);
+
+        return back()->with('success', 'Execução pausada com sucesso.');
+    }
+
+    /**
+     * Tecnico retoma a execucao apos pausa.
+     */
+    public function retomar(OrdemServico $orden)
+    {
+        $ordem = $orden->fresh(); // garante dados atuais do banco
+        $user  = Auth::user();
+
+        $ehTecnicoDaOrdem = $ordem->tecnicos()->where('users.id', $user->id)->exists();
+
+        if (! $ehTecnicoDaOrdem) {
+            abort(403, 'Você não tem permissão para retomar esta OS.');
+        }
+
+        if ($ordem->status !== 'pausada') {
+            return back()->with('error', 'Só é possível retomar ordens pausadas.');
+        }
+
+        if (! $ordem->pausada_em) {
+            return back()->with('error', 'Momento de pausa não registrado nesta OS.');
+        }
+
+        Log::info('OS retomar solicitado', [
+            'ordem_id'   => $ordem->id,
+            'status'     => $ordem->status,
+            'pausada_em' => $ordem->pausada_em?->toDateTimeString(),
+            'total_pausa_atual' => $ordem->total_minutos_pausa,
+            'user_id'    => $user->id ?? null,
+        ]);
+
+        $this->acumulaPausa($ordem);
+        $ordem->status = 'em_execucao';
+        $ordem->save();
+
+        return back()->with('success', 'Execução retomada.');
+    }
+
+    /**
+     * Soma a pausa atual ao total e limpa o marcador de pausa.
+     */
+    private function acumulaPausa(OrdemServico $ordem): void
+    {
+        if (! $ordem->pausada_em) {
+            return;
+        }
+
+        $pausadaEm = $ordem->pausada_em instanceof \Carbon\Carbon
+            ? $ordem->pausada_em->copy()
+            : \Carbon\Carbon::parse($ordem->pausada_em);
+
+        // Calcula na unha para evitar arredondamentos estranhos
+        $segundosPausa = max(now()->timestamp - $pausadaEm->timestamp, 0);
+        // Arredonda pra cima e garante ao menos 1 minuto quando houve qualquer pausa
+        $minutosPausa = $segundosPausa > 0 ? max(1, (int) ceil($segundosPausa / 60)) : 0;
+        $totalAtual = max((int) ($ordem->total_minutos_pausa ?? 0), 0);
+
+        $ordem->total_minutos_pausa = $totalAtual + $minutosPausa;
+        $ordem->pausada_em = null;
+
+        // Persiste imediatamente para garantir o total mesmo se a próxima operação falhar
+        $ordem->save();
+
+        Log::info('OS pausa acumulada', [
+            'ordem_id'        => $ordem->id,
+            'pausada_em'      => $pausadaEm?->toDateTimeString(),
+            'agora'           => now()->toDateTimeString(),
+            'segundos_pausa'  => $segundosPausa,
+            'minutos_pausa'   => $minutosPausa,
+            'total_anterior'  => $totalAtual,
+            'total_final'     => $ordem->total_minutos_pausa,
+            'status'          => $ordem->status,
+        ]);
+    }
+
+    protected function autorizaVisualizador(OrdemServico $ordem, bool $paraEditar = false): void
     {
         $user = auth()->user();
 

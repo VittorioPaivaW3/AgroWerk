@@ -72,6 +72,36 @@
                             @enderror
                         </div>
 
+                        {{-- Vida útil (horas) --}}
+                        <div>
+                            <label for="vida_util_h"
+                                   class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Vida útil (h)
+                            </label>
+                            <input id="vida_util_h" name="vida_util_h" type="number" min="0" step="1"
+                                   value="{{ old('vida_util_h') }}"
+                                   class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
+                                          text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
+                            @error('vida_util_h')
+                                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Horímetro --}}
+                        <div>
+                            <label for="horimetro"
+                                   class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Horímetro
+                            </label>
+                            <input id="horimetro" name="horimetro" type="number" min="0" step="0.01"
+                                   value="{{ old('horimetro') }}"
+                                   class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
+                                          text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
+                            @error('horimetro')
+                                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         {{-- Cor / Identificação visual --}}
                         <div>
                             <label for="cor"

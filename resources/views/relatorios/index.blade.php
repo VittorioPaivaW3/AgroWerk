@@ -447,6 +447,7 @@
                                     <option value="">Todos</option>
                                     <option value="concluida">Concluida</option>
                                     <option value="em_execucao">Em execucao</option>
+                                    <option value="pausada">Pausada</option>
                                     <option value="aberta">Aberta</option>
                                     <option value="cancelada">Cancelada</option>
                                 </select>
@@ -527,6 +528,7 @@
                                     <option value="">Todos</option>
                                     <option value="concluida">Concluida</option>
                                     <option value="em_execucao">Em execucao</option>
+                                    <option value="pausada">Pausada</option>
                                     <option value="aberta">Aberta</option>
                                     <option value="cancelada">Cancelada</option>
                                 </select>
@@ -618,6 +620,7 @@
                                     <option value="">Todos</option>
                                     <option value="concluida">Concluida</option>
                                     <option value="em_execucao">Em execucao</option>
+                                    <option value="pausada">Pausada</option>
                                     <option value="aberta">Aberta</option>
                                     <option value="cancelada">Cancelada</option>
                                 </select>

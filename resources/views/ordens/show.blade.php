@@ -48,6 +48,7 @@
         $statusLabel = match ($status) {
             'aberta'       => 'Aberta',
             'em_execucao'  => 'Em execução',
+            'pausada'      => 'Pausada',
             'concluida'    => 'Concluída',
             'cancelada'    => 'Cancelada',
             default        => $statusRaw ? ucfirst(str_replace('_', ' ', $statusRaw)) : '—',
@@ -56,6 +57,7 @@
         $statusClasses = match ($status) {
             'aberta'       => 'bg-emerald-50 text-emerald-700 border-emerald-200',
             'em_execucao'  => 'bg-amber-50 text-amber-700 border-amber-200',
+            'pausada'      => 'bg-blue-50 text-blue-700 border-blue-200',
             'concluida'    => 'bg-sky-50 text-sky-700 border-sky-200',
             'cancelada'    => 'bg-red-50 text-red-700 border-red-200',
             default        => 'bg-gray-50 text-gray-700 border-gray-200',
@@ -64,6 +66,7 @@
         $statusIconLight = match ($status) {
             'aberta'       => 'imagem/engrenagem_alerta.png',
             'em_execucao'  => 'imagem/engrenagem_play.png',
+            'pausada'      => 'imagem/engrenagem_alerta.png',
             'concluida'    => 'imagem/engrenagem.png',
             'cancelada'    => 'imagem/engrenagem_alerta.png',
             default        => 'imagem/engrenagem_alerta.png',
@@ -72,6 +75,7 @@
         $statusIconDark = match ($status) {
             'aberta'       => 'imagem/engrenagem_alerta_white.png',
             'em_execucao'  => 'imagem/engrenagem_play_white.png',
+            'pausada'      => 'imagem/engrenagem_alerta_white.png',
             'concluida'    => 'imagem/engrenagem_white.png',
             'cancelada'    => 'imagem/engrenagem_alerta_white.png',
             default        => 'imagem/engrenagem_alerta_white.png',
@@ -139,6 +143,11 @@
                                     <span>Concluída em {{ $ordem->fim_execucao_em->format('d/m/Y H:i') }}</span>
                                 @endif
                             </p>
+                            @if($ordem->status === 'pausada' && $ordem->pausada_em)
+                                <p class="text-xs text-blue-700 dark:text-blue-400 flex flex-wrap gap-1">
+                                    Pausada em {{ $ordem->pausada_em->format('d/m/Y H:i') }}
+                                </p>
+                            @endif
                         @endif
                     </div>
 
@@ -256,6 +265,34 @@
                                 <p class="text-gray-900 dark:text-gray-100">
                                     {{ number_format($ordem->duracao_execucao_em_horas, 2, ',', '.') }} h
                                 </p>
+                            </div>
+                        @endif
+
+                        @php
+                            $tempoPausaMin = (int) ($ordem->total_minutos_pausa ?? 0);
+                            $tempoPausaFmt = sprintf('%02dh %02dmin', intdiv($tempoPausaMin, 60), $tempoPausaMin % 60);
+                        @endphp
+                        @if($tempoPausaMin > 0)
+                            <div>
+                                <p class="text-[11px] uppercase text-gray-500 dark:text-gray-400 font-semibold">
+                                    Tempo em pausa
+                                </p>
+                                <p class="text-gray-900 dark:text-gray-100">
+                                    {{ $tempoPausaFmt }}
+                                </p>
+                            </div>
+                        @endif
+
+                        @if($ordem->observacao_pausa)
+                            <div>
+                                <p class="text-[11px] uppercase text-gray-500 dark:text-gray-400 font-semibold">
+                                    Observação da pausa
+                                </p>
+                                <div class="mt-1 rounded-md border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-900/60 px-3 py-3">
+                                    <p class="text-sm text-gray-900 dark:text-gray-100 whitespace-pre-line">
+                                        {{ $ordem->observacao_pausa }}
+                                    </p>
+                                </div>
                             </div>
                         @endif
 
@@ -401,7 +438,10 @@
             {{-- Rodape ajustes --}}
             <div
                 class="flex flex-wrap items-center justify-end gap-2 pt-1"
-                x-data="{ concluirModal: @json($errors->has('observacao_conclusao') || $errors->has('anexo_conclusao')) }"
+                x-data="{
+                    concluirModal: @json($errors->has('observacao_conclusao') || $errors->has('anexo_conclusao')),
+                    pausarModal: @json($errors->has('observacao_pausa'))
+                }"
             >
                 {{-- Voltar --}}
                 @php
@@ -423,7 +463,7 @@
 
                 {{-- Acoes do tecnico --}}
                 @if($ehTecnicoDaOrdem)
-                    <div class="flex items-center gap-2">
+                    <div class="flex flex-wrap items-center gap-2">
                         @if($ordem->status === 'aberta')
                             <form action="{{ route('ordens.executar', $ordem) }}" method="POST">
                                 @csrf
@@ -435,21 +475,90 @@
                             </form>
                         @elseif($ordem->status === 'em_execucao')
                             <button type="button"
+                                @click="pausarModal = true"
+                                class="inline-flex items-center h-9 px-4 bg-blue-600 hover:bg-blue-700 border border-blue-700 rounded-md
+                                    text-[11px] font-semibold text-white uppercase tracking-widest leading-none shadow-sm">
+                                Pausar OS
+                            </button>
+                            <button type="button"
                                 @click="concluirModal = true"
                                 class="inline-flex items-center h-9 px-4 bg-verdes-verde_claro hover:bg-verdes-verde_folha border0 rounded-md
                                     text-[11px] font-semibold text-white uppercase tracking-widest leading-none shadow-sm">
                                 Concluir ordem
                             </button>
+                        @elseif($ordem->status === 'pausada')
+                            <form action="{{ route('ordens.retomar', $ordem) }}" method="POST">
+                                @csrf
+                                <button type="submit"
+                                    class="inline-flex items-center h-9 px-4 bg-emerald-600 hover:bg-emerald-700 border border-emerald-700 rounded-md
+                                        text-[11px] font-semibold text-white uppercase tracking-widest leading-none shadow-sm">
+                                    Retomar OS
+                                </button>
+                            </form>
                         @endif
                     </div>
 
-                    {{-- Modal Concluir --}}
+                    {{-- Overlay para modais --}}
                     <div
                         x-cloak
-                        x-show="concluirModal"
+                        x-show="concluirModal || pausarModal"
                         x-transition.opacity
                         class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
                     ></div>
+
+                    {{-- Modal Pausar --}}
+                    <div
+                        x-cloak
+                        x-show="pausarModal"
+                        x-transition
+                        class="fixed inset-0 z-50 flex items-center justify-center px-4"
+                    >
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg border border-gray-200 dark:border-gray-700">
+                            <div class="px-5 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs uppercase font-semibold text-gray-500 dark:text-gray-400">Pausar OS</p>
+                                    <p class="text-sm text-gray-900 dark:text-gray-100 font-semibold mt-0.5">{{ $ordem->codigo ?? $ordem->id }}</p>
+                                </div>
+                                <button type="button" class="text-gray-400 hover:text-gray-600" @click="pausarModal = false">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <form action="{{ route('ordens.pausar', $ordem) }}" method="POST">
+                                @csrf
+                                <div class="px-5 py-4 space-y-4">
+                                    <div>
+                                        <label for="observacao_pausa" class="text-[11px] uppercase text-gray-500 dark:text-gray-400 font-semibold">
+                                            Motivo da pausa (obrigatório)
+                                        </label>
+                                        <textarea
+                                            id="observacao_pausa"
+                                            name="observacao_pausa"
+                                            rows="3"
+                                            required
+                                            class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro"
+                                            placeholder="Descreva por que a execução será pausada"
+                                        >{{ old('observacao_pausa') }}</textarea>
+                                        @error('observacao_pausa')
+                                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="px-5 py-3 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-2">
+                                    <button type="button"
+                                        @click="pausarModal = false"
+                                        class="inline-flex items-center h-9 px-4 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-[11px] font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-widest leading-none">
+                                        Cancelar
+                                    </button>
+                                    <button type="submit"
+                                        class="inline-flex items-center h-9 px-4 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-semibold uppercase tracking-widest leading-none shadow-sm">
+                                        Confirmar pausa
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    {{-- Modal Concluir --}}
                     <div
                         x-cloak
                         x-show="concluirModal"

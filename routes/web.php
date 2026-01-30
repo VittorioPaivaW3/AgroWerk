@@ -87,6 +87,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('ordens/{orden}/executar', [OrdemServicoController::class, 'executar'])
         ->name('ordens.executar');
 
+    Route::post('ordens/{orden}/pausar', [OrdemServicoController::class, 'pausar'])
+        ->name('ordens.pausar');
+
+    Route::post('ordens/{orden}/retomar', [OrdemServicoController::class, 'retomar'])
+        ->name('ordens.retomar');
+
     Route::post('ordens/{orden}/concluir', [OrdemServicoController::class, 'concluir'])
         ->name('ordens.concluir');
 
@@ -105,6 +111,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
      | EQUIPAMENTOS
      |------------------------------------------------------------------
      */
+    Route::get('/equipamentos/horimetros', [EquipamentoController::class, 'horimetros'])
+        ->middleware('role:admin|gestor|tecnico')
+        ->name('equipamentos.horimetros');
+
+    Route::post('/equipamentos/alertas', [EquipamentoController::class, 'storeAlerta'])
+        ->middleware('role:admin|gestor|tecnico')
+        ->name('equipamentos.alertas.store');
+
+    Route::get('/equipamentos/alertas/teste', [EquipamentoController::class, 'testeAlerta'])
+        ->middleware('role:admin|gestor|tecnico')
+        ->name('equipamentos.alertas.teste');
+
+    Route::post('/equipamentos/{equipamento}/horimetro', [EquipamentoController::class, 'storeHorimetro'])
+        ->middleware('role:admin|gestor|tecnico')
+        ->name('equipamentos.horimetro.store');
+
+    Route::post('/equipamentos/{equipamento}/horimetro/zerar', [EquipamentoController::class, 'zerarHorimetro'])
+        ->middleware('role:admin|gestor|tecnico')
+        ->name('equipamentos.horimetro.zerar');
+
     Route::resource('equipamentos', EquipamentoController::class)
         ->middleware('role:admin|gestor|tecnico')
         ->parameters(['equipamentos' => 'equipamento']);

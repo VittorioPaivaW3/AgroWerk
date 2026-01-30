@@ -1,0 +1,510 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Horímetro dos Equipamentos') }}
+        </h2>
+    </x-slot>
+
+    <div class="py-8" x-data="horimetroPage()">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+
+            {{-- Toast de sucesso --}}
+            @if (session('success'))
+                <div
+                    x-data="{ show: true }"
+                    x-init="setTimeout(() => show = false, 3200)"
+                    x-show="show"
+                    x-transition
+                    class="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 shadow-sm dark:border-green-300/40 dark:bg-green-900/40 dark:text-green-100">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900">
+                <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
+                <div class="px-6 py-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                            Lançamento de horímetro
+                        </h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">
+                            Visualize a vida útil planejada e o horímetro atual de cada equipamento.
+                        </p>
+                    </div>
+                    <div class="flex flex-col items-start gap-2 md:flex-row md:items-center md:gap-3">
+                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                            Total: {{ $equipamentos->count() }} equipamentos
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button
+                                type="button"
+                                id="btn-open-alert"
+                                class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 border border-transparent rounded-md
+                                       text-xs font-semibold text-white uppercase tracking-widest
+                                       hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                                </svg>
+                                Criar Aviso
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-900">
+                <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
+                <div class="px-6 py-4 overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead>
+                            <tr>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    Código
+                                </th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    Equipamento
+                                </th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    Vida útil (h)
+                                </th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    Horímetro atual
+                                </th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    Próxima manutenção
+                                </th>
+                                <th class="px-3 py-2 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    Ações
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                            @forelse ($equipamentos as $equipamento)
+                                <tr>
+                                    <td class="px-3 py-2 text-sm text-gray-900 dark:text-gray-100">
+                                        {{ $equipamento->codigo ?? $equipamento->id }}
+                                    </td>
+                                    <td class="px-3 py-2 text-sm text-gray-900 dark:text-gray-100">
+                                        {{ $equipamento->nome }}
+                                    </td>
+                                    <td class="px-3 py-2 text-sm text-gray-900 dark:text-gray-100">
+                                        {{ $equipamento->vida_util_h !== null ? number_format($equipamento->vida_util_h, 0, ',', '.') . ' h' : '—' }}
+                                    </td>
+                                    <td class="px-3 py-2 text-sm text-gray-900 dark:text-gray-100">
+                                        @php
+                                            $vida = $equipamento->vida_util_h ?: null;
+                                            $h    = $equipamento->horimetro ?? 0;
+                                            $ratio = $vida ? ($h / max($vida, 0.0001)) : null;
+                                            $badge = 'bg-gray-200 text-gray-800';
+                                            if ($ratio !== null) {
+                                                if ($ratio >= 0.85)      $badge = 'bg-red-100 text-red-800';
+                                                elseif ($ratio >= 0.6)   $badge = 'bg-yellow-100 text-yellow-800';
+                                                else                     $badge = 'bg-green-100 text-green-800';
+                                            }
+                                        @endphp
+                                        <div class="flex items-center gap-2">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold {{ $badge }}">
+                                                {{ $equipamento->horimetro !== null ? number_format($equipamento->horimetro, 2, ',', '.') . ' h' : '—' }}
+                                            </span>
+                                            @if($vida)
+                                            @endif
+                                        </div>
+                                    </td>
+                                    <td class="px-3 py-2 text-sm text-gray-900 dark:text-gray-100">
+                                        @php
+                                            $alerta = $equipamento->alertas->first();
+                                        @endphp
+                                        @if($alerta)
+                                            @if($alerta->tipo === 'data')
+                                                @if($alerta->recorrente && $alerta->dias_recorrencia)
+                                                    @php
+                                                        $inicio = \Illuminate\Support\Carbon::parse($alerta->data_inicio_recorrencia ?? $alerta->created_at);
+                                                        $diasRec = max(1, (int) $alerta->dias_recorrencia);
+                                                        $hoje = now();
+                                                        if ($hoje->lessThanOrEqualTo($inicio)) {
+                                                            $proxima = $inicio;
+                                                        } else {
+                                                            $passados = $inicio->diffInDays($hoje);
+                                                            $intervalos = intdiv($passados, $diasRec) + 1;
+                                                            $proxima = $inicio->copy()->addDays($intervalos * $diasRec);
+                                                        }
+                                                    @endphp
+                                                    <div class="text-xs text-blue-800 dark:text-blue-300">
+                                                        A cada {{ $alerta->dias_recorrencia }} dias<br>
+                                                        Próxima: {{ $proxima->format('d/m/Y') }}
+                                                    </div>
+                                                @elseif($alerta->data_alerta)
+                                                    {{ \Illuminate\Support\Carbon::parse($alerta->data_alerta)->format('d/m/Y') }}
+                                                @else
+                                                    —
+                                                @endif
+                                            @else
+                                                <div class="text-xs text-gray-600 dark:text-gray-300">
+                                                <strong>{{ number_format($alerta->horimetro_alvo, 2, ',', '.') }} h</strong>
+                                                </div>
+                                            @endif
+                                        @else
+                                            —
+                                        @endif
+                                    </td>
+                                    <td class="px-3 py-2 text-sm">
+                                        <div class="flex justify-end items-center gap-2">
+                                            <button
+                                                type="button"
+                                                @click="openHorimetroModal({ id: {{ $equipamento->id }}, nome: @js($equipamento->nome), codigo: @js($equipamento->codigo ?? $equipamento->id), atual: {{ $equipamento->horimetro ?? 'null' }} })"
+                                                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-verdes-verde_claro border border-transparent rounded-full
+                                                       text-xs font-semibold text-white uppercase tracking-widest shadow-sm
+                                                       hover:bg-verdes-verde_folha focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-verdes-verde_claro">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m6-6H6"/>
+                                                </svg>
+                                                Horímetro
+                                            </button>
+                                            <form method="POST"
+                                                  action="{{ route('equipamentos.horimetro.zerar', $equipamento) }}"
+                                                  class="inline"
+                                                  onsubmit="return confirm('Zerar horímetro deste equipamento após manutenção?');">
+                                                @csrf
+                                                <button type="submit"
+                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/70 border border-gray-200 rounded-full
+                                                           text-xs font-semibold text-gray-700 uppercase tracking-widest shadow-sm
+                                                           hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-gray-300
+                                                           dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                    </svg>
+                                                    Zerar Horímetro
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="px-3 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                                        Nenhum equipamento cadastrado.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        {{-- Modal Horímetro --}}
+        <div
+            x-cloak
+            x-show="horimetroOpen"
+            x-transition.opacity
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+            style="display: none;"
+        >
+            <div
+                x-transition.scale
+                class="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl dark:bg-gray-900 dark:border dark:border-white/10">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <p class="text-xs uppercase text-gray-500 dark:text-gray-400 font-semibold">Equipamento</p>
+                        <p class="text-lg font-semibold text-gray-900 dark:text-gray-100" x-text="equipamento.nome"></p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                            Código: <span x-text="equipamento.codigo"></span>
+                        </p>
+                    </div>
+                    <button type="button" @click="closeModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                        ✕
+                    </button>
+                </div>
+
+                <form :action="routeSubmit" method="POST" class="mt-6 space-y-4">
+                    @csrf
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Horas a lançar (será somado ao horímetro atual)
+                    </label>
+                    <input
+                        name="horimetro"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        x-model="valor"
+                        required
+                        class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
+                               text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
+
+                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                        Horímetro atual: <span x-text="equipamento.atualDisplay"></span><br>
+                        Horímetro após lançamento: <span x-text="valor ? previewTotal() : '—'"></span>
+                    </p>
+
+                    <div class="flex justify-end gap-2 pt-3">
+                        <button type="button"
+                                @click="closeModal()"
+                                class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md
+                                       text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-widest
+                                       hover:bg-gray-50 dark:hover:bg-gray-700">
+                            Cancelar
+                        </button>
+                        <button type="submit"
+                                class="inline-flex items-center px-4 py-2 bg-verdes-verde_claro border border-transparent rounded-md
+                                       text-xs font-semibold text-white uppercase tracking-widest
+                                       hover:bg-verdes-verde_folha focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-verdes-verde_claro">
+                            Salvar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function horimetroPage() {
+            return {
+                // Horímetro modal state
+                horimetroOpen: false,
+                equipamento: { id: null, nome: '', codigo: '', atual: null, atualDisplay: '—' },
+                valor: null,
+                routeSubmit: '',
+                openHorimetroModal(data) {
+                    this.equipamento = {
+                        ...data,
+                        atualDisplay: data.atual !== null ? `${Number(data.atual).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} h` : '—'
+                    };
+                    this.valor = null;
+                    this.routeSubmit = `{{ url('/equipamentos') }}/${data.id}/horimetro`;
+                    this.horimetroOpen = true;
+                },
+                closeModal() {
+                    this.horimetroOpen = false;
+                    this.valor = null;
+                },
+                previewTotal() {
+                    const atual = this.equipamento.atual ?? 0;
+                    const add = Number(this.valor ?? 0);
+                    return `${(atual + add).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} h`;
+                },
+
+                // Alerta modal state
+                alert: {
+                    open: false,
+                    equipamentoId: '',
+                    mensagem: '',
+                    tipo: 'data',
+                    recorrente: false,
+                    dias: null,
+                    data: '',
+                    horimetroAlvo: null,
+                },
+                openAlertModal() {
+                    this.alert.open = true;
+                },
+                alertClose() {
+                    this.alert.open = false;
+                    this.alert.equipamentoId = '';
+                    this.alert.mensagem = '';
+                    this.alert.tipo = 'data';
+                    this.alert.recorrente = false;
+                    this.alert.dias = null;
+                    this.alert.data = '';
+                    this.alert.horimetroAlvo = null;
+                },
+            }
+        }
+    </script>
+
+    {{-- Modal Alerta de Manutenção --}}
+    <div id="alert-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/40 px-4">
+        <div class="w-full max-w-3xl rounded-2xl bg-white p-6 shadow-2xl dark:bg-gray-900 dark:border dark:border-white/10 transform transition-all duration-150 scale-100 translate-y-0">
+            <div class="flex items-start justify-between gap-3">
+                <div>
+                    <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">Criar Manutenção</p>
+                </div>
+                <button type="button" data-close-alert class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                    ✕
+                </button>
+            </div>
+
+            <form class="mt-6 space-y-4" method="POST" action="{{ route('equipamentos.alertas.store') }}">
+                @csrf
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Equipamento
+                        </label>
+                        <select id="alert-equip" name="equipamento_id" required
+                                class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
+                                       text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                            <option value="">Selecione</option>
+                            @foreach ($equipamentos as $equip)
+                                <option value="{{ $equip->id }}">{{ $equip->nome }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Tipo de aviso
+                        </label>
+                        <select id="alert-tipo" name="tipo" required
+                                class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
+                                       text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                            <option value="data">Por data</option>
+                            <option value="horimetro">Por horímetro</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Mensagem do aviso
+                    </label>
+                    <textarea name="mensagem" rows="2"
+                              class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
+                                     text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500"
+                              placeholder="Ex.: Revisar filtros, trocar óleo..."></textarea>
+                </div>
+
+                        <div id="alert-data-block" class="space-y-3">
+                            <label class="inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                                <input type="checkbox" id="alert-recorrente" name="recorrente" value="1"
+                                       class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                Recorrente
+                            </label>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div id="alert-inicio-field">
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        Data inicial
+                                    </label>
+                                    <input type="date" name="data_inicio_recorrencia"
+                                           class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
+                                                  text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                                <div id="alert-recorrencia-field">
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        Dias para recorrência
+                                    </label>
+                                    <input type="number" min="1" step="1" name="dias_recorrencia"
+                                           class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
+                                                  text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500"
+                                           placeholder="Ex.: 30">
+                                </div>
+                                <div id="alert-data-field">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Data do aviso
+                            </label>
+                            <input type="date" name="data_alerta"
+                                   class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
+                                          text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="alert-horimetro-block" class="grid grid-cols-1 md:grid-cols-2 gap-4 hidden">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Horímetro alvo
+                        </label>
+                        <input type="number" min="0" step="0.01" name="horimetro_alvo"
+                               class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
+                                      text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500"
+                               placeholder="Ex.: 250.00">
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-3">
+                    <button type="button"
+                            data-close-alert
+                            class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md
+                                   text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-widest
+                                   hover:bg-gray-50 dark:hover:bg-gray-700">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md
+                                   text-xs font-semibold text-white uppercase tracking-widest
+                                   hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Salvar aviso
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function horimetroPage() {
+            return {
+                // Horímetro modal state
+                horimetroOpen: false,
+                equipamento: { id: null, nome: '', codigo: '', atual: null, atualDisplay: '—' },
+                valor: null,
+                routeSubmit: '',
+                openHorimetroModal(data) {
+                    this.equipamento = {
+                        ...data,
+                        atualDisplay: data.atual !== null ? `${Number(data.atual).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} h` : '—'
+                    };
+                    this.valor = null;
+                    this.routeSubmit = `{{ url('/equipamentos') }}/${data.id}/horimetro`;
+                    this.horimetroOpen = true;
+                },
+                closeModal() {
+                    this.horimetroOpen = false;
+                    this.valor = null;
+                },
+                previewTotal() {
+                    const atual = this.equipamento.atual ?? 0;
+                    const add = Number(this.valor ?? 0);
+                    return `${(atual + add).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} h`;
+                },
+            }
+        }
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('alert-modal');
+            const btnOpen = document.getElementById('btn-open-alert');
+            const closeButtons = modal?.querySelectorAll('[data-close-alert]') ?? [];
+            const tipo = document.getElementById('alert-tipo');
+            const recorrente = document.getElementById('alert-recorrente');
+            const blocoData = document.getElementById('alert-data-block');
+                const blocoRecorrencia = document.getElementById('alert-recorrencia-field');
+                const blocoDataUnica = document.getElementById('alert-data-field');
+                const blocoInicio = document.getElementById('alert-inicio-field');
+                const blocoHorimetro = document.getElementById('alert-horimetro-block');
+
+                const syncVisibilidade = () => {
+                    if (!tipo || !recorrente) return;
+
+                    const isData = tipo.value === 'data';
+                    const isRecorrente = recorrente.checked;
+
+                    blocoData?.classList.toggle('hidden', !isData);
+                    blocoHorimetro?.classList.toggle('hidden', isData);
+
+                    blocoRecorrencia?.classList.toggle('hidden', !(isData && isRecorrente));
+                    blocoDataUnica?.classList.toggle('hidden', !(isData && !isRecorrente));
+                    blocoInicio?.classList.toggle('hidden', !(isData && isRecorrente));
+                };
+
+            btnOpen?.addEventListener('click', () => {
+                modal?.classList.remove('hidden');
+                modal?.classList.add('flex');
+                syncVisibilidade();
+            });
+
+            closeButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    modal?.classList.add('hidden');
+                    modal?.classList.remove('flex');
+                });
+            });
+
+            tipo?.addEventListener('change', syncVisibilidade);
+            recorrente?.addEventListener('change', syncVisibilidade);
+
+            // Estado inicial
+            syncVisibilidade();
+        });
+    </script>
+</x-app-layout>

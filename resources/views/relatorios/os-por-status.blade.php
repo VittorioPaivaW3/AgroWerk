@@ -1,7 +1,7 @@
 @php
     use Illuminate\Support\Str;
 
-    $statusOrder = $statusOrder ?? ['aberta', 'em_execucao', 'concluida', 'cancelada'];
+    $statusOrder = $statusOrder ?? ['aberta', 'em_execucao', 'pausada', 'concluida', 'cancelada'];
 @endphp
 
 <x-app-layout>

@@ -59,7 +59,7 @@ class RelatorioController extends Controller
                 ->with('error', 'Data final deve ser maior ou igual a data inicial.');
         }
 
-        $statusOrder = ['aberta', 'em_execucao', 'concluida', 'cancelada'];
+        $statusOrder = ['aberta', 'em_execucao', 'pausada', 'concluida', 'cancelada'];
 
         $query = OrdemServico::with([
                 'setor:id,nome',
@@ -109,6 +109,7 @@ class RelatorioController extends Controller
         $statusLabels = [
             'aberta'      => 'Aberta',
             'em_execucao' => 'Em execucao',
+            'pausada'     => 'Pausada',
             'concluida'   => 'Concluida',
             'cancelada'   => 'Cancelada',
         ];
@@ -201,16 +202,18 @@ class RelatorioController extends Controller
             ->orderBy('created_at')
             ->get()
             ->map(function (OrdemServico $os) use ($formatMinutes) {
+                $pausaMin = (int) ($os->total_minutos_pausa ?? 0);
+
                 $tempoAteInicioMin = ($os->created_at && $os->inicio_execucao_em)
                     ? $os->created_at->diffInMinutes($os->inicio_execucao_em)
                     : null;
 
                 $tempoExecucaoMin = ($os->inicio_execucao_em && $os->fim_execucao_em)
-                    ? $os->inicio_execucao_em->diffInMinutes($os->fim_execucao_em)
+                    ? max(($os->inicio_execucao_em->diffInSeconds($os->fim_execucao_em) / 60) - $pausaMin, 0)
                     : null;
 
                 $tempoTotalMin = ($os->created_at && $os->fim_execucao_em)
-                    ? $os->created_at->diffInMinutes($os->fim_execucao_em)
+                    ? max(($os->created_at->diffInSeconds($os->fim_execucao_em) / 60) - $pausaMin, 0)
                     : null;
 
                 $os->tempo_ate_inicio_min = $tempoAteInicioMin;
@@ -263,6 +266,7 @@ class RelatorioController extends Controller
         $statusLabels = [
             'aberta'      => 'Aberta',
             'em_execucao' => 'Em execucao',
+            'pausada'     => 'Pausada',
             'concluida'   => 'Concluida',
             'cancelada'   => 'Cancelada',
         ];
@@ -304,7 +308,7 @@ class RelatorioController extends Controller
             'setor_id'       => ['nullable', 'integer', 'exists:setores,id'],
             'equipamento_id' => ['nullable', 'integer', 'exists:equipamentos,id'],
             'tipo'           => ['nullable', 'in:corretiva,preventiva'],
-            'status'         => ['nullable', 'in:aberta,em_execucao,concluida,cancelada'],
+            'status'         => ['nullable', 'in:aberta,em_execucao,pausada,concluida,cancelada'],
         ], [
             'inicio.required' => 'Informe a data inicial do periodo.',
             'fim.required'    => 'Informe a data final do periodo.',
@@ -373,6 +377,7 @@ class RelatorioController extends Controller
         $statusLabels = [
             'aberta'      => 'Aberta',
             'em_execucao' => 'Em execucao',
+            'pausada'     => 'Pausada',
             'concluida'   => 'Concluida',
             'cancelada'   => 'Cancelada',
         ];
@@ -428,7 +433,7 @@ class RelatorioController extends Controller
             'inicio'         => ['required', 'date'],
             'fim'            => ['required', 'date'],
             'tipo'           => ['nullable', 'in:corretiva,preventiva'],
-            'status'         => ['nullable', 'in:aberta,em_execucao,concluida,cancelada'],
+            'status'         => ['nullable', 'in:aberta,em_execucao,pausada,concluida,cancelada'],
         ], [
             'inicio.required' => 'Informe a data inicial do periodo.',
             'fim.required'    => 'Informe a data final do periodo.',
@@ -467,6 +472,7 @@ class RelatorioController extends Controller
         $statusLabels = [
             'aberta'      => 'Aberta',
             'em_execucao' => 'Em execucao',
+            'pausada'     => 'Pausada',
             'concluida'   => 'Concluida',
             'cancelada'   => 'Cancelada',
         ];
@@ -505,7 +511,7 @@ class RelatorioController extends Controller
             'fim'      => ['required', 'date'],
             'setor_id' => ['nullable', 'integer', 'exists:setores,id'],
             'tipo'     => ['nullable', 'in:corretiva,preventiva'],
-            'status'   => ['nullable', 'in:aberta,em_execucao,concluida,cancelada'],
+            'status'   => ['nullable', 'in:aberta,em_execucao,pausada,concluida,cancelada'],
         ], [
             'inicio.required' => 'Informe a data inicial do periodo.',
             'fim.required'    => 'Informe a data final do periodo.',
@@ -575,6 +581,7 @@ class RelatorioController extends Controller
         $statusLabels = [
             'aberta'      => 'Aberta',
             'em_execucao' => 'Em execucao',
+            'pausada'     => 'Pausada',
             'concluida'   => 'Concluida',
             'cancelada'   => 'Cancelada',
         ];

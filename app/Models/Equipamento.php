@@ -15,6 +15,8 @@ class Equipamento extends Model
         'cor',
         'setor_id',
         'status',
+        'vida_util_h',
+        'horimetro',
         'campos_extras',
         'observacoes',
         'manutencao_preventiva',
@@ -25,6 +27,8 @@ class Equipamento extends Model
         'manutencao_preventiva' => 'date',
         'campos_extras' => 'array',
         'terceiro' => 'boolean',
+        'vida_util_h' => 'integer',
+        'horimetro' => 'decimal:2',
     ];
 
     public function setor()
@@ -39,5 +43,10 @@ class Equipamento extends Model
     public function arquivos()
     {
         return $this->hasMany(EquipamentoArquivo::class);
+    }
+
+    public function alertas()
+    {
+        return $this->hasMany(ManutencaoAlerta::class);
     }
 }

@@ -108,6 +108,7 @@
                                     <option value="">Todos</option>
                                     <option value="aberta" @selected(request('status') === 'aberta')>Aberta</option>
                                     <option value="em_execucao" @selected(request('status') === 'em_execucao')>Em execução</option>
+                                    <option value="pausada" @selected(request('status') === 'pausada')>Pausada</option>
                                     <option value="concluida" @selected(request('status') === 'concluida')>Concluída</option>
                                     <option value="cancelada" @selected(request('status') === 'cancelada')>Cancelada</option>
                                 </select>
@@ -163,6 +164,7 @@
         $statusPalette = [
             'aberta'      => ['hex' => '#8DC63F', 'tw' => 'bg-verdes-verde_claro/15 text-verdes-verde_escuro dark:bg-verdes-verde_claro/25 dark:text-verdes-verde_claro'],
             'em_execucao' => ['hex' => '#00843D', 'tw' => 'bg-verdes-verde_bandeira/15 text-verdes-verde_bandeira dark:bg-verdes-verde_bandeira/25 dark:text-verdes-verde_bandeira'],
+            'pausada'     => ['hex' => '#2563EB', 'tw' => 'bg-blue-100 text-blue-800 dark:bg-blue-900/35 dark:text-blue-200'],
             'concluida'   => ['hex' => '#63BE15', 'tw' => 'bg-verdes-verde_folha text-white dark:bg-verdes-verde_folha dark:text-white'],
             'cancelada'   => ['hex' => '#f87171', 'tw' => 'bg-red-100 text-red-800 dark:bg-red-900/35 dark:text-red-200'],
         ];
@@ -261,12 +263,18 @@
                                 </span>
                                 <span class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-[11px] font-semibold {{ $statusPalette['em_execucao']['tw'] }}">
                                     <span class="h-2 w-2 rounded-full" style="background: {{ $statusPalette['em_execucao']['hex'] }}"></span>
-                                    Em execução
-                                </span>
+                                     Em execução
+                                  </span>
+                                @if(isset($statusCountsArr['pausada']))
+                                    <span class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-[11px] font-semibold {{ $statusPalette['pausada']['tw'] }}">
+                                        <span class="h-2 w-2 rounded-full" style="background: {{ $statusPalette['pausada']['hex'] }}"></span>
+                                         Pausada
+                                      </span>
+                                @endif
                                 <span class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-[11px] font-semibold {{ $statusPalette['concluida']['tw'] }}">
                                     <span class="h-2 w-2 rounded-full" style="background: {{ $statusPalette['concluida']['hex'] }}"></span>
-                                    Concluída
-                                </span>
+                                     Concluída
+                                  </span>
 
                                 @if(isset($statusCountsArr['cancelada']))
                                     <span class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-[11px] font-semibold {{ $statusPalette['cancelada']['tw'] }}">
@@ -361,6 +369,7 @@
                                 $statusLabel = match ($status) {
                                     'aberta'       => 'Aberta',
                                     'em_execucao'  => 'Em execução',
+                                    'pausada'      => 'Pausada',
                                     'concluida'    => 'Concluída',
                                     'cancelada'    => 'Cancelada',
                                     default        => $statusRaw ? ucfirst(str_replace('_', ' ', $statusRaw)) : '—',
@@ -371,6 +380,7 @@
                                 $statusIcon = match ($status) {
                                     'aberta'      => 'imagem/engrenagem_alerta.png',
                                     'em_execucao' => 'imagem/engrenagem_play.png',
+                                    'pausada'     => 'imagem/engrenagem_alerta.png',
                                     'concluida'   => 'imagem/engrenagem.png',
                                     'cancelada'   => 'imagem/engrenagem_alerta.png',
                                     default       => 'imagem/engrenagem_alerta.png',
@@ -379,6 +389,7 @@
                                 $statusIconDark = match ($status) {
                                     'aberta'      => 'imagem/engrenagem_alerta_white.png',
                                     'em_execucao' => 'imagem/engrenagem_play_white.png',
+                                    'pausada'     => 'imagem/engrenagem_alerta_white.png',
                                     'concluida'   => 'imagem/engrenagem_white.png',
                                     'cancelada'   => 'imagem/engrenagem_alerta_white.png',
                                     default       => 'imagem/engrenagem_alerta_white.png',
@@ -569,10 +580,11 @@
     };
 
     const STATUS = {
-      aberta:      { label: 'Aberta',      color: '#8DC63F' },
-      em_execucao: { label: 'Em execução', color: '#00843D' },
-      concluida:   { label: 'Concluída',   color: '#63BE15' },
-      cancelada:   { label: 'Cancelada',   color: '#f87171' },
+        aberta:      { label: 'Aberta',      color: '#8DC63F' },
+        em_execucao: { label: 'Em execução', color: '#00843D' },
+        pausada:     { label: 'Pausada',     color: '#2563EB' },
+        concluida:   { label: 'Concluída',   color: '#63BE15' },
+        cancelada:   { label: 'Cancelada',   color: '#f87171' },
     };
 
     Chart.defaults.font.family = 'ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
@@ -612,7 +624,7 @@
     // DATA (mesmos dados que você já tinha)
     // =========================
     const statusDataRaw = @json($statusCountsArr ?? []);
-    const statusOrder = ['aberta','em_execucao','concluida','cancelada'].filter(k => k in statusDataRaw);
+    const statusOrder = ['aberta','em_execucao','pausada','concluida','cancelada'].filter(k => k in statusDataRaw);
     const statusLabels = statusOrder.map(k => STATUS[k]?.label ?? k);
     const statusValues = statusOrder.map(k => Number(statusDataRaw[k] ?? 0));
     const statusColors = statusOrder.map(k => STATUS[k]?.color ?? '#9ca3af');

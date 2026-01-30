@@ -160,6 +160,7 @@
                                     $statusLabel = match ($status) {
                                         'aberta'       => 'ABERTA',
                                         'em_execucao'  => 'EM EXECUCAO',
+                                        'pausada'      => 'PAUSADA',
                                         'concluida'    => 'CONCLUIDA',
                                         'cancelada'    => 'CANCELADA',
                                         default        => strtoupper(str_replace('_', ' ', $os->status ?? '-')),
@@ -167,6 +168,7 @@
                                     $statusIcon = match ($status) {
                                         'aberta'      => 'imagem/engrenagem_alerta.png',
                                         'em_execucao' => 'imagem/engrenagem_play.png',
+                                        'pausada'     => 'imagem/engrenagem_alerta.png',
                                         'concluida'   => 'imagem/engrenagem.png',
                                         'cancelada'   => 'imagem/engrenagem_alerta.png',
                                         default       => 'imagem/engrenagem_alerta.png',
@@ -175,6 +177,7 @@
                                     $statusIconDark = match ($status) {
                                         'aberta'      => 'imagem/engrenagem_alerta_white.png',
                                         'em_execucao' => 'imagem/engrenagem_play_white.png',
+                                        'pausada'     => 'imagem/engrenagem_alerta_white.png',
                                         'concluida'   => 'imagem/engrenagem_white.png',
                                         'cancelada'   => 'imagem/engrenagem_alerta_white.png',
                                         default       => 'imagem/engrenagem_alerta_white.png',

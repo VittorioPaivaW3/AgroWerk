@@ -85,6 +85,28 @@
                         </div>
                     </div>
 
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {{-- Vida útil --}}
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
+                                Vida útil (h)
+                            </p>
+                            <p class="mt-0.5 text-sm">
+                                {{ $equipamento->vida_util_h !== null ? number_format($equipamento->vida_util_h, 0, ',', '.') . ' h' : '-' }}
+                            </p>
+                        </div>
+
+                        {{-- Horímetro --}}
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
+                                Horímetro
+                            </p>
+                            <p class="mt-0.5 text-sm">
+                                {{ $equipamento->horimetro !== null ? number_format($equipamento->horimetro, 2, ',', '.') . ' h' : '-' }}
+                            </p>
+                        </div>
+                    </div>
+
                     {{-- Cor --}}
                     <div>
                         <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">

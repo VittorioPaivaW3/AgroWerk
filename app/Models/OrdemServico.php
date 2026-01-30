@@ -24,16 +24,21 @@ class OrdemServico extends Model
         'previsao_conclusao',
         'inicio_execucao_em',
         'fim_execucao_em',
+        'pausada_em',
+        'total_minutos_pausa',
+        'observacao_pausa',
         'custo_total',
         'concluida_por_terceiros',
     ];
 
-        protected $casts = [
-        'inicio_execucao_em' => 'datetime',
-        'fim_execucao_em'    => 'datetime',
-        'created_at'         => 'datetime',
-        'updated_at'         => 'datetime',
-        'custo_total'        => 'decimal:2',
+    protected $casts = [
+        'inicio_execucao_em'      => 'datetime',
+        'fim_execucao_em'         => 'datetime',
+        'pausada_em'              => 'datetime',
+        'created_at'              => 'datetime',
+        'updated_at'              => 'datetime',
+        'custo_total'             => 'decimal:2',
+        'total_minutos_pausa'     => 'integer',
         'concluida_por_terceiros' => 'boolean',
     ];
 
@@ -97,9 +102,11 @@ class OrdemServico extends Model
             return null;
         }
 
-        $minutos = $this->inicio_execucao_em->diffInMinutes($this->fim_execucao_em);
+        $segundosBrutos = $this->inicio_execucao_em->diffInSeconds($this->fim_execucao_em);
+        $segundosPausa  = ((int) ($this->total_minutos_pausa ?? 0)) * 60;
+        $segundosAtivos = max($segundosBrutos - $segundosPausa, 0);
 
-        return $minutos / 60;
+        return $segundosAtivos / 3600;
     }
 
     public function getCustoMaoDeObraAttribute(): ?float
