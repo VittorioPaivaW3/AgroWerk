@@ -119,6 +119,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('role:admin|gestor|tecnico')
         ->name('equipamentos.alertas.store');
 
+    Route::put('/equipamentos/alertas/{alerta}', [EquipamentoController::class, 'updateAlerta'])
+        ->middleware('role:admin|gestor|tecnico')
+        ->name('equipamentos.alertas.update');
+
     Route::get('/equipamentos/alertas/teste', [EquipamentoController::class, 'testeAlerta'])
         ->middleware('role:admin|gestor|tecnico')
         ->name('equipamentos.alertas.teste');

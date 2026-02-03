@@ -260,16 +260,33 @@ class EquipamentoController extends Controller
     /**
      * Lista equipamentos com vida útil e horímetro para lançamento.
      */
-    public function horimetros()
+    public function horimetros(Request $request)
     {
-        $equipamentos = Equipamento::with(['alertas' => function ($q) {
+        $query = Equipamento::with(['alertas' => function ($q) {
                 $q->orderByDesc('created_at');
-            }])
-            ->select('id', 'nome', 'codigo', 'vida_util_h', 'horimetro')
+            }, 'setor'])
+            ->select('id', 'nome', 'codigo', 'vida_util_h', 'horimetro', 'setor_id');
+
+        if ($request->filled('setor_id')) {
+            $query->where('setor_id', $request->setor_id);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+                $q->where('nome', 'like', "%{$search}%")
+                  ->orWhere('codigo', 'like', "%{$search}%");
+            });
+        }
+
+        $equipamentos = $query
             ->orderBy('nome')
             ->get();
 
-        return view('equipamentos.horimetros', compact('equipamentos'));
+        $setores = Setor::orderBy('nome')->get();
+
+        return view('equipamentos.horimetros', compact('equipamentos', 'setores'));
     }
 
     public function storeHorimetro(Request $request, Equipamento $equipamento)
@@ -342,6 +359,55 @@ class EquipamentoController extends Controller
         return redirect()
             ->route('equipamentos.horimetros')
             ->with('success', 'Alerta de manutenção criado com sucesso!');
+    }
+
+    public function updateAlerta(Request $request, ManutencaoAlerta $alerta)
+    {
+        $data = $request->validate([
+            'equipamento_id'    => ['required', 'exists:equipamentos,id'],
+            'mensagem'          => ['nullable', 'string', 'max:2000'],
+            'tipo'              => ['required', 'in:data,horimetro'],
+            'recorrente'        => ['nullable', 'boolean'],
+            'dias_recorrencia'  => ['nullable', 'integer', 'min:1'],
+            'data_inicio_recorrencia' => ['nullable', 'date'],
+            'data_alerta'       => ['nullable', 'date'],
+            'horimetro_alvo'    => ['nullable', 'numeric', 'min:0'],
+        ]);
+
+        $data['recorrente'] = $request->boolean('recorrente');
+
+        if ($data['tipo'] === 'data') {
+            if ($data['recorrente']) {
+                $request->validate([
+                    'dias_recorrencia' => ['required', 'integer', 'min:1'],
+                    'data_inicio_recorrencia' => ['required', 'date'],
+                ]);
+                $data['data_alerta'] = null;
+            } else {
+                $request->validate([
+                    'data_alerta' => ['required', 'date'],
+                ]);
+                $data['dias_recorrencia'] = null;
+                $data['data_inicio_recorrencia'] = null;
+            }
+            $data['horimetro_alvo'] = null;
+        }
+
+        if ($data['tipo'] === 'horimetro') {
+            $request->validate([
+                'horimetro_alvo' => ['required', 'numeric', 'min:0'],
+            ]);
+            $data['recorrente'] = false;
+            $data['dias_recorrencia'] = null;
+            $data['data_inicio_recorrencia'] = null;
+            $data['data_alerta'] = null;
+        }
+
+        $alerta->update($data);
+
+        return redirect()
+            ->route('equipamentos.horimetros')
+            ->with('success', 'Alerta atualizado com sucesso!');
     }
 
     /**

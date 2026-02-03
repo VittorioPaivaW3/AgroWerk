@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Equipamento;
+use App\Models\ManutencaoAlerta;
 use App\Models\ManutencaoPreventiva;
 use Illuminate\Http\Request;
 use App\Models\Setor;
@@ -75,9 +76,68 @@ class ManutencaoPreventivaController extends Controller
                 'backgroundColor' => $equip?->cor ?: '#2563eb',
                 'borderColor'     => $equip?->cor ?: '#1d4ed8',
             ];
-        });
+        })->values()->all();
 
-        return response()->json($events);
+        $alertasQuery = ManutencaoAlerta::with('equipamento')
+            ->where('tipo', 'data');
+
+        if ($startDate && $endDate) {
+            $alertasQuery->where(function ($q) use ($startDate, $endDate) {
+                $q->where(function ($qq) use ($endDate) {
+                    $qq->where('recorrente', true)
+                        ->whereDate('data_inicio_recorrencia', '<=', $endDate);
+                })->orWhere(function ($qq) use ($startDate, $endDate) {
+                    $qq->where('recorrente', false)
+                        ->whereDate('data_alerta', '>=', $startDate)
+                        ->whereDate('data_alerta', '<=', $endDate);
+                });
+            });
+        }
+
+        $alertas = $alertasQuery->get();
+        $alertaEvents = [];
+
+        foreach ($alertas as $alerta) {
+            $equip = $alerta->equipamento;
+            $title = 'Aviso: ' . ($equip?->nome ?? 'Equipamento');
+            $url = $equip ? route('equipamentos.show', $equip) : null;
+
+            if ($alerta->recorrente && $alerta->dias_recorrencia && $alerta->data_inicio_recorrencia) {
+                $dias = max(1, (int) $alerta->dias_recorrencia);
+                $inicio = Carbon::parse($alerta->data_inicio_recorrencia);
+
+                $next = $inicio->copy()->addDays($dias);
+
+                if ($startDate && $next->lt($startDate)) continue;
+                if ($endDate && $next->gt($endDate)) continue;
+
+                $alertaEvents[] = [
+                    'id'    => 'alerta-' . $alerta->id,
+                    'title' => $title,
+                    'start' => $next->format('Y-m-d'),
+                    'url'   => $url,
+                    'backgroundColor' => '#dc2626',
+                    'borderColor'     => '#b91c1c',
+                    'textColor'       => '#ffffff',
+                ];
+            } elseif ($alerta->data_alerta) {
+                $data = $alerta->data_alerta;
+                if ($startDate && $data->lt($startDate)) continue;
+                if ($endDate && $data->gt($endDate)) continue;
+
+                $alertaEvents[] = [
+                    'id'    => 'alerta-' . $alerta->id,
+                    'title' => $title,
+                    'start' => $data->format('Y-m-d'),
+                    'url'   => $url,
+                    'backgroundColor' => '#dc2626',
+                    'borderColor'     => '#b91c1c',
+                    'textColor'       => '#ffffff',
+                ];
+            }
+        }
+
+        return response()->json(array_merge($events, $alertaEvents));
     }
 
     public function store(Request $request)
