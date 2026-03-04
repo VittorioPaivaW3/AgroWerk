@@ -63,7 +63,7 @@ class EquipamentoController extends Controller
             'terceiro'  => ['nullable', 'boolean'],
 
             // múltiplos anexos
-            'anexos.*'              => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'mimetypes:image/jpeg,image/png,application/pdf', 'max:4096'],
+            'anexos.*'              => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'mimetypes:image/jpeg,image/png,application/pdf', 'max:20480'],
 
             'extra_keys'     => ['nullable', 'array'],
             'extra_keys.*'   => ['nullable', 'string', 'max:255'],
@@ -161,7 +161,7 @@ class EquipamentoController extends Controller
             'terceiro'  => ['nullable', 'boolean'],
 
             // anexos novos (opcionais)
-            'anexos.*'              => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'mimetypes:image/jpeg,image/png,application/pdf', 'max:4096'],
+            'anexos.*'              => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'mimetypes:image/jpeg,image/png,application/pdf', 'max:20480'],
 
             'extra_keys'     => ['nullable', 'array'],
             'extra_keys.*'   => ['nullable', 'string', 'max:255'],

@@ -183,7 +183,7 @@
                                                         Próxima: {{ $proxima->format('d/m/Y') }}
                                                     </div>
                                                 @elseif($alerta->data_alerta)
-                                                    {{ \Illuminate\Support\Carbon::parse($alerta->data_alerta)->format('d/m/Y') }}
+                                                    {{ \Illuminate\Support\Carbon::padrse($alerta->data_alerta)->format('d/m/Y') }}
                                                 @else
                                                     —
                                                 @endif

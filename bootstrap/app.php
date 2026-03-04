@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Http\Exceptions\PostTooLargeException;
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -25,5 +27,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (PostTooLargeException $exception, Request $request) {
+            $limit = ini_get('post_max_size');
+
+            return back()->withErrors([
+                'anexos' => "O upload excedeu o limite total da requisicao ({$limit}). Envie arquivos menores ou em menos quantidade.",
+            ]);
+        });
     })->create();

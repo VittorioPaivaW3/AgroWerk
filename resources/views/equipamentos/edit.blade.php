@@ -226,9 +226,12 @@
                                           dark:file:bg-verdes-verde_claro dark:file:text-white
                                           dark:hover:file:bg-verdes-verde_folha">
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                Formatos permitidos: JPG, JPEG, PNG, PDF. Max. 4 MB por arquivo.
+                                Formatos permitidos: JPG, JPEG, PNG, PDF. Max. 20 MB por arquivo.
                             </p>
                             @error('anexos.*')
+                                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                            @enderror
+                            @error('anexos')
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                             @enderror
                         </div>

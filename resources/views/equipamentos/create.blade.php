@@ -227,8 +227,14 @@
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                                 Você pode selecionar múltiplos arquivos segurando CTRL (Windows) ou CMD (Mac).
                             </p>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                Formatos permitidos: JPG, JPEG, PNG, PDF. Max. 20 MB por arquivo.
+                            </p>
 
                             @error('anexos.*')
+                                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                            @enderror
+                            @error('anexos')
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
