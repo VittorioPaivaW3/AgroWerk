@@ -129,7 +129,9 @@
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                             @forelse ($equipamentos as $equipamento)
-                                <tr class="hover:bg-verdes-verde_claro/5 dark:hover:bg-verdes-verde_claro/10 transition">
+                                <tr class="hover:bg-verdes-verde_claro/5 dark:hover:bg-verdes-verde_claro/10 transition"
+                                    data-equip-id="{{ $equipamento->id }}"
+                                    data-vida-util="{{ $equipamento->vida_util_h ?? '' }}">
                                     <td class="px-3 py-2 text-sm text-gray-900 dark:text-gray-100">
                                         {{ $equipamento->codigo ?? $equipamento->id }}
                                     </td>
@@ -152,7 +154,8 @@
                                             }
                                         @endphp
                                         <div class="flex items-center gap-2">
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold {{ $badge }}">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold js-horimetro-badge {{ $badge }}"
+                                                  data-current-value="{{ $equipamento->horimetro ?? 0 }}">
                                                 {{ $equipamento->horimetro !== null ? number_format($equipamento->horimetro, 2, ',', '.') . ' h' : '—' }}
                                             </span>
                                             @if($vida)
@@ -183,7 +186,7 @@
                                                         Próxima: {{ $proxima->format('d/m/Y') }}
                                                     </div>
                                                 @elseif($alerta->data_alerta)
-                                                    {{ \Illuminate\Support\Carbon::padrse($alerta->data_alerta)->format('d/m/Y') }}
+                                                    {{ \Illuminate\Support\Carbon::parse($alerta->data_alerta)->format('d/m/Y') }}
                                                 @else
                                                     —
                                                 @endif
@@ -200,7 +203,11 @@
                                         <div class="flex justify-end items-center gap-2">
                                             <button
                                                 type="button"
-                                                @click="openHorimetroModal({ id: {{ $equipamento->id }}, nome: @js($equipamento->nome), codigo: @js($equipamento->codigo ?? $equipamento->id), atual: {{ $equipamento->horimetro ?? 'null' }} })"
+                                                data-id="{{ $equipamento->id }}"
+                                                data-nome="{{ $equipamento->nome }}"
+                                                data-codigo="{{ $equipamento->codigo ?? $equipamento->id }}"
+                                                data-atual="{{ $equipamento->horimetro ?? '' }}"
+                                                @click="openHorimetroModalFromButton($event.currentTarget)"
                                                 class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-verdes-verde_claro border border-transparent
                                                        text-xs font-semibold text-white uppercase tracking-widest shadow-sm whitespace-nowrap
                                                        hover:bg-verdes-verde_folha focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-verdes-verde_claro">
@@ -234,8 +241,9 @@
                                             @endif
                                             <form method="POST"
                                                   action="{{ route('equipamentos.horimetro.zerar', $equipamento) }}"
-                                                  class="inline"
-                                                  onsubmit="return confirm('Zerar horímetro deste equipamento após manutenção?');">
+                                                  class="inline js-zerar-horimetro-form"
+                                                  data-equip-id="{{ $equipamento->id }}"
+                                                  data-confirm-message="Zerar horímetro deste equipamento após manutenção?">
                                                 @csrf
                                                 <button type="submit"
                                                     class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white border border-gray-300
@@ -291,7 +299,7 @@
                         </button>
                     </div>
 
-                    <form :action="routeSubmit" method="POST" class="mt-6 space-y-4">
+                    <form id="horimetro-form" :action="routeSubmit" method="POST" @submit.prevent="submitHorimetro($event)" class="mt-6 space-y-4">
                     @csrf
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Horas a lançar (será somado ao horímetro atual)
@@ -311,6 +319,10 @@
                         Horímetro após lançamento: <span x-text="valor ? previewTotal() : '—'"></span>
                     </p>
 
+                    <p x-show="errorMsg"
+                       x-text="errorMsg"
+                       class="text-xs font-medium text-red-600 dark:text-red-400"></p>
+
                     <div class="flex justify-end gap-2 pt-3">
                         <button type="button"
                                 @click="closeModal()"
@@ -320,8 +332,9 @@
                             Cancelar
                         </button>
                         <button type="submit"
+                                :disabled="isSubmitting"
                                 class="inline-flex items-center px-4 py-2 bg-verdes-verde_claro border border-transparent rounded-md
-                                       text-xs font-semibold text-white uppercase tracking-widest
+                                       text-xs font-semibold text-white uppercase tracking-widest disabled:opacity-60 disabled:cursor-not-allowed
                                        hover:bg-verdes-verde_folha focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-verdes-verde_claro">
                             Salvar
                         </button>
@@ -340,23 +353,119 @@
                 equipamento: { id: null, nome: '', codigo: '', atual: null, atualDisplay: '—' },
                 valor: null,
                 routeSubmit: '',
+                isSubmitting: false,
+                errorMsg: '',
+                formatHoras(value) {
+                    const parsed = Number(value);
+                    if (value === null || value === undefined || Number.isNaN(parsed)) {
+                        return '—';
+                    }
+
+                    return `${parsed.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} h`;
+                },
+                getBadgeClass(horimetro, vidaUtil) {
+                    if (vidaUtil === null || vidaUtil === undefined || Number(vidaUtil) <= 0) {
+                        return 'bg-gray-200 text-gray-800';
+                    }
+
+                    const ratio = Number(horimetro ?? 0) / Math.max(Number(vidaUtil), 0.0001);
+                    if (ratio >= 0.85) return 'bg-red-100 text-red-800';
+                    if (ratio >= 0.6) return 'bg-yellow-100 text-yellow-800';
+                    return 'bg-green-100 text-green-800';
+                },
+                openHorimetroModalFromButton(button) {
+                    if (!button) return;
+
+                    const atualRaw = button.dataset.atual;
+                    const atual = atualRaw === '' || atualRaw === undefined ? null : Number(atualRaw);
+
+                    this.openHorimetroModal({
+                        id: Number(button.dataset.id),
+                        nome: button.dataset.nome ?? '',
+                        codigo: button.dataset.codigo ?? '',
+                        atual,
+                    });
+                },
                 openHorimetroModal(data) {
                     this.equipamento = {
                         ...data,
-                        atualDisplay: data.atual !== null ? `${Number(data.atual).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} h` : '—'
+                        atualDisplay: this.formatHoras(data.atual),
                     };
                     this.valor = null;
+                    this.errorMsg = '';
                     this.routeSubmit = `{{ url('/equipamentos') }}/${data.id}/horimetro`;
                     this.horimetroOpen = true;
                 },
                 closeModal() {
                     this.horimetroOpen = false;
                     this.valor = null;
+                    this.errorMsg = '';
                 },
                 previewTotal() {
                     const atual = this.equipamento.atual ?? 0;
                     const add = Number(this.valor ?? 0);
-                    return `${(atual + add).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} h`;
+                    return this.formatHoras(atual + add);
+                },
+                applyHorimetroUpdate(payload) {
+                    const equipamentoId = Number(payload?.equipamento_id);
+                    if (!equipamentoId) return;
+
+                    const novoHorimetro = Number(payload?.horimetro ?? 0);
+                    const row = document.querySelector(`tr[data-equip-id="${equipamentoId}"]`);
+                    if (!row) return;
+
+                    if (payload?.vida_util_h !== undefined && payload?.vida_util_h !== null) {
+                        row.dataset.vidaUtil = String(payload.vida_util_h);
+                    }
+
+                    const vidaUtilRaw = row.dataset.vidaUtil;
+                    const vidaUtil = vidaUtilRaw === '' || vidaUtilRaw === undefined ? null : Number(vidaUtilRaw);
+                    const badge = row.querySelector('.js-horimetro-badge');
+                    if (badge) {
+                        badge.className = `inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold js-horimetro-badge ${this.getBadgeClass(novoHorimetro, vidaUtil)}`;
+                        badge.dataset.currentValue = String(novoHorimetro);
+                        badge.textContent = this.formatHoras(novoHorimetro);
+                    }
+
+                    const launchButton = row.querySelector('button[data-id]');
+                    if (launchButton) {
+                        launchButton.dataset.atual = String(novoHorimetro);
+                    }
+
+                    if (Number(this.equipamento?.id) === equipamentoId) {
+                        this.equipamento.atual = novoHorimetro;
+                        this.equipamento.atualDisplay = this.formatHoras(novoHorimetro);
+                    }
+                },
+                async submitHorimetro(event) {
+                    const form = event.target;
+                    if (!form || this.isSubmitting) return;
+
+                    this.errorMsg = '';
+                    this.isSubmitting = true;
+                    try {
+                        const response = await fetch(form.action, {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                            body: new FormData(form),
+                        });
+
+                        const result = await response.json().catch(() => ({}));
+                        if (!response.ok) {
+                            const firstError = result?.errors ? Object.values(result.errors)[0]?.[0] : null;
+                            throw new Error(firstError || result?.message || 'Não foi possível atualizar o horímetro.');
+                        }
+
+                        this.applyHorimetroUpdate(result?.data ?? {});
+                        this.closeModal();
+                    } catch (error) {
+                        this.errorMsg = error?.message || 'Não foi possível atualizar o horímetro.';
+                    } finally {
+                        this.isSubmitting = false;
+                    }
                 },
 
                 // Alerta modal state
@@ -629,6 +738,51 @@
 
             tipo?.addEventListener('change', syncVisibilidade);
             recorrente?.addEventListener('change', syncVisibilidade);
+
+            const pageRoot = document.querySelector('div.py-8[x-data]');
+            const pageData = pageRoot
+                ? (window.Alpine?.$data?.(pageRoot) ?? pageRoot.__x?.$data ?? null)
+                : null;
+            const zerarForms = document.querySelectorAll('.js-zerar-horimetro-form');
+
+            const extractErrorMessage = (result, fallback) => {
+                const firstError = result?.errors ? Object.values(result.errors)[0]?.[0] : null;
+                return firstError || result?.message || fallback;
+            };
+
+            zerarForms.forEach(formEl => {
+                formEl.addEventListener('submit', async (event) => {
+                    if (event.defaultPrevented) return;
+                    event.preventDefault();
+
+                    const confirmMessage = formEl.dataset.confirmMessage || 'Zerar horímetro deste equipamento após manutenção?';
+                    if (!window.confirm(confirmMessage)) return;
+
+                    const submitBtn = formEl.querySelector('button[type="submit"]');
+                    submitBtn?.setAttribute('disabled', 'disabled');
+                    try {
+                        const response = await fetch(formEl.action, {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                            body: new FormData(formEl),
+                        });
+
+                        const result = await response.json().catch(() => ({}));
+                        if (!response.ok) {
+                            throw new Error(extractErrorMessage(result, 'Não foi possível zerar o horímetro.'));
+                        }
+
+                        pageData?.applyHorimetroUpdate(result?.data ?? {});
+                    } catch (error) {
+                        window.alert(error?.message || 'Não foi possível zerar o horímetro.');
+                    } finally {
+                        submitBtn?.removeAttribute('disabled');
+                    }
+                });
+            });
 
             // Estado inicial
             syncVisibilidade();

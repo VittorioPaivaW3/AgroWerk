@@ -21,12 +21,14 @@
                     </div>
 
                     <div class="flex gap-2">
-                        <a href="{{ route('equipamentos.edit', $equipamento) }}"
-                           class="inline-flex items-center px-4 py-2 bg-verdes-verde_claro border border-transparent rounded-md
-                                  text-xs font-semibold text-white uppercase tracking-widest
-                                  hover:bg-verdes-verde_folha focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-verdes-verde_claro">
-                            Editar
-                        </a>
+                        @role('admin|gestor')
+                            <a href="{{ route('equipamentos.edit', $equipamento) }}"
+                               class="inline-flex items-center px-4 py-2 bg-verdes-verde_claro border border-transparent rounded-md
+                                      text-xs font-semibold text-white uppercase tracking-widest
+                                      hover:bg-verdes-verde_folha focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-verdes-verde_claro">
+                                Editar
+                            </a>
+                        @endrole
 
                         <a href="{{ route('equipamentos.index') }}"
                            class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md
@@ -42,46 +44,81 @@
                 <div class="h-1.5 w-full bg-verdes-verde_claro"></div>
                 <div class="px-6 py-4 text-gray-900 dark:text-gray-100 space-y-4">
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {{-- Setor --}}
-                        <div>
-                            <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
-                                Setor
-                            </p>
-                            <p class="text-sm">
-                                {{ $equipamento->setor->nome ?? '-' }}
-                            </p>
+                    <div class="grid grid-cols-1 md:grid-cols-[1fr_220px] gap-4 items-start">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {{-- Setor --}}
+                            <div>
+                                <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
+                                    Setor
+                                </p>
+                                <p class="text-sm">
+                                    {{ $equipamento->setor->nome ?? '-' }}
+                                </p>
+                            </div>
+
+                            {{-- Status --}}
+                            <div>
+                                <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
+                                    Status
+                                </p>
+
+                                @php
+                                    $statusRaw = $equipamento->status ?? null;
+                                    $status = $statusRaw ? strtolower(trim($statusRaw)) : null;
+                                    $statusLabel = match ($status) {
+                                        'ativo'      => 'Ativo',
+                                        'inativo'    => 'Inativo',
+                                        'manutencao' => 'Em manutencao',
+                                        default      => ($statusRaw ?: '-'),
+                                    };
+                                    $badgeClass = match ($status) {
+                                        'ativo'      => 'bg-verdes-verde_claro/20 text-verdes-verde_escuro',
+                                        'inativo'    => 'bg-red-100 text-red-700',
+                                        'manutencao' => 'bg-yellow-100 text-yellow-800',
+                                        default      => 'bg-gray-200 text-gray-900',
+                                    };
+                                @endphp
+
+                                <p class="mt-0.5">
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $badgeClass }}">
+                                        {{ $statusLabel }}
+                                    </span>
+                                </p>
+                            </div>
+
+                            <div>
+                                <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
+                                    Tipo
+                                </p>
+                                <p class="text-sm">
+                                    {{ $equipamento->tipoEquipamento->nome ?? '-' }}
+                                </p>
+                            </div>
                         </div>
 
-                        {{-- Status --}}
                         <div>
-                            <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
-                                Status
-                            </p>
-
                             @php
-                                $statusRaw = $equipamento->status ?? null;
-                                $status = $statusRaw ? strtolower(trim($statusRaw)) : null;
-                                $statusLabel = match ($status) {
-                                    'ativo'      => 'Ativo',
-                                    'inativo'    => 'Inativo',
-                                    'manutencao' => 'Em manutencao',
-                                    default      => ($statusRaw ?: '-'),
-                                };
-                                $badgeClass = match ($status) {
-                                    'ativo'      => 'bg-verdes-verde_claro/20 text-verdes-verde_escuro',
-                                    'inativo'    => 'bg-red-100 text-red-700',
-                                    'manutencao' => 'bg-yellow-100 text-yellow-800',
-                                    default      => 'bg-gray-200 text-gray-900',
-                                };
+                                $fotoPerfilDisponivel = $equipamento->foto_perfil
+                                    && \Illuminate\Support\Facades\Storage::disk('public')->exists($equipamento->foto_perfil);
+                                $fotoPerfilUrl = $fotoPerfilDisponivel
+                                    ? '/storage/' . ltrim($equipamento->foto_perfil, '/')
+                                    : null;
                             @endphp
-
-                            <p class="mt-0.5">
-                                <span
-                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $badgeClass }}">
-                                    {{ $statusLabel }}
-                                </span>
+                            <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
+                                Foto de perfil
                             </p>
+                            <div class="mt-1 h-32 w-full overflow-hidden rounded-lg border border-gray-200 bg-gray-100 dark:border-gray-700 dark:bg-gray-800">
+                                @if($fotoPerfilDisponivel)
+                                    <img src="{{ $fotoPerfilUrl }}"
+                                         alt="Foto de perfil do equipamento {{ $equipamento->nome }}"
+                                         class="h-full w-full object-cover">
+                                @else
+                                    <div class="flex h-full items-center justify-center text-xs text-gray-500 dark:text-gray-400">
+                                        Sem foto
+                                    </div>
+                                @endif
+                            </div>
                         </div>
                     </div>
 

@@ -14,9 +14,12 @@ class Equipamento extends Model
         'nome',
         'cor',
         'setor_id',
+        'tipo_equipamento_id',
         'status',
         'vida_util_h',
         'horimetro',
+        'tem_horimetro',
+        'foto_perfil',
         'campos_extras',
         'observacoes',
         'manutencao_preventiva',
@@ -27,6 +30,7 @@ class Equipamento extends Model
         'manutencao_preventiva' => 'date',
         'campos_extras' => 'array',
         'terceiro' => 'boolean',
+        'tem_horimetro' => 'boolean',
         'vida_util_h' => 'integer',
         'horimetro' => 'decimal:2',
     ];
@@ -34,6 +38,11 @@ class Equipamento extends Model
     public function setor()
     {
         return $this->belongsTo(Setor::class);
+    }
+
+    public function tipoEquipamento()
+    {
+        return $this->belongsTo(TipoEquipamento::class, 'tipo_equipamento_id');
     }
 
     public function manutencoesPreventivas()

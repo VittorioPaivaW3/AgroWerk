@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrdemServicoController;
 use App\Http\Controllers\EquipamentoController;
+use App\Http\Controllers\TipoEquipamentoController;
 use App\Http\Controllers\SetoresController;
 use App\Http\Controllers\ManutencaoPreventivaController;
 use App\Http\Controllers\UsuarioController;
@@ -108,6 +109,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     /*
      |------------------------------------------------------------------
+     | TIPOS DE EQUIPAMENTO
+     |------------------------------------------------------------------
+     */
+    Route::resource('tipos', TipoEquipamentoController::class)
+        ->middleware('role:admin|gestor')
+        ->parameters(['tipos' => 'tipo'])
+        ->except(['show', 'edit']);
+
+    /*
+     |------------------------------------------------------------------
      | EQUIPAMENTOS
      |------------------------------------------------------------------
      */
@@ -137,7 +148,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('equipamentos', EquipamentoController::class)
         ->middleware('role:admin|gestor|tecnico')
-        ->parameters(['equipamentos' => 'equipamento']);
+        ->parameters(['equipamentos' => 'equipamento'])
+        ->except(['edit', 'update']);
+
+    Route::get('/equipamentos/{equipamento}/edit', [EquipamentoController::class, 'edit'])
+        ->middleware('role:admin|gestor')
+        ->name('equipamentos.edit');
+
+    Route::match(['put', 'patch'], '/equipamentos/{equipamento}', [EquipamentoController::class, 'update'])
+        ->middleware('role:admin|gestor')
+        ->name('equipamentos.update');
 
     // Remover arquivo de equipamento
     Route::delete(

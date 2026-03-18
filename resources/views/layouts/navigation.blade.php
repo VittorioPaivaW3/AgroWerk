@@ -57,6 +57,10 @@
                                     <x-dropdown-link :href="route('setores.index')">
                                         {{ __('Setores') }}
                                     </x-dropdown-link>
+
+                                    <x-dropdown-link :href="route('tipos.index')">
+                                        {{ __('Tipos') }}
+                                    </x-dropdown-link>
                                 @endunlessrole
 
                                 <x-dropdown-link :href="route('equipamentos.index')">
@@ -248,6 +252,10 @@
 
                     <x-responsive-nav-link :href="route('setores.index')" :active="request()->routeIs('setores.*')">
                         {{ __('Setores') }}
+                    </x-responsive-nav-link>
+
+                    <x-responsive-nav-link :href="route('tipos.index')" :active="request()->routeIs('tipos.*')">
+                        {{ __('Tipos') }}
                     </x-responsive-nav-link>
                 @endunlessrole
 

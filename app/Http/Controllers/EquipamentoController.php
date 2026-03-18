@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Equipamento;
 use App\Models\Setor;
+use App\Models\TipoEquipamento;
 use App\Models\EquipamentoArquivo;
 use App\Models\ManutencaoAlerta;
 use App\Models\User;
@@ -14,7 +15,7 @@ class EquipamentoController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Equipamento::with('setor');
+        $query = Equipamento::with(['setor', 'tipoEquipamento']);
 
         if ($request->filled('setor_id')) {
             $query->where('setor_id', $request->setor_id);
@@ -42,8 +43,9 @@ class EquipamentoController extends Controller
     public function create()
     {
         $setores = Setor::orderBy('nome')->get();
+        $tipos = TipoEquipamento::orderBy('nome')->get();
 
-        return view('equipamentos.create', compact('setores'));
+        return view('equipamentos.create', compact('setores', 'tipos'));
     }
 
     public function store(Request $request)
@@ -53,10 +55,12 @@ class EquipamentoController extends Controller
             'codigo'    => ['nullable', 'string', 'max:255'],
             'cor'       => ['nullable', 'string', 'max:7'],
             'setor_id'  => ['required', 'exists:setores,id'],
+            'tipo_equipamento_id' => ['nullable', 'exists:tipos_equipamento,id'],
 
             'status'    => ['required', 'in:ativo,inativo,manutencao'],
             'vida_util_h' => ['nullable', 'integer', 'min:0'],
             'horimetro'   => ['nullable', 'numeric', 'min:0'],
+            'tem_horimetro' => ['nullable', 'boolean'],
 
             'manutencao_preventiva' => ['nullable', 'date'],
             'observacoes'           => ['nullable', 'string'],
@@ -64,6 +68,7 @@ class EquipamentoController extends Controller
 
             // múltiplos anexos
             'anexos.*'              => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'mimetypes:image/jpeg,image/png,application/pdf', 'max:20480'],
+            'foto_perfil'           => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
 
             'extra_keys'     => ['nullable', 'array'],
             'extra_keys.*'   => ['nullable', 'string', 'max:255'],
@@ -72,6 +77,12 @@ class EquipamentoController extends Controller
         ]);
 
         $data['terceiro'] = $request->boolean('terceiro');
+        $data['tem_horimetro'] = $request->boolean('tem_horimetro');
+
+        if (! $data['tem_horimetro']) {
+            $data['vida_util_h'] = null;
+            $data['horimetro'] = null;
+        }
 
         // monta campos extras
         $extras = [];
@@ -92,15 +103,23 @@ class EquipamentoController extends Controller
             ];
         }
 
+        $fotoPerfilPath = null;
+        if ($request->hasFile('foto_perfil')) {
+            $fotoPerfilPath = $request->file('foto_perfil')->store('equipamentos/perfil', 'public');
+        }
+
         // cria equipamento
         $equipamento = Equipamento::create([
             'nome'                  => $data['nome'],
             'codigo'                => $data['codigo'] ?? null,
             'cor'                   => $data['cor'] ?? null,
             'setor_id'              => $data['setor_id'],
+            'tipo_equipamento_id'   => $data['tipo_equipamento_id'] ?? null,
             'status'                => $data['status'] ?? 'ativo',
             'vida_util_h'           => $data['vida_util_h'] ?? null,
             'horimetro'             => $data['horimetro'] ?? null,
+            'tem_horimetro'         => $data['tem_horimetro'] ?? false,
+            'foto_perfil'           => $fotoPerfilPath,
             'manutencao_preventiva' => $data['manutencao_preventiva'] ?? null,
             'observacoes'           => $data['observacoes'] ?? null,
             'campos_extras'         => ! empty($extras) ? $extras : null,
@@ -131,7 +150,7 @@ class EquipamentoController extends Controller
 
     public function show(Equipamento $equipamento)
     {
-        $equipamento->load(['setor', 'arquivos']);
+        $equipamento->load(['setor', 'tipoEquipamento', 'arquivos']);
 
         return view('equipamentos.show', compact('equipamento'));
     }
@@ -139,9 +158,10 @@ class EquipamentoController extends Controller
     public function edit(Equipamento $equipamento)
     {
         $setores = Setor::orderBy('nome')->get();
+        $tipos = TipoEquipamento::orderBy('nome')->get();
         $equipamento->load('arquivos');
 
-        return view('equipamentos.edit', compact('equipamento', 'setores'));
+        return view('equipamentos.edit', compact('equipamento', 'setores', 'tipos'));
     }
 
     public function update(Request $request, Equipamento $equipamento)
@@ -151,10 +171,12 @@ class EquipamentoController extends Controller
             'codigo'    => ['nullable', 'string', 'max:255'],
             'cor'       => ['nullable', 'string', 'max:7'],
             'setor_id'  => ['required', 'exists:setores,id'],
+            'tipo_equipamento_id' => ['nullable', 'exists:tipos_equipamento,id'],
 
             'status'    => ['required', 'in:ativo,inativo,manutencao'],
             'vida_util_h' => ['nullable', 'integer', 'min:0'],
             'horimetro'   => ['nullable', 'numeric', 'min:0'],
+            'tem_horimetro' => ['nullable', 'boolean'],
 
             'manutencao_preventiva' => ['nullable', 'date'],
             'observacoes'           => ['nullable', 'string'],
@@ -162,6 +184,8 @@ class EquipamentoController extends Controller
 
             // anexos novos (opcionais)
             'anexos.*'              => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'mimetypes:image/jpeg,image/png,application/pdf', 'max:20480'],
+            'foto_perfil'           => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'remover_foto_perfil'   => ['nullable', 'boolean'],
 
             'extra_keys'     => ['nullable', 'array'],
             'extra_keys.*'   => ['nullable', 'string', 'max:255'],
@@ -169,6 +193,12 @@ class EquipamentoController extends Controller
             'extra_values.*' => ['nullable', 'string'],
         ]);
         $data['terceiro'] = $request->boolean('terceiro');
+        $data['tem_horimetro'] = $request->boolean('tem_horimetro');
+
+        if (! $data['tem_horimetro']) {
+            $data['vida_util_h'] = null;
+            $data['horimetro'] = null;
+        }
 
         // monta campos extras
         $extras = [];
@@ -187,15 +217,31 @@ class EquipamentoController extends Controller
             ];
         }
 
+        $fotoPerfilPath = $equipamento->foto_perfil;
+        if ($request->hasFile('foto_perfil')) {
+            if ($fotoPerfilPath && Storage::disk('public')->exists($fotoPerfilPath)) {
+                Storage::disk('public')->delete($fotoPerfilPath);
+            }
+            $fotoPerfilPath = $request->file('foto_perfil')->store('equipamentos/perfil', 'public');
+        } elseif ($request->boolean('remover_foto_perfil')) {
+            if ($fotoPerfilPath && Storage::disk('public')->exists($fotoPerfilPath)) {
+                Storage::disk('public')->delete($fotoPerfilPath);
+            }
+            $fotoPerfilPath = null;
+        }
+
         // atualiza equipamento
         $equipamento->update([
             'nome'                  => $data['nome'],
             'codigo'                => $data['codigo'] ?? null,
             'cor'                   => $data['cor'] ?? null,
             'setor_id'              => $data['setor_id'],
+            'tipo_equipamento_id'   => $data['tipo_equipamento_id'] ?? null,
             'status'                => $data['status'] ?? 'ativo',
             'vida_util_h'           => $data['vida_util_h'] ?? null,
             'horimetro'             => $data['horimetro'] ?? null,
+            'tem_horimetro'         => $data['tem_horimetro'] ?? false,
+            'foto_perfil'           => $fotoPerfilPath,
             'manutencao_preventiva' => $data['manutencao_preventiva'] ?? null,
             'observacoes'           => $data['observacoes'] ?? null,
             'campos_extras'         => ! empty($extras) ? $extras : null,
@@ -265,6 +311,7 @@ class EquipamentoController extends Controller
         $query = Equipamento::with(['alertas' => function ($q) {
                 $q->orderByDesc('created_at');
             }, 'setor'])
+            ->where('tem_horimetro', true)
             ->select('id', 'nome', 'codigo', 'vida_util_h', 'horimetro', 'setor_id');
 
         if ($request->filled('setor_id')) {
@@ -298,6 +345,18 @@ class EquipamentoController extends Controller
         $equipamento->horimetro = ($equipamento->horimetro ?? 0) + $data['horimetro'];
         $equipamento->save();
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Horimetro lancado com sucesso!',
+                'data' => [
+                    'equipamento_id' => $equipamento->id,
+                    'horimetro' => (float) $equipamento->horimetro,
+                    'vida_util_h' => $equipamento->vida_util_h !== null ? (int) $equipamento->vida_util_h : null,
+                ],
+            ]);
+        }
+
+
         return redirect()
             ->route('equipamentos.horimetros')
             ->with('success', 'Horímetro lançado com sucesso!');
@@ -307,6 +366,18 @@ class EquipamentoController extends Controller
     {
         $equipamento->horimetro = 0;
         $equipamento->save();
+
+        if (request()->expectsJson()) {
+            return response()->json([
+                'message' => 'Horimetro zerado apos manutencao.',
+                'data' => [
+                    'equipamento_id' => $equipamento->id,
+                    'horimetro' => 0,
+                    'vida_util_h' => $equipamento->vida_util_h !== null ? (int) $equipamento->vida_util_h : null,
+                ],
+            ]);
+        }
+
 
         return redirect()
             ->route('equipamentos.horimetros')

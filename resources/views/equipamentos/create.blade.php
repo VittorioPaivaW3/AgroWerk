@@ -72,6 +72,27 @@
                             @enderror
                         </div>
 
+                        {{-- Tem horimetro --}}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Horimetro
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input
+                                    type="checkbox"
+                                    name="tem_horimetro"
+                                    value="1"
+                                    class="h-4 w-4 rounded border-gray-300 text-verdes-verde_claro shadow-sm focus:ring-verdes-verde_claro/40"
+                                    {{ old('tem_horimetro', old('horimetro') !== null || old('vida_util_h') !== null) ? 'checked' : '' }}
+                                >
+                                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                                    Tem horimetro
+                                </span>
+                            </label>
+                            @error('tem_horimetro')
+                                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
                         {{-- Vida útil (horas) --}}
                         <div>
                             <label for="vida_util_h"
@@ -160,6 +181,26 @@
                             @enderror
                         </div>
 
+                        {{-- Tipo de equipamento --}}
+                        <div>
+                            <label for="tipo_equipamento_id"
+                                   class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Tipo de equipamento
+                            </label>
+                            <select id="tipo_equipamento_id" name="tipo_equipamento_id"
+                                    class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
+                                           text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">
+                                <option value="">Selecione um tipo</option>
+                                @foreach ($tipos as $tipo)
+                                    <option value="{{ $tipo->id }}" @selected(old('tipo_equipamento_id') == $tipo->id)>
+                                        {{ $tipo->nome }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('tipo_equipamento_id')
+                                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
                         {{-- Manutenção preventiva --}}
                         <div>
                             <label for="manutencao_preventiva"
@@ -202,6 +243,30 @@
                                     class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900
                                             text-sm text-gray-900 dark:text-gray-100 focus:border-verdes-verde_claro focus:ring-verdes-verde_claro">{{ old('observacoes') }}</textarea>
                             @error('observacoes')
+                                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Foto de perfil --}}
+                        <div class="rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50/70 dark:bg-gray-900/40 p-4">
+                            <label for="foto_perfil"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Foto de perfil do equipamento
+                            </label>
+                            <input id="foto_perfil" name="foto_perfil" type="file"
+                                accept=".png,.jpg,.jpeg,.webp"
+                                class="block w-full text-sm text-gray-900 dark:text-gray-100
+                                       file:mr-4 file:py-2 file:px-4
+                                       file:rounded-md file:border-0
+                                       file:text-sm file:font-semibold
+                                       file:bg-verdes-verde_claro file:text-white
+                                       hover:file:bg-verdes-verde_folha
+                                       dark:file:bg-verdes-verde_claro dark:file:text-white
+                                       dark:hover:file:bg-verdes-verde_folha">
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                Formatos permitidos: JPG, JPEG, PNG ou WEBP. Max. 5 MB.
+                            </p>
+                            @error('foto_perfil')
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
@@ -361,3 +426,5 @@
     }
 </script>
 </x-app-layout>
+
+

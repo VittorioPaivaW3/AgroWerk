@@ -104,6 +104,9 @@
                                     Setor
                                 </th>
                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    Tipo
+                                </th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                     Status
                                 </th>
                                 <th class="px-3 py-2 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -148,6 +151,9 @@
                                     <td class="px-3 py-2 text-sm text-gray-900 dark:text-gray-100">
                                         {{ $equipamento->setor->nome ?? '-' }}
                                     </td>
+                                    <td class="px-3 py-2 text-sm text-gray-900 dark:text-gray-100">
+                                        {{ $equipamento->tipoEquipamento->nome ?? '-' }}
+                                    </td>
                                     <td class="px-3 py-2 text-sm">
                                         <span
                                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $badgeClass }}">
@@ -159,15 +165,17 @@
                                            class="text-verdes-verde_claro hover:text-verdes-verde_folha dark:text-verdes-verde_claro dark:hover:text-verdes-verde_folha text-xs font-semibold">
                                             Ver
                                         </a>
-                                        <a href="{{ route('equipamentos.edit', $equipamento) }}"
-                                           class="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white text-xs font-semibold">
-                                            Editar
-                                        </a>
+                                        @role('admin|gestor')
+                                            <a href="{{ route('equipamentos.edit', $equipamento) }}"
+                                               class="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white text-xs font-semibold">
+                                                Editar
+                                            </a>
+                                        @endrole
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-3 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                                    <td colspan="6" class="px-3 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
                                         Nenhum equipamento encontrado.
                                     </td>
                                 </tr>
