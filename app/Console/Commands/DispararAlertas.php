@@ -19,6 +19,7 @@ class DispararAlertas extends Command
         $agora = Carbon::now();
 
         $alertas = ManutencaoAlerta::with('equipamento')
+            ->ativos()
             ->orderBy('id')
             ->get()
             ->filter(function (ManutencaoAlerta $alerta) use ($agora) {
@@ -39,9 +40,20 @@ class DispararAlertas extends Command
 
                 // Tipo horímetro
                 if ($alerta->tipo === 'horimetro' && $alerta->horimetro_alvo !== null) {
+                    if ($alerta->last_sent_at !== null) {
+                        return false;
+                    }
+
+                    if ($alerta->horimetro_intervalo !== null) {
+                        $restantes = $alerta->horasRestantesHorimetro();
+
+                        return $restantes !== null
+                            && $restantes <= (float) ($alerta->horimetro_antecedencia ?? 10);
+                    }
+
                     $horimetroAtual = $alerta->equipamento?->horimetro ?? 0;
-                    return $horimetroAtual >= $alerta->horimetro_alvo
-                        && $alerta->last_sent_at === null;
+
+                    return $horimetroAtual >= $alerta->horimetro_alvo;
                 }
 
                 return false;

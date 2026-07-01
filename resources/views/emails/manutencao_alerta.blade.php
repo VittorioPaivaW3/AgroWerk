@@ -48,9 +48,18 @@
                     
                     @if($alerta->tipo === 'horimetro')
                       <div style="font-size:14px; color:#0f172a; line-height:1.5;">
-                        Este alerta será disparado quando o horímetro atingir
+                        {{ $alerta->nome ?: 'Manutenção por horímetro' }}:
+                        @if($alerta->horimetro_intervalo)
+                          intervalo de
+                          <span style="font-weight:700; color:#16a34a;">
+                            {{ number_format($alerta->horimetro_intervalo, 2, ',', '.') }} h
+                          </span>,
+                          com próximo alvo em
+                        @else
+                          este alerta será disparado quando o horímetro atingir
+                        @endif
                         <span style="font-weight:700; color:#16a34a;">
-                          {{ number_format($alerta->horimetro_alvo, 2, ',', '.') }} h
+                          {{ number_format($alerta->horimetroAlvoCalculado() ?? $alerta->horimetro_alvo, 2, ',', '.') }} h
                         </span>.
                       </div>
                     @else

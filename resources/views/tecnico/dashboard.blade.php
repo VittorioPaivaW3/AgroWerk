@@ -22,6 +22,8 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
+            @include('equipamentos.partials.alertas-horimetro-criticos')
+
             {{-- Cards de resumo --}}
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
 

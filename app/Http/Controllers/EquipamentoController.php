@@ -346,12 +346,15 @@ class EquipamentoController extends Controller
         $equipamento->save();
 
         if ($request->expectsJson()) {
+            $equipamento->load(['alertas', 'setor']);
+
             return response()->json([
                 'message' => 'Horimetro lancado com sucesso!',
                 'data' => [
                     'equipamento_id' => $equipamento->id,
                     'horimetro' => (float) $equipamento->horimetro,
                     'vida_util_h' => $equipamento->vida_util_h !== null ? (int) $equipamento->vida_util_h : null,
+                    'alertas_horimetro' => $this->alertasHorimetroPayload($equipamento),
                 ],
             ]);
         }
@@ -367,13 +370,28 @@ class EquipamentoController extends Controller
         $equipamento->horimetro = 0;
         $equipamento->save();
 
+        $equipamento->alertas()
+            ->where('tipo', 'horimetro')
+            ->whereNotNull('horimetro_intervalo')
+            ->get()
+            ->each(function (ManutencaoAlerta $alerta) {
+                $alerta->update([
+                    'horimetro_base' => 0,
+                    'horimetro_alvo' => (float) $alerta->horimetro_intervalo,
+                    'last_sent_at' => null,
+                ]);
+            });
+
         if (request()->expectsJson()) {
+            $equipamento->load(['alertas', 'setor']);
+
             return response()->json([
                 'message' => 'Horimetro zerado apos manutencao.',
                 'data' => [
                     'equipamento_id' => $equipamento->id,
                     'horimetro' => 0,
                     'vida_util_h' => $equipamento->vida_util_h !== null ? (int) $equipamento->vida_util_h : null,
+                    'alertas_horimetro' => $this->alertasHorimetroPayload($equipamento),
                 ],
             ]);
         }
@@ -388,6 +406,7 @@ class EquipamentoController extends Controller
     {
         $data = $request->validate([
             'equipamento_id'    => ['required', 'exists:equipamentos,id'],
+            'nome'              => ['nullable', 'string', 'max:255'],
             'mensagem'          => ['nullable', 'string', 'max:2000'],
             'tipo'              => ['required', 'in:data,horimetro'],
             'recorrente'        => ['nullable', 'boolean'],
@@ -395,9 +414,20 @@ class EquipamentoController extends Controller
             'data_inicio_recorrencia' => ['nullable', 'date'],
             'data_alerta'       => ['nullable', 'date'],
             'horimetro_alvo'    => ['nullable', 'numeric', 'min:0'],
+            'horimetro_intervalo' => ['nullable', 'numeric', 'min:0.01'],
+            'horimetro_base'    => ['nullable', 'numeric', 'min:0'],
+            'horimetro_antecedencia' => ['nullable', 'numeric', 'min:0'],
+            'horimetro_items' => ['nullable', 'array'],
+            'horimetro_items.*.nome' => ['nullable', 'string', 'max:255'],
+            'horimetro_items.*.mensagem' => ['nullable', 'string', 'max:2000'],
+            'horimetro_items.*.horimetro_intervalo' => ['nullable', 'numeric', 'min:0.01'],
+            'horimetro_items.*.horimetro_base' => ['nullable', 'numeric', 'min:0'],
+            'horimetro_items.*.horimetro_antecedencia' => ['nullable', 'numeric', 'min:0'],
         ]);
 
         $data['recorrente'] = $request->boolean('recorrente');
+        $data['ativo'] = true;
+        unset($data['horimetro_items']);
 
         if ($data['tipo'] === 'data') {
             if ($data['recorrente']) {
@@ -414,14 +444,77 @@ class EquipamentoController extends Controller
                 $data['data_inicio_recorrencia'] = null;
             }
             $data['horimetro_alvo'] = null;
+            $data['horimetro_intervalo'] = null;
+            $data['horimetro_base'] = null;
+            $data['horimetro_antecedencia'] = 10;
         }
 
         if ($data['tipo'] === 'horimetro') {
+            $itensHorimetro = collect($request->input('horimetro_items', []))
+                ->filter(function ($item) {
+                    return filled($item['nome'] ?? null)
+                        || filled($item['mensagem'] ?? null)
+                        || filled($item['horimetro_intervalo'] ?? null)
+                        || filled($item['horimetro_base'] ?? null)
+                        || filled($item['horimetro_antecedencia'] ?? null);
+                })
+                ->values();
+
+            if ($itensHorimetro->isNotEmpty()) {
+                $request->validate([
+                    'horimetro_items' => ['required', 'array', 'min:1'],
+                    'horimetro_items.*.horimetro_intervalo' => ['required', 'numeric', 'min:0.01'],
+                ]);
+
+                $equipamento = Equipamento::findOrFail($data['equipamento_id']);
+
+                $itensHorimetro->each(function (array $item) use ($data, $equipamento) {
+                    $base = filled($item['horimetro_base'] ?? null)
+                        ? (float) $item['horimetro_base']
+                        : (float) ($equipamento->horimetro ?? 0);
+                    $intervalo = (float) $item['horimetro_intervalo'];
+                    $antecedencia = filled($item['horimetro_antecedencia'] ?? null)
+                        ? (float) $item['horimetro_antecedencia']
+                        : 10;
+
+                    ManutencaoAlerta::create([
+                        'equipamento_id' => $data['equipamento_id'],
+                        'nome' => $item['nome'] ?? null,
+                        'mensagem' => $item['mensagem'] ?? null,
+                        'tipo' => 'horimetro',
+                        'recorrente' => false,
+                        'dias_recorrencia' => null,
+                        'data_inicio_recorrencia' => null,
+                        'data_alerta' => null,
+                        'horimetro_base' => $base,
+                        'horimetro_intervalo' => $intervalo,
+                        'horimetro_antecedencia' => $antecedencia,
+                        'horimetro_alvo' => $base + $intervalo,
+                        'ativo' => true,
+                    ]);
+                });
+
+                return redirect()
+                    ->route('equipamentos.horimetros')
+                    ->with('success', $itensHorimetro->count() . ' manutenção(ões) por horímetro criada(s) com sucesso!');
+            }
+
             $request->validate([
-                'horimetro_alvo' => ['required', 'numeric', 'min:0'],
+                'horimetro_intervalo' => ['required', 'numeric', 'min:0.01'],
             ]);
+
+            $equipamento = Equipamento::findOrFail($data['equipamento_id']);
+            $data['horimetro_base'] = array_key_exists('horimetro_base', $data) && $data['horimetro_base'] !== null
+                ? (float) $data['horimetro_base']
+                : (float) ($equipamento->horimetro ?? 0);
+            $data['horimetro_intervalo'] = (float) $data['horimetro_intervalo'];
+            $data['horimetro_antecedencia'] = array_key_exists('horimetro_antecedencia', $data) && $data['horimetro_antecedencia'] !== null
+                ? (float) $data['horimetro_antecedencia']
+                : 10;
+            $data['horimetro_alvo'] = $data['horimetro_base'] + $data['horimetro_intervalo'];
             $data['recorrente'] = false;
             $data['dias_recorrencia'] = null;
+            $data['data_inicio_recorrencia'] = null;
             $data['data_alerta'] = null;
         }
 
@@ -436,6 +529,7 @@ class EquipamentoController extends Controller
     {
         $data = $request->validate([
             'equipamento_id'    => ['required', 'exists:equipamentos,id'],
+            'nome'              => ['nullable', 'string', 'max:255'],
             'mensagem'          => ['nullable', 'string', 'max:2000'],
             'tipo'              => ['required', 'in:data,horimetro'],
             'recorrente'        => ['nullable', 'boolean'],
@@ -443,6 +537,9 @@ class EquipamentoController extends Controller
             'data_inicio_recorrencia' => ['nullable', 'date'],
             'data_alerta'       => ['nullable', 'date'],
             'horimetro_alvo'    => ['nullable', 'numeric', 'min:0'],
+            'horimetro_intervalo' => ['nullable', 'numeric', 'min:0.01'],
+            'horimetro_base'    => ['nullable', 'numeric', 'min:0'],
+            'horimetro_antecedencia' => ['nullable', 'numeric', 'min:0'],
         ]);
 
         $data['recorrente'] = $request->boolean('recorrente');
@@ -462,12 +559,25 @@ class EquipamentoController extends Controller
                 $data['data_inicio_recorrencia'] = null;
             }
             $data['horimetro_alvo'] = null;
+            $data['horimetro_intervalo'] = null;
+            $data['horimetro_base'] = null;
+            $data['horimetro_antecedencia'] = 10;
         }
 
         if ($data['tipo'] === 'horimetro') {
             $request->validate([
-                'horimetro_alvo' => ['required', 'numeric', 'min:0'],
+                'horimetro_intervalo' => ['required', 'numeric', 'min:0.01'],
             ]);
+
+            $equipamento = Equipamento::findOrFail($data['equipamento_id']);
+            $data['horimetro_base'] = array_key_exists('horimetro_base', $data) && $data['horimetro_base'] !== null
+                ? (float) $data['horimetro_base']
+                : (float) ($equipamento->horimetro ?? 0);
+            $data['horimetro_intervalo'] = (float) $data['horimetro_intervalo'];
+            $data['horimetro_antecedencia'] = array_key_exists('horimetro_antecedencia', $data) && $data['horimetro_antecedencia'] !== null
+                ? (float) $data['horimetro_antecedencia']
+                : 10;
+            $data['horimetro_alvo'] = $data['horimetro_base'] + $data['horimetro_intervalo'];
             $data['recorrente'] = false;
             $data['dias_recorrencia'] = null;
             $data['data_inicio_recorrencia'] = null;
@@ -479,6 +589,63 @@ class EquipamentoController extends Controller
         return redirect()
             ->route('equipamentos.horimetros')
             ->with('success', 'Alerta atualizado com sucesso!');
+    }
+
+    public function realizarAlertaHorimetro(Request $request, ManutencaoAlerta $alerta)
+    {
+        abort_if($alerta->tipo !== 'horimetro', 422, 'Este aviso não é por horímetro.');
+
+        $alerta->load('equipamento.setor');
+        $equipamento = $alerta->equipamento;
+        abort_if(! $equipamento, 404, 'Equipamento não encontrado.');
+
+        $horimetroAtual = (float) ($equipamento->horimetro ?? 0);
+        $intervalo = $alerta->horimetro_intervalo !== null ? (float) $alerta->horimetro_intervalo : null;
+
+        $alerta->update([
+            'horimetro_base' => $horimetroAtual,
+            'horimetro_alvo' => $intervalo ? $horimetroAtual + $intervalo : $alerta->horimetro_alvo,
+            'ultimo_realizado_em' => now(),
+            'ultimo_realizado_horimetro' => $horimetroAtual,
+            'last_sent_at' => null,
+        ]);
+
+        $equipamento->load(['alertas', 'setor']);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Manutenção marcada como feita.',
+                'data' => [
+                    'equipamento_id' => $equipamento->id,
+                    'alertas_horimetro' => $this->alertasHorimetroPayload($equipamento),
+                ],
+            ]);
+        }
+
+        return redirect()
+            ->route('equipamentos.horimetros')
+            ->with('success', 'Manutenção marcada como feita.');
+    }
+
+    private function alertasHorimetroPayload(Equipamento $equipamento): array
+    {
+        $horimetroAtual = (float) ($equipamento->horimetro ?? 0);
+
+        return $equipamento->alertas
+            ->where('tipo', 'horimetro')
+            ->where('ativo', true)
+            ->map(function (ManutencaoAlerta $alerta) use ($equipamento, $horimetroAtual) {
+                $alerta->setRelation('equipamento', $equipamento);
+                $resumo = $alerta->resumoHorimetro($horimetroAtual);
+                $resumo['realizar_url'] = route('equipamentos.alertas.realizar-horimetro', $alerta);
+
+                return $resumo;
+            })
+            ->sortBy(function (array $alerta) {
+                return $alerta['horas_restantes'] ?? PHP_FLOAT_MAX;
+            })
+            ->values()
+            ->all();
     }
 
     /**

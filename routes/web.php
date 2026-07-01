@@ -134,6 +134,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('role:admin|gestor|tecnico')
         ->name('equipamentos.alertas.update');
 
+    Route::post('/equipamentos/alertas/{alerta}/realizar-horimetro', [EquipamentoController::class, 'realizarAlertaHorimetro'])
+        ->middleware('role:admin|gestor|tecnico')
+        ->name('equipamentos.alertas.realizar-horimetro');
+
     Route::get('/equipamentos/alertas/teste', [EquipamentoController::class, 'testeAlerta'])
         ->middleware('role:admin|gestor|tecnico')
         ->name('equipamentos.alertas.teste');

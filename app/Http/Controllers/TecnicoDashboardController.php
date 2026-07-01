@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ManutencaoAlerta;
 use App\Models\OrdemServico;
 use Illuminate\Http\Request;
 
@@ -34,6 +35,7 @@ class TecnicoDashboardController extends Controller
             'osConcluidas' => $osConcluidas,
             'mostrarConcluidas' => $mostrarConcluidas,
             'ordens'       => $ordens,
+            'alertasHorimetroCriticos' => ManutencaoAlerta::criticosHorimetro(5),
         ]);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\OrdemServico;
 use App\Models\Setor;
 use App\Models\User;
+use App\Models\ManutencaoAlerta;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -111,6 +112,7 @@ class DashboardController extends Controller
         'filters'           => $filters,
         'setores'           => Setor::orderBy('nome')->get(),
         'tecnicos'          => User::role('tecnico')->orderBy('name')->get(['id','name']),
+        'alertasHorimetroCriticos' => ManutencaoAlerta::criticosHorimetro(5),
     ]);
 }
 }
